@@ -14,6 +14,11 @@ const requestSchema = new Schema({
         type: String,
         required: true
     },
+    state: {
+        type: String,
+        required: true,
+        default: 'pending'
+    },
     files: [String],
     isViewed: {
         type: Boolean,
@@ -23,3 +28,14 @@ const requestSchema = new Schema({
 
 const Request = mongoose.model('Request', requestSchema);
 module.exports = Request;
+
+/*
+owner sends requests - pending
+officer views - mark request viewed
+if approves:
+    mark approved
+    send notification with neccessary files and details
+else:
+    mark rejected
+    send a notification with the reason
+*/
