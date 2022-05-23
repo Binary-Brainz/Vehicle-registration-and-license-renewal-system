@@ -6,6 +6,10 @@ const vehicleSchema = new Schema({
     type: String,
     required: true,
   },
+  mode: {
+    type: String,
+    required: true,
+  },
   regNo: {
     type: String,
     required: true,
@@ -23,11 +27,15 @@ const vehicleSchema = new Schema({
     type: String,
     required: true
   },
+  wheelType: {
+    type: Number,
+    required: true
+  },
   isExpired: {
     type: Boolean,
     default: false
   },
-  expireDate: {
+  registeredDate: {
     type: Date,
     required: true
   }
