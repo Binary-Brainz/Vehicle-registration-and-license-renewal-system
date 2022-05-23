@@ -23,7 +23,7 @@ const vehicleSchema = new Schema({
     type: String,
     required: true
   },
-  ownerId: {
+  ownerNIC: {
     type: String,
     required: true
   },
