@@ -20,7 +20,7 @@ const login_post = async (req, res) => {
 
         const user = await Officer.findOne({nic});
 
-        if(user != null){
+        if(user !== null){
 
             let password_check = await encHandler.checkEncryptedCredential(password, user.password);
 
@@ -61,7 +61,7 @@ const add_vehicle = async (req, res) => {
 
     const owner = await Owner.findOne({nic: ownerNIC})
 
-    if(owner != null){
+    if(owner !== null){
 
         const vehicle = new Vehicle(data);
 
@@ -94,7 +94,53 @@ const add_vehicle = async (req, res) => {
     }
 }
 
-//get all vehicles
+//update vehicle
+const update_vehicle = async (req, res) => {
+
+    data = req.body;
+    id = req.params.id;
+    new_data = {};
+
+    for(let key in req.body){
+        if(data[key] !== ''){
+            new_data[key] = data[key];
+        }
+    }
+
+    try {
+        if(Object.keys(new_data).length > 0){
+        
+            Vehicle.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {returnOriginal: false}, (err, doc) => {
+    
+                if (err){
+                    res.json({
+                        status: 'error',
+                        error: err
+                    });
+                }
+                else if(doc === null){
+
+                    res.json({
+                        status: 'error',
+                        error: 'unregistered vehicle!'
+                    })
+                }
+                else{
+                    // send updated liscence as a notification
+                    res.json({
+                        status: 'ok',
+                        vehicle: doc
+                    });
+                }
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+//get all vehicles - when fetching change the timezone to IST
 const get_vehicles = async (req, res) => {
 
     try {
@@ -114,7 +160,7 @@ const get_vehicles = async (req, res) => {
 
                     let owner = owners[i];
 
-                    if(owner.nic == nic){
+                    if(owner.nic === nic){
 
                         result.push({
                             vehicle,
@@ -145,5 +191,6 @@ const get_vehicles = async (req, res) => {
 module.exports = {
     login_post,
     add_vehicle,
+    update_vehicle,
     get_vehicles,
 }

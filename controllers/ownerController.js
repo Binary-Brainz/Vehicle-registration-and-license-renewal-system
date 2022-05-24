@@ -47,7 +47,7 @@ const login_post = async (req, res) => {
 
         const user = await Owner.findOne({nic});
 
-        if(user != null){
+        if(user !== null){
             
             let password_check = await encHandler.checkEncryptedCredential(password, user.password);
 
