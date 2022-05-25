@@ -1,0 +1,27 @@
+.navbar-dark{
+    background-color: #bba7a7;
+}
+
+h1.header1 {
+    color: #d23d3d;
+}
+
+
+.headr {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.footer{
+    background-color: #ddcece;
+    margin:0px auto;
+    padding: 20px 0px 20px 0px;
+  }
+
+  .row-content {
+    margin: 0px auto;
+    padding: 0px 0px;
+    border-bottom: 1px ridge;
+    min-height: 400px; }
