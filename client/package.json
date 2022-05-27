@@ -15,6 +15,7 @@
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.2",
+    "react-redux-form": "^1.16.14",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "reactstrap": "^9.0.2",
@@ -48,4 +49,3 @@
     "autoprefixer": "10.4.5"
   }
 }
-

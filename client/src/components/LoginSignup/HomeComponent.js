@@ -1,5 +1,4 @@
 import React from "react"
-import Image from "react-bootstrap/esm/Image"
 import { Media } from "reactstrap"
 
 

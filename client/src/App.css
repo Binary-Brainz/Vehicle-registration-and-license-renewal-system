@@ -1,9 +1,9 @@
 .navbar-dark{
-    background-color: #bba7a7;
+    background-color: #a5c9de;
 }
 
 h1.header1 {
-    color: #d23d3d;
+    color: #032256;
 }
 
 
@@ -15,7 +15,7 @@ h1.header1 {
 }
 
 .footer{
-    background-color: #ddcece;
+    background-color: #afc7d5;
     margin:0px auto;
     padding: 20px 0px 20px 0px;
   }
@@ -25,3 +25,8 @@ h1.header1 {
     padding: 0px 0px;
     border-bottom: 1px ridge;
     min-height: 400px; }
+
+.form-group{
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
