@@ -6,7 +6,7 @@ const vehicleSchema = new Schema({
     type: String,
     required: true,
   },
-  mode: {
+  model: {
     type: String,
     required: true,
   },
