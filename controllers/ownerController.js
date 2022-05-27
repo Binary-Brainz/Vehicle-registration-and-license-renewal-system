@@ -5,6 +5,7 @@ const SuperUser = require('../models/superuser');
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
 const Notification = require('../models/notification');
+const Request = require('../models/request');
 
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
@@ -80,7 +81,55 @@ const login_post = async (req, res) => {
     }
 }
 
+//owner request
+const send_request = async (req, res) => {
+
+    let data = req.body
+    let type = data.type
+
+    if(data.files){
+
+        let obj = await Officer.findOne({type: type}, '_id');
+        let officerID = obj._id.toString();
+
+        if(officerID){
+
+            data['officerID'] = officerID;
+            const request = new Request(data);
+
+            request.save((err) => {
+
+                if(err){
+                    res.json({
+                        status: 'error',
+                        error: err,
+                    });
+                }
+                else{
+                    res.json({
+                        status: 'ok',
+                        request: request
+                    });
+                }
+            })
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid request type!'
+            });
+        }
+    }
+    else{
+        res.json({
+            status: 'error',
+            error: 'Required documents must be uploaded!'
+        });
+    }
+}
+
 module.exports = {
     register_post,
     login_post,
+    send_request,
 }

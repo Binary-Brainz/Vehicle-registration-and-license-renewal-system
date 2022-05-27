@@ -27,7 +27,7 @@ const vehicleSchema = new Schema({
     type: String,
     required: true
   },
-  wheelType: {
+  noOfDoors: {
     type: Number,
     required: true
   },
