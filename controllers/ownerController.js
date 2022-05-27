@@ -147,3 +147,6 @@ module.exports = {
     login_post,
     send_request,
 }
+
+// optional //
+// get all requests

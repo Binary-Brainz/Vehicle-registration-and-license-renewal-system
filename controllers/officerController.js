@@ -1,6 +1,9 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
+const archiver = require('archiver');
+const path = require('path');
+
 const SuperUser = require('../models/superuser');
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
@@ -67,7 +70,7 @@ const login_post = async (req, res) => {
     }
 }
 
-// add new vehicle
+// add new vehicle - change application status/send notification to user with a generated liscense
 const add_vehicle = async (req, res) => {
 
     let data = req.body;
@@ -108,7 +111,7 @@ const add_vehicle = async (req, res) => {
     }
 }
 
-//update vehicle
+//update vehicle - change application status/send notification to user with a generated liscense
 const update_vehicle = async (req, res) => {
 
     data = req.body;
@@ -202,9 +205,65 @@ const get_vehicles = async (req, res) => {
     }
 }
 
+// download documents of an application
+const download_documents = async (req, res) => {
+
+    let request_id = req.params.request_id;
+    
+    try {
+
+        let request_data = await Request.findByIdAndUpdate(mongoose.Types.ObjectId(request_id), {status: 'pending'}, {new: true});
+        
+        if(request_data){
+
+            let fileNames = request_data.files;
+            console.log(fileNames);
+
+            const archive = archiver('zip');
+            archive.on('error', function(err) {
+                res.status(500).send({error: err.message});
+            });
+
+            //on stream closed we can end the request
+            archive.on('end', function() {
+                console.log('Archive wrote %d bytes', archive.pointer());
+            });
+
+            res.attachment('documents.zip');
+            let files = [];
+
+            for(let i = 0; i < fileNames.length; i++){
+                
+                files.push('uploads/' + fileNames[i]);
+
+            }
+
+            archive.pipe(res);
+
+            for(const i in files) {
+                archive.file(files[i], { name: path.basename(files[i]) });
+            }
+
+            archive.finalize();
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Unable to find the request!'
+            })
+        }
+    } 
+    catch (err) {
+        console.log(err);
+    }
+}
+
+//reject application
+
 module.exports = {
     login_post,
     add_vehicle,
     update_vehicle,
     get_vehicles,
+    download_documents,
 }

@@ -16,4 +16,7 @@ router.post('/updateVehicle/:id', auth.requireAuth, officerController.update_veh
 //get all vehicles
 router.get('/getAllVehicles', auth.requireAuth, officerController.get_vehicles);
 
+//download documents belong to an application
+router.get('/downloadDocumets/:request_id', officerController.download_documents);
+
 module.exports = router;
