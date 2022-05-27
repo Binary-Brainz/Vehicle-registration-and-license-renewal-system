@@ -6,11 +6,12 @@ const Officer = require('../models/officer');
 const Owner = require('../models/owner');
 const Notification = require('../models/notification');
 const Vehicle = require('../models/vehicle');
+const Request = require('../models/request');
 
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 
-//login
+//login - get all applications(requests by officerID)
 const login_post = async (req, res) => {
 
     const nic = req.body.nic;
@@ -26,13 +27,26 @@ const login_post = async (req, res) => {
 
             if(password_check){
 
-                let token = auth.createToken(user._id);
+                try {
+                    
+                    let applications = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
 
-                res.json({
-                    status: 'ok',
-                    token: token,
-                    user: user
-                });
+                    let return_data = {};
+                    
+                    return_data['user'] = user;
+                    return_data['applications'] = applications;
+                    
+                    let token = auth.createToken(user._id);
+
+                    res.json({
+                        status: 'ok',
+                        token: token,
+                        data: return_data
+                    });
+                } 
+                catch (err) {
+                    console.log(err);
+                }
             }
             else{
                 res.json({

@@ -5,6 +5,7 @@ const SuperUser = require('../models/superuser');
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
 const Notification = require('../models/notification');
+const Vehicle = require('../models/vehicle');
 const Request = require('../models/request');
 
 const auth = require('../middleware/auth');
@@ -38,7 +39,7 @@ const register_post = async (req, res) => {
     })
 }
 
-//login
+//login - get all owner vehicles/notifications(test)
 const login_post = async (req, res) => {
 
     const nic = req.body.nic;
@@ -54,13 +55,26 @@ const login_post = async (req, res) => {
 
             if(password_check){
 
-                let token = auth.createToken(user._id);
+                try {
+                    
+                    let vehicles = await Vehicle.find({ownerNIC: nic});
 
-                res.json({
-                    status: 'ok',
-                    token: token,
-                    user: user
-                });
+                    let return_data = {};
+                    
+                    return_data['user'] = user;
+                    return_data['vehicles'] = vehicles;
+
+                    let token = auth.createToken(user._id);
+
+                    res.json({
+                        status: 'ok',
+                        token: token,
+                        data: return_data
+                    });
+                } 
+                catch (err) {
+                    console.log(err);
+                }
             }
             else{
                 res.json({
