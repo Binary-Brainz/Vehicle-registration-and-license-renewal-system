@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import Login from './components/LoginSignup/LoginComponent';
+import Login from './components/LoginSignupMainComponent';
 import './App.css';
 import { BrowserRouter } from 'react-router-dom'; 
+import VehicleOwnerMain from './components/VehicleOwnerMainComponent';
 
 
 class App extends Component {
@@ -11,7 +12,7 @@ class App extends Component {
         
           <BrowserRouter>
             <div className='App'>
-              <Login />
+              <VehicleOwnerMain />
             </div>
           </BrowserRouter>
           

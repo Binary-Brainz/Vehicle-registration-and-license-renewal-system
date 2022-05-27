@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import {
     Nav, Navbar, NavbarBrand, NavItem,
-    Button, Modal, ModalHeader, ModalBody, Label, NavLink, Card, Col, Row
+    Button, Modal, ModalHeader, ModalBody, Label, NavLink, Col, Row
 } from 'reactstrap';
 import Image from "react-bootstrap/Image";
 import { Control, Errors, LocalForm } from 'react-redux-form';
