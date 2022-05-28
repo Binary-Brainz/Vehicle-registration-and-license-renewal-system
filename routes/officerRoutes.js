@@ -19,10 +19,13 @@ router.post('/renewLicense/:id', auth.requireAuth, officerController.update_vehi
 //reject request
 router.post('/reject/:request_id', officerController.reject_request);
 
-//get all vehicles
-router.get('/getAllVehicles', auth.requireAuth, officerController.get_vehicles);
-
 //download documents belong to an application
 router.get('/downloadDocumets/:request_id', officerController.download_documents);
+
+//get all vehicles
+router.get('/allVehicles', auth.requireAuth, officerController.get_vehicles);
+
+//get officer requests
+router.get('/requests', auth.requireAuth, officerController.get_officer_requests);
 
 module.exports = router;

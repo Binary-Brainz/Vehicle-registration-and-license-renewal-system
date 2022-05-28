@@ -31,26 +31,37 @@ const login_post = async (req, res) => {
 
             if(password_check){
 
-                try {
-                    
-                    let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
+                let token = auth.createToken();
 
-                    let return_data = {};
-                    
-                    return_data['officer'] = user;
-                    return_data['requests'] = requests;
-                    
-                    let token = auth.createToken(user._id);
+                res.json({
+                    status: 'ok',
+                    token: token,
+                    data: {
+                        nic: nic,
+                        id: user._id
+                    }
+                });
 
-                    res.json({
-                        status: 'ok',
-                        token: token,
-                        data: return_data
-                    });
-                } 
-                catch (err) {
-                    console.log(err);
-                }
+                // try {
+                    
+                //     let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
+
+                //     let return_data = {};
+                    
+                //     return_data['officer'] = user;
+                //     return_data['requests'] = requests;
+                    
+                //     let token = auth.createToken(user._id);
+
+                //     res.json({
+                //         status: 'ok',
+                //         token: token,
+                //         data: return_data
+                //     });
+                // } 
+                // catch (err) {
+                //     console.log(err);
+                // }
             }
             else{
                 res.json({
@@ -247,54 +258,6 @@ const update_vehicle = async (req, res) => {
     }
 }
 
-//get all vehicles - when fetching change the timezone to IST
-const get_vehicles = async (req, res) => {
-
-    try {
-        
-        let vehicles = await Vehicle.find();
-        let owners = await Owner.find();
-
-        if(vehicles.length > 0){
-
-            let result = [];
-
-            vehicles.forEach((vehicle) => {
-
-                let nic = vehicle.ownerNIC;
-
-                for (let i = 0; i < owners.length; i++) {
-
-                    let owner = owners[i];
-
-                    if(owner.nic === nic){
-
-                        result.push({
-                            vehicle,
-                            owner
-                        });
-                        continue;
-                    }
-                }
-            });
-
-            res.json({
-                status: 'ok',
-                result: result
-            });
-        }
-        else{
-            res.json({
-                status: 'empty',
-                result: []
-            })
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-
 // download documents of an application
 const download_documents = async (req, res) => {
 
@@ -394,17 +357,84 @@ const reject_request = async (req, res) => {
     });
 }
 
+//get all vehicles - when fetching change the timezone to IST
+const get_vehicles = async (req, res) => {
+
+    try {
+        
+        let vehicles = await Vehicle.find();
+        let owners = await Owner.find();
+
+        if(vehicles.length > 0){
+
+            let result = [];
+
+            vehicles.forEach((vehicle) => {
+
+                let nic = vehicle.ownerNIC;
+
+                for (let i = 0; i < owners.length; i++) {
+
+                    let owner = owners[i];
+
+                    if(owner.nic === nic){
+
+                        result.push({
+                            vehicle,
+                            owner
+                        });
+                        continue;
+                    }
+                }
+            });
+
+            res.json({
+                status: 'ok',
+                result: result
+            });
+        }
+        else{
+            res.json({
+                status: 'empty',
+                result: []
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+//get all the requests of the officer
+const get_officer_requests = async (req, res) => {
+
+    let id = req.body.id;
+
+    try{
+
+        let requests = await Request.find({officerID: id});
+
+        res.json({
+            status: 'ok',
+            data: {requests: requests}
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 module.exports = {
     login_post,
     add_vehicle,
     update_vehicle,
     reject_request,
-    get_vehicles,
     download_documents,
+    get_vehicles,
+    get_officer_requests,
 }
 
 //###optional
 // get one vehicle
 // get one request
-// get all requests after any status update
 // get vehicles after any vehicle change

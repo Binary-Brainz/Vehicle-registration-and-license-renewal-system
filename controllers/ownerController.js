@@ -19,7 +19,6 @@ const register_post = async (req, res) => {
     let nic = data.nic;
 
     data.password = await encHandler.encryptCredential(password);
-    // data.nic = encHandler.encryptCredential(data.nic); //if applied change the login check
 
     const owner = new Owner(data);
 
@@ -33,36 +32,48 @@ const register_post = async (req, res) => {
             });
         }
         else{
+
+            let user = await Owner.findOne({nic});
+            let token = auth.createToken();
+
+            res.json({
+                status: 'ok',
+                token: token,
+                data: {
+                    nic: nic,
+                    id: user._id
+                }
+            });
             
-            try {
+            // try {
                 
-                let user = await Owner.findOne({nic});
+            //     let user = await Owner.findOne({nic});
 
-                let vehicles = await Vehicle.find({ownerNIC: user.nic});
-                let notifications = await Notification.find({receiverID: user._id})
+            //     let vehicles = await Vehicle.find({ownerNIC: user.nic});
+            //     let notifications = await Notification.find({receiverID: user._id})
 
-                let return_data = {};
+            //     let return_data = {};
                 
-                return_data['owner'] = user;
-                return_data['vehicles'] = vehicles;
-                return_data['notifications'] = notifications;
+            //     return_data['owner'] = user;
+            //     return_data['vehicles'] = vehicles;
+            //     return_data['notifications'] = notifications;
 
-                let token = auth.createToken(user._id);
+            //     let token = auth.createToken(user._id);
 
-                res.json({
-                    status: 'ok',
-                    token: token,
-                    data: return_data
-                });
-            } 
-            catch (err) {
-                console.log(err);
-            }
+            //     res.json({
+            //         status: 'ok',
+            //         token: token,
+            //         data: user
+            //     });
+            // } 
+            // catch (err) {
+            //     console.log(err);
+            // }
         }
     })
 }
 
-//login - get all owner vehicles/notifications
+//login - get all owner vehicles/notifications(optional)
 const login_post = async (req, res) => {
 
     const nic = req.body.nic;
@@ -78,28 +89,39 @@ const login_post = async (req, res) => {
 
             if(password_check){
 
-                try {
+                let token = auth.createToken();
+
+                res.json({
+                    status: 'ok',
+                    token: token,
+                    data: {
+                        nic: nic,
+                        id: user._id
+                    }
+                });
+
+                // try {
                     
-                    let vehicles = await Vehicle.find({ownerNIC: nic});
-                    let notifications = await Notification.find({receiverID: user._id})
+                //     let vehicles = await Vehicle.find({ownerNIC: nic});
+                //     let notifications = await Notification.find({receiverID: user._id})
 
-                    let return_data = {};
+                //     let return_data = {};
                     
-                    return_data['owner'] = user;
-                    return_data['vehicles'] = vehicles;
-                    return_data['notifications'] = notifications;
+                //     return_data['owner'] = user;
+                //     return_data['vehicles'] = vehicles;
+                //     return_data['notifications'] = notifications;
 
-                    let token = auth.createToken(user._id);
+                //     let token = auth.createToken(user._id);
 
-                    res.json({
-                        status: 'ok',
-                        token: token,
-                        data: return_data
-                    });
-                } 
-                catch (err) {
-                    console.log(err);
-                }
+                //     res.json({
+                //         status: 'ok',
+                //         token: token,
+                //         data: return_data
+                //     });
+                // } 
+                // catch (err) {
+                //     console.log(err);
+                // }
             }
             else{
                 res.json({
@@ -203,17 +225,83 @@ const download_file = async (req, res) => {
     }
 }
 
+//get all the vehicles of the owner
+const get_owner_vehicles = async (req, res) => {
+
+    let nic = req.body.nic;
+
+    try{
+
+        let vehicles = await Vehicle.find({ownerNIC: nic});
+
+        if(vehicles !== null){
+
+            res.json({
+                status: 'ok',
+                data: {vehicles: vehicles}
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid nic!'
+            });
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+} 
+
+//get all the notifications of the owner
+const get_owner_notifications = async (req, res) => {
+
+    let id = req.body.id;
+
+    try{
+
+        let notifications = await Notification.find({receiverID: id});
+
+        res.json({
+            status: 'ok',
+            data: {notifications: notifications}
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+//get all the requests of the owner
+const get_owner_requests = async (req, res) => {
+
+    let id = req.body.id;
+
+    try{
+
+        let requests = await Request.find({ownerID: id});
+
+        res.json({
+            status: 'ok',
+            data: {requests: requests}
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 module.exports = {
     register_post,
     login_post,
     send_request,
     download_file,
+    get_owner_vehicles,
+    get_owner_notifications,
+    get_owner_requests,
 }
 
 // optional //
-// get all requests
-// get all notifications
-// get all vehicles
 // get one request
 // get one notification
 // get one vehicle
