@@ -2,9 +2,10 @@
 
 import React, { Component } from "react";
 import {
-    Nav, Navbar, NavbarBrand, NavItem,
-    Button, Modal, ModalHeader, ModalBody, Label, NavLink, Col, Row
+    
+    Modal, ModalHeader, ModalBody, Label, Col, Row
 } from 'reactstrap';
+import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { Control, Errors, LocalForm } from 'react-redux-form';
 
@@ -36,7 +37,7 @@ class Header extends Component {
     }
 
     handleChange(event) {
-        this.setState({value: event.target.value});  
+        this.setState({ value: event.target.value });
     }
 
 
@@ -71,39 +72,23 @@ class Header extends Component {
     render() {
         return (
             <React.Fragment>
-                <Navbar dark expand="md" style={{ "padding": "0px" }}>
-                    <div className="headr">
-                        <div className="row d-flex align-items-center">
-                            <div className="col-2 col-sm-1 float-left">
-                                <NavbarBrand>
-                                    <Image
-                                        roundedCircle
-                                        fluid
-                                        src="assets/images/logo1.png"
-                                        alt="logo.jpg"
-                                    />
-                                </NavbarBrand>
-                            </div>
-                            <div className="col-8">
-                                <h2 className="header1">Vehicle Registration System</h2>
-                            </div>
-                            <div className="col">
-                                <Nav className="ml-auto justify-content-end" navbar>
-                                    <NavItem>
-                                        <NavLink style={{ color: "#0d6efd", cursor: "pointer" }} onClick={this.toggleSignupModal}  >
-                                            Sign Up
-                                        </NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <Button outline color="primary" onClick={this.toggleLoginModal}>
+                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                    <Container>
+                        <Navbar.Brand href="#home"><img src="assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licening System</Navbar.Brand>
+                        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                        <Navbar.Collapse id="responsive-navbar-nav">
+                            <Nav className="ms-auto">
+                                <Nav.Link href="#" onClick={this.toggleSignupModal}>Signup</Nav.Link>
+                                <Nav.Link href="#" onClick={this.toggleLoginModal}>
+                                        
                                             <span className="fa fa-sign-in fa-lg"></span> Login
-                                        </Button>
-                                    </NavItem>
-                                </Nav>
-                            </div>
-                        </div>
-                    </div>
+                                        
+                                </Nav.Link>
+                            </Nav>
+                        </Navbar.Collapse>
+                    </Container>
                 </Navbar>
+                
                 <Modal isOpen={this.state.isLoginModalOpen} toggle={this.toggleLoginModal}>
                     <ModalHeader toggle={this.toggleLoginModal}>Login </ModalHeader>
                     <ModalBody>
@@ -167,7 +152,7 @@ class Header extends Component {
                 <Modal isOpen={this.state.isSignupModalOpen} toggle={this.toggleSignupModal}>
                     <ModalHeader toggle={this.toggleSignupModal}>Signup </ModalHeader>
                     <ModalBody>
-                        <LocalForm  onSubmit={(values) => this.handleSignup(values)} >
+                        <LocalForm onSubmit={(values) => this.handleSignup(values)} >
                             <Row className="form-group">
                                 <Label htmlFor="firstName" md={3}>First Name</Label>
                                 <Col md={9}>
