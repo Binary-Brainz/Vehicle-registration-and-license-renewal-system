@@ -15,7 +15,7 @@ const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 const pdfGenerator = require('../middleware/pdfGenerator');
 
-//login - get all applications(requests by officerID)
+//login - get all requests(requests by officerID)
 const login_post = async (req, res) => {
 
     const nic = req.body.nic;
@@ -33,12 +33,12 @@ const login_post = async (req, res) => {
 
                 try {
                     
-                    let applications = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
+                    let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
 
                     let return_data = {};
                     
-                    return_data['user'] = user;
-                    return_data['applications'] = applications;
+                    return_data['officer'] = user;
+                    return_data['requests'] = requests;
                     
                     let token = auth.createToken(user._id);
 
@@ -348,12 +348,63 @@ const download_documents = async (req, res) => {
     }
 }
 
-//reject application
+//reject request
+const reject_request = async (req, res) => {
+
+    let requestID = req.params.requestID;
+    let reason = req.body.reason;
+        
+    Request.findOneAndUpdate({_id: mongoose.Types.ObjectId(requestID)}, {status: 'rejected'}, {new: true}, async (err, request) => {
+
+        if(err){
+
+            res.json({
+                status: 'error',
+                error: err
+            })
+        }
+        else{
+            
+            let notification_data = {
+                type: request.type,
+                message: `Your request for ${request.type} has rejected - ${reason}`,
+                receiverID: request.ownerID,
+                requestID: request._id,
+            }
+
+            let notification = new Notification(notification_data);
+
+            notification.save((err) => {
+
+                if(err){
+
+                    res.json({
+                        status: 'error',
+                        error: err
+                    })
+                }
+                else{
+
+                    res.json({
+                        status: 'ok',
+                    });
+                }
+            })
+        }
+    });
+}
 
 module.exports = {
     login_post,
     add_vehicle,
     update_vehicle,
+    reject_request,
     get_vehicles,
     download_documents,
 }
+
+//###optional
+// get one vehicle
+// get one request
+// get all requests after any status update
+// get vehicles after any vehicle change

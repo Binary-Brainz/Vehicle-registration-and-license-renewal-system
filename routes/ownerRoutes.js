@@ -15,4 +15,7 @@ router.post('/login', ownerController.login_post);
 //request with file upload
 router.post('/request', uploader.array('documents'), ownerController.send_request);
 
+//download pdf document sent by an officer
+router.get('/downloadFile/:notificationID', ownerController.download_file);
+
 module.exports = router;

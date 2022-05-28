@@ -13,6 +13,12 @@ router.post('/addVehicle', auth.requireAuth, officerController.add_vehicle);
 //update vehicle details
 router.post('/updateVehicle/:id', auth.requireAuth, officerController.update_vehicle);
 
+//renew liscence
+router.post('/renewLicense/:id', auth.requireAuth, officerController.update_vehicle);
+
+//reject request
+router.post('/reject/:request_id', officerController.reject_request);
+
 //get all vehicles
 router.get('/getAllVehicles', auth.requireAuth, officerController.get_vehicles);
 

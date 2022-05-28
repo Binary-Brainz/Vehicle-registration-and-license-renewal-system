@@ -16,13 +16,15 @@ const register_post = async (req, res) => {
 
     let data = req.body;
     let password = data.password;
+    let nic = data.nic;
 
     data.password = await encHandler.encryptCredential(password);
     // data.nic = encHandler.encryptCredential(data.nic); //if applied change the login check
 
     const owner = new Owner(data);
 
-    owner.save((err) => {
+    owner.save(async (err) => {
+
         if(err){
             let errField = (err.keyValue.email) ? 'email' : 'nic';
             res.json({
@@ -31,15 +33,36 @@ const register_post = async (req, res) => {
             });
         }
         else{
-            res.json({
-                status: 'ok',
-                user: owner
-            });
+            
+            try {
+                
+                let user = await Owner.findOne({nic});
+
+                let vehicles = await Vehicle.find({ownerNIC: user.nic});
+                let notifications = await Notification.find({receiverID: user._id})
+
+                let return_data = {};
+                
+                return_data['owner'] = user;
+                return_data['vehicles'] = vehicles;
+                return_data['notifications'] = notifications;
+
+                let token = auth.createToken(user._id);
+
+                res.json({
+                    status: 'ok',
+                    token: token,
+                    data: return_data
+                });
+            } 
+            catch (err) {
+                console.log(err);
+            }
         }
     })
 }
 
-//login - get all owner vehicles/notifications(test)
+//login - get all owner vehicles/notifications
 const login_post = async (req, res) => {
 
     const nic = req.body.nic;
@@ -58,11 +81,13 @@ const login_post = async (req, res) => {
                 try {
                     
                     let vehicles = await Vehicle.find({ownerNIC: nic});
+                    let notifications = await Notification.find({receiverID: user._id})
 
                     let return_data = {};
                     
-                    return_data['user'] = user;
+                    return_data['owner'] = user;
                     return_data['vehicles'] = vehicles;
+                    return_data['notifications'] = notifications;
 
                     let token = auth.createToken(user._id);
 
@@ -142,11 +167,53 @@ const send_request = async (req, res) => {
     }
 }
 
+//download pdf
+const download_file = async (req, res) => {
+
+    let notificationID = req.params.notificationID;
+
+    try {
+        
+        let notification = await Notification.findById(mongoose.Types.ObjectId(notificationID));
+
+        if(notification !== null){
+
+            if(notification.files.length > 0){
+
+                let fileName = notification.files[0];
+
+                res.download('generated/' + fileName);
+            }
+            else{
+                res.json({
+                    status: 'error',
+                    error: 'No attachments!'
+                })
+            }
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid notification id!'
+            })
+        }
+    } 
+    catch (err) {
+        
+    }
+}
+
 module.exports = {
     register_post,
     login_post,
     send_request,
+    download_file,
 }
 
 // optional //
 // get all requests
+// get all notifications
+// get all vehicles
+// get one request
+// get one notification
+// get one vehicle
