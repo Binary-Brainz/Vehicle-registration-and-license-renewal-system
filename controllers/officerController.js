@@ -13,6 +13,7 @@ const Request = require('../models/request');
 
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
+const pdfGenerator = require('../middleware/pdfGenerator');
 
 //login - get all applications(requests by officerID)
 const login_post = async (req, res) => {
@@ -74,7 +75,10 @@ const login_post = async (req, res) => {
 const add_vehicle = async (req, res) => {
 
     let data = req.body;
-    let ownerNIC = req.body.ownerNIC;
+    let ownerNIC = data.ownerNIC;
+
+    let requestID = data.requestID;
+    delete data.requestID
 
     const owner = await Owner.findOne({nic: ownerNIC})
 
@@ -82,23 +86,54 @@ const add_vehicle = async (req, res) => {
 
         const vehicle = new Vehicle(data);
 
-        vehicle.save((err) => {
+        vehicle.save(async (err) => {
             
             if(err){
 
-                let errmsg = "Registration number already exists!";
-
                 res.json({
                     status: 'error',
-                    error: errmsg,
+                    error: 'Registration number already exists!',
                 });
             }
             else{
-                // send notification to user with a generated liscense
-                res.json({
-                    status: 'ok',
-                    vehicle: vehicle
-                });
+
+                try {
+
+                    let request = await Request.findByIdAndUpdate(requestID, {status: 'approved'});
+                
+                    let doc_name = pdfGenerator.makePdf(data);
+                    let files = [doc_name];
+
+                    let notification_data = {
+                        type: request.type,
+                        message: `A new vehicle is registered under registration No. ${vehicle.regNo}`,
+                        receiverID: owner._id,
+                        requestID: requestID,
+                        files: files
+                    };
+                    let notification = new Notification(notification_data);
+
+                    notification.save((err) => {
+
+                        if(err){
+
+                            res.json({
+                                status: 'error',
+                                error: err
+                            })
+                        }
+                        else{
+
+                            res.json({
+                                status: 'ok',
+                                vehicle: vehicle
+                            });
+                        }
+                    })
+                } 
+                catch (err) {
+                    console.log(err);
+                }
             }
         })
     }
@@ -106,7 +141,7 @@ const add_vehicle = async (req, res) => {
 
         res.json({
             status: 'error',
-            error: 'Invalid owner!',
+            error: 'Invalid owner!'
         });
     }
 }
@@ -114,20 +149,25 @@ const add_vehicle = async (req, res) => {
 //update vehicle - change application status/send notification to user with a generated liscense
 const update_vehicle = async (req, res) => {
 
-    data = req.body;
-    id = req.params.id;
-    new_data = {};
+    let data = req.body;
+    let vehicleID = req.params.id;
 
-    for(let key in req.body){
+    let requestID = data.requestID;
+    delete data.requestID
+
+    let new_data = {};
+
+    for(let key in data){
         if(data[key] !== ''){
             new_data[key] = data[key];
         }
     }
 
     try {
+
         if(Object.keys(new_data).length > 0){
         
-            Vehicle.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {returnOriginal: false}, (err, doc) => {
+            Vehicle.findOneAndUpdate({_id: mongoose.Types.ObjectId(vehicleID)}, data, {new: true}, async (err, updated_vehicle) => {
     
                 if (err){
                     res.json({
@@ -135,7 +175,7 @@ const update_vehicle = async (req, res) => {
                         error: err
                     });
                 }
-                else if(doc === null){
+                else if(updated_vehicle === null){
 
                     res.json({
                         status: 'error',
@@ -143,12 +183,62 @@ const update_vehicle = async (req, res) => {
                     })
                 }
                 else{
-                    // send updated liscence as a notification
-                    res.json({
-                        status: 'ok',
-                        vehicle: doc
-                    });
+                    
+                    try {
+
+                        let owner = await Owner.findOne({nic: updated_vehicle.ownerNIC});
+
+                        if(owner !== null){
+
+                            let request = await Request.findByIdAndUpdate(requestID, {status: 'approved'});
+                        
+                            let doc_name = pdfGenerator.makePdf(updated_vehicle);
+                            let files = [doc_name];
+        
+                            let notification_data = {
+                                type: request.type,
+                                message: `${request.type} - registration No. ${updated_vehicle.regNo}`,
+                                receiverID: owner._id,
+                                requestID: requestID,
+                                files: files
+                            };
+                            let notification = new Notification(notification_data);
+
+                            notification.save((err) => {
+        
+                                if(err){
+        
+                                    res.json({
+                                        status: 'error',
+                                        error: err
+                                    })
+                                }
+                                else{
+        
+                                    res.json({
+                                        status: 'ok',
+                                        vehicle: updated_vehicle
+                                    });
+                                }
+                            })
+                        }
+                        else{
+
+                            res.json({
+                                status: 'error',
+                                error: 'Invalid Owner!'
+                            });
+                        }
+                    } 
+                    catch (err) {
+                        console.log(err);
+                    }
                 }
+            });
+        }
+        else{
+            res.json({
+                status: 'ok'
             });
         }
     }
