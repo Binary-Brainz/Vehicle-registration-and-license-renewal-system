@@ -46,7 +46,14 @@ const ViewVehicleComponent = ({vehicle}) => {
         </Button>
         <Collapse in={openReservation}>
           <div >
-            <DateReservationComponent />
+          <Modal.Header closeButton>
+                <Modal.Title>Reserve a Date</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+                <DateReservationComponent/>
+            </Modal.Body>
+
           </div>
         </Collapse>
 
@@ -61,7 +68,14 @@ const ViewVehicleComponent = ({vehicle}) => {
         </Button>
         <Collapse in={openUpload}>
           <div >
-            <UploadComponent />
+          <Modal.Header closeButton>
+                <Modal.Title>Upload Documents</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+                <UploadComponent/>
+            </Modal.Body>
+
           </div>
         </Collapse>
 

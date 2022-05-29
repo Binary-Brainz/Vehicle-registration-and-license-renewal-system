@@ -30,13 +30,13 @@ class App extends Component {
             <div className='App'>
 
 
-                <Routes>
+                {/* <Routes>
                     <Route path="*" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
                     <Route path="/" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
-                    <Route exact path="/ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}></Route>  
+                    <Route exact path="/ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}></Route>   */}
                     {/* <Route exact path="/officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
-                </Routes>
-
+                {/* </Routes> */}
+<VehicleOwnerMain/>
             </div>
           </BrowserRouter>
           

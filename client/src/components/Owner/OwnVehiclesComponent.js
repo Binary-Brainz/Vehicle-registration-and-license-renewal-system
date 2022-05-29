@@ -3,7 +3,7 @@ import { Button, Card, Modal } from 'react-bootstrap';
 import ViewVehicleComponent from './ViewVehicleComponent';
 
 
-const OwnVehiclesComponent = () => {
+const OwnVehicles = () => {
 
     const [id, setId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,12 +146,6 @@ const OwnVehiclesComponent = () => {
         toggleModal();
         if (!isModalOpen) {
             setId(Id);
-            // setVehicle(ownVehicles.filter(function (el) {
-            //     return el.id === id;
-            // })[0]);
-            // setVehicle(ownVehicles.filter(obj => {
-            //     return obj.id === id
-            //   }));
         };
     }
 
@@ -188,4 +182,4 @@ const OwnVehiclesComponent = () => {
 
 }
 
-export default OwnVehiclesComponent
+export default OwnVehicles
