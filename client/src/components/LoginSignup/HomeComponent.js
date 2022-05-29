@@ -9,7 +9,7 @@ export default function Home() {
                 <div className="row row-content align-items-center" >
                     <div className="col-12 col-md-5" >
                         <Media left middle>
-                            <Media object width="400vh" src="assets/images/registration.jpg" alt="registration"></Media>
+                            <Media object width="400vh" src="/assets/images/registration.jpg" alt="registration"></Media>
                         </Media>
                     </div>
                     <div className="col-12 col-md-7" >
@@ -25,7 +25,7 @@ export default function Home() {
                 <div className="row row-content align-items-center" >
                     <div className="col-12 order-md-last col-md-5" >
                         <Media left middle>
-                            <Media object width="400vh" src="assets/images/license.jpg" alt="license"></Media>
+                            <Media object width="400vh" src="/assets/images/license.jpg" alt="license"></Media>
                         </Media>
                     </div>
                     <div className="col-12 order-md-first col-md-7" >
@@ -41,7 +41,7 @@ export default function Home() {
                 <div className="row row-content align-items-center" >
                     <div className="col-12 col-md-5" >
                         <Media left middle>
-                            <Media object width="400vh" src="assets/images/vehicle.jpg" alt="vehicle"></Media>
+                            <Media object width="400vh" src="/assets/images/vehicle.jpg" alt="vehicle"></Media>
                         </Media>
                     </div>
                     <div className="col-12 col-md-7" >

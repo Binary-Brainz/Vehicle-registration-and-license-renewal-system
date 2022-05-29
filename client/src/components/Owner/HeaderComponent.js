@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
-
+import { useSelector, useDispatch } from 'react-redux'
+import { gotId, gotNic } from '../userSlice'
 
 
 
 function Header(props) {
 
+    const nic = useSelector(state => state.user.nic)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const toggleModal = () => {
@@ -34,7 +36,7 @@ function Header(props) {
                             </div></Nav.Link>
 
                             <NavDropdown  title={<><span className="fa fa-user fa-lg"></span> firstname lastname long</>} id="collasible-nav-dropdown">
-                                <NavDropdown.Header >1999xxxxxxV</NavDropdown.Header>
+                                <NavDropdown.Header >{nic}</NavDropdown.Header>
                                 <NavDropdown.Item href="#"><span className="fa fa-cogs fa-lg"></span> Account Settings</NavDropdown.Item>
                                 <NavDropdown.Divider />
                                 <NavDropdown.Item href="#"><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>

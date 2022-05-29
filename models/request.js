@@ -10,6 +10,10 @@ const requestSchema = new Schema({
         type: String,
         required: true
     },
+    regNo: {
+        type: String,
+        required: true
+    },
     type: {
         type: String,
         required: true
