@@ -32,7 +32,7 @@ export default class RegisterNewVehicle extends Component {
                     <div className="col-12 col-md-6 d-flex justify-content-center" style={{paddingLeft: "30px", paddingRight: "30px"}}>
                         <ReactCardFlip isFlipped={this.state.dateFlipped} flipDirection="vertical">
                             <Card style={{  "paddingLeft": "0px", "paddingRight": "0px"  }}>
-                                <Card.Img variant="top" src="assets/images/date.gif" height="350" />
+                                <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                                 <Card.Body>
                                     <Card.Title>Reserve a Date</Card.Title>
                                     <Card.Subtitle>Reserved Date: {(this.state.reservedDate)? <Badge bg="warning" text="dark">{this.state.reservedDate}</Badge>: <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
@@ -58,7 +58,7 @@ export default class RegisterNewVehicle extends Component {
                     <div className="col-12 col-md-6 d-flex justify-content-center" style={{paddingLeft: "30px", paddingRight: "30px"}}>
                         <ReactCardFlip isFlipped={this.state.subFlipped} flipDirection="vertical">
                             <Card style={{  "paddingLeft": "0px", "paddingRight": "0px" }}>
-                                <Card.Img variant="top" src="assets/images/fileSub.gif" height="350" />
+                                <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                                 <Card.Body>
                                     <Card.Title>Submit Vehicle Details Form</Card.Title>
                                     <Card.Subtitle>{(this.state.subStatus)? <Badge bg="warning" text="dark">Submited</Badge>: <Badge bg="secondary">No Submission</Badge>}</Card.Subtitle>
