@@ -5,6 +5,10 @@ import VehicleOwnerMain from './components/VehicleOwnerMainComponent';
 // import AdminMainComponent from './components/AdminMainComponent';
 import LoginSignup from './components/LoginSignupMainComponent';
 
+import OwnVehicles from "./components/Owner/OwnVehiclesComponent";
+import RegisterNewVehicle from "./components/Owner/RegisterNewVehicleComponent";
+import RenewLicense from "./components/Owner/RenewLicenseComponent ";
+
 
 class App extends Component {
 
@@ -30,8 +34,13 @@ class App extends Component {
                 <Routes>
                     <Route path="*" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
                     <Route path="/" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
-                    <Route exact path="/ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}></Route>  
-                    {/* <Route exact path="/officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
+                    <Route path="ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}>
+                        <Route path="" element={<OwnVehicles />}></Route>
+                        <Route index path="ownvehicles" element={<OwnVehicles />}></Route>
+                        <Route exact path="registernewvehicle" element={<RegisterNewVehicle />} ></Route>  
+                        <Route exact path="renewlicense" element={<RenewLicense />} ></Route>
+                    </Route>  
+                    {/* <Route exact path="officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
                 </Routes>
             </div>
           </BrowserRouter>
