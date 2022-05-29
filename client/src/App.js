@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import VehicleOwnerMain from './components/VehicleOwnerMainComponent';
 // import AdminMainComponent from './components/AdminMainComponent';
 import LoginSignup from './components/LoginSignupMainComponent';
+import AdminMain from './components/AdminMainComponent';
 
 import OwnVehicles from "./components/Owner/OwnVehiclesComponent";
 import RegisterNewVehicle from "./components/Owner/RegisterNewVehicleComponent";
@@ -31,6 +32,8 @@ class App extends Component {
         
           <BrowserRouter>
             <div className='App'>
+
+
                 <Routes>
                     <Route path="*" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
                     <Route path="/" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
@@ -42,6 +45,7 @@ class App extends Component {
                     </Route>  
                     {/* <Route exact path="officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
                 </Routes>
+
             </div>
           </BrowserRouter>
           

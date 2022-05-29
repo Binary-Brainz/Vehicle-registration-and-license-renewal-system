@@ -22,6 +22,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "/assets/images/RR.jpg",
+            licenseExp: true
         },
         {
             id: 2,
@@ -36,6 +37,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: false
         },
         {
             id: 3,
@@ -50,6 +52,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: true
         }, {
             id: 4,
             vehicleNo: "XXX-XXXX",
@@ -63,6 +66,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: false
         },
         {
             id: 5,
@@ -77,6 +81,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: true
         },
         {
             id: 6,
@@ -91,6 +96,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: false
         },
         {
             id: 7,
@@ -105,6 +111,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: false
         },
         {
             id: 8,
@@ -119,6 +126,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: false
         },
         {
             id: 9,
@@ -133,6 +141,7 @@ function RenewLicense(props) {
             numberOfDoors: "4",
             manufacturedYear: "1999",
             image: "",
+            licenseExp: true
         },
     ]);
 
@@ -155,7 +164,7 @@ function RenewLicense(props) {
         <div className='container'>
             <div className='row'>
 
-                {ownVehicles.map((vehicle) => (
+                {ownVehicles.filter((veh) => veh.licenseExp).map((vehicle) => (
 
                     <Card key={vehicle.id} bg="light" border="light" className='m-3 shadow' style={{ width: '18rem', "paddingLeft": "0px", "paddingRight": "0px" }}>
                         <Card.Img variant="top" src={(vehicle.image)?vehicle.image: defaultVehicle} />
