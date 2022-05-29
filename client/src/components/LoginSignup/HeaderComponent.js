@@ -5,8 +5,7 @@ import {
     
     Modal, ModalHeader, ModalBody, Label, Col, Row
 } from 'reactstrap';
-import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import Image from "react-bootstrap/Image";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Control, Errors, LocalForm } from 'react-redux-form';
 
 const required = (val) => val && val.length;

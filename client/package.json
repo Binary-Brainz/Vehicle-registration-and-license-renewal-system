@@ -15,6 +15,7 @@
     "jquery": "^3.6.0",
     "react": "^18.1.0",
     "react-bootstrap": "^2.4.0",
+    "react-card-flip": "^1.1.5",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.2",
     "react-redux-form": "^1.16.14",
