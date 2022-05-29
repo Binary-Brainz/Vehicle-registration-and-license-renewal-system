@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter } from 'react-router-dom'; 
 import VehicleOwnerMain from './components/VehicleOwnerMainComponent';
 import LoginSignup from './components/LoginSignupMainComponent';
+import AdminMain from './components/AdminMainComponent';
 
 
 class App extends Component {
@@ -12,7 +13,7 @@ class App extends Component {
         
           <BrowserRouter>
             <div className='App'>
-              <VehicleOwnerMain />
+              <AdminMain />
             </div>
           </BrowserRouter>
           

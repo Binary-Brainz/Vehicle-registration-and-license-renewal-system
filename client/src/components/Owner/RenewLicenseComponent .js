@@ -26,6 +26,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "/assets/images/RR.jpg",
+                    licenseExp: true
                 },
                 {
                     id: 2,
@@ -40,6 +41,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: false
                 },
                 {
                     id: 3,
@@ -54,6 +56,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: true
                 }, {
                     id: 4,
                     vehicleNo: "XXX-XXXX",
@@ -67,6 +70,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: false
                 },
                 {
                     id: 5,
@@ -81,6 +85,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: true
                 },
                 {
                     id: 6,
@@ -95,6 +100,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: false
                 },
                 {
                     id: 7,
@@ -109,6 +115,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: false
                 },
                 {
                     id: 8,
@@ -123,6 +130,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: false
                 },
                 {
                     id: 9,
@@ -137,6 +145,7 @@ export default class RenewLicense extends React.Component {
                     numberOfDoors: "4",
                     manufacturedYear: "1999",
                     image: "",
+                    licenseExp: true
                 },
             ]
 
@@ -165,7 +174,7 @@ export default class RenewLicense extends React.Component {
             <div className='container'>
                 <div className='row'>
 
-                    {this.state.ownVehicles.map((vehicle) => (
+                    {this.state.ownVehicles.filter((veh) => veh.licenseExp).map((vehicle) => (
 
                         <Card key={vehicle.id} bg="light" border="light" className='m-3 shadow' style={{ width: '18rem', "paddingLeft": "0px", "paddingRight": "0px" }}>
                             <Card.Img variant="top" src={(vehicle.image)?vehicle.image: this.state.defaultVehicle} />
