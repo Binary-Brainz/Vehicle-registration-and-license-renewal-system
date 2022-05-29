@@ -1,12 +1,15 @@
 /* eslint-disable react/jsx-pascal-case */
 
-import React, { Component } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     
     Modal, ModalHeader, ModalBody, Label, Col, Row
 } from 'reactstrap';
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Control, Errors, LocalForm } from 'react-redux-form';
+import VehicleOwnerMain from "../VehicleOwnerMainComponent";
+import AdminMainComponent from "../AdminMainComponent";
 
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -17,346 +20,410 @@ const validPass = (val) => /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*!@$%^&]).{8
 const validRePass = (val1) => (val2) => val1 === val2;
 const validNic = (val) => (/^[VX0-9]{10}$/i.test(val)) || (/^[0-9]{12}$/i.test(val));
 
+async function signUpUser(data) {
+    return fetch('http://localhost:5000/owner/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
 
-class Header extends Component {
-    constructor(props) {
-        super(props);
+async function loginOwner(data) {
+    return fetch('http://localhost:5000/owner/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
 
-        this.toggleLoginModal = this.toggleLoginModal.bind(this);
-        this.toggleSignupModal = this.toggleSignupModal.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
-        this.handleSignup = this.handleSignup.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+async function loginOfficer(data) {
+    return fetch('http://localhost:5000/officer/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
 
-        this.state = {
-            isLoginModalOpen: false,
-            isSignupModalOpen: false,
-            value: ''
-        };
+function Header(props) {
+
+    let navigate = useNavigate();
+
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+    const [loginError, setLoginError] = useState('');
+    const [signUpError, setSignUpError] = useState('');
+    const [value, setValue] = useState('');
+
+    const handleChange = (event) => {
+        setValue(event.target.value );
     }
 
-    handleChange(event) {
-        this.setState({ value: event.target.value });
+    const toggleLoginModal = () => {
+        setIsLoginModalOpen(!isLoginModalOpen);
     }
 
-
-    toggleLoginModal() {
-        this.setState({
-            isLoginModalOpen: !this.state.isLoginModalOpen,
-        });
+    const toggleSignupModal = () => {
+        setIsSignupModalOpen(!isSignupModalOpen);
     }
 
-    toggleSignupModal() {
-        this.setState({
-            isSignupModalOpen: !this.state.isSignupModalOpen,
-        });
+    const handleSignup = async (values) => {
+
+        toggleSignupModal();
+
+        const response = await signUpUser(values);
+
+        if(response.status === 'error'){
+            setSignUpError(response.error );
+        }
+        else{
+
+            sessionStorage.setItem('token', JSON.stringify(response.token));
+            props.setAuthState(response);
+
+            navigate('/ownerDashboard', { replace: true });
+        }
     }
 
-    handleSignup(values) {
-        this.toggleSignupModal();
-        console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
+    const handleLogin = async (event) => {
+
+        toggleLoginModal();
+
+        let response;
+        let type;
+        let nic_arr = event.nic.split("-");
+        
+        if(nic_arr.length === 1){
+
+            type = 'owner';
+
+            response = await loginOwner({
+                nic: event.nic,
+                password: event.password
+            });
+        }
+        else if(nic_arr[1].toLowerCase() === 'officer'){
+
+            type = 'officer';
+
+            response = await loginOfficer({
+                nic: nic_arr[1],
+                password: event.password
+            });
+        }
+
+        if(response.status === 'error'){
+            setLoginError(response.error );
+        }
+        else{
+
+            sessionStorage.setItem('token', JSON.stringify(response.token));
+            props.setAuthState(response);
+
+            if(type === 'owner'){
+                navigate('/ownerDashboard', { replace: true });
+            }
+            else{
+                console.log("in officer");
+                // navigate('/officerDashboard', { replace: true });
+            }
+        }
     }
+    return (
+        <React.Fragment>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                <Container>
+                    <Navbar.Brand href="/home"><img src="assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licening System</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="ms-auto">
+                            <Nav.Link href="#" onClick={toggleSignupModal}>Signup</Nav.Link>
+                            <Nav.Link href="#" onClick={toggleLoginModal}>
+                                    
+                                        <span className="fa fa-sign-in fa-lg"></span> Login
+                                    
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+            
+            <Modal isOpen={isLoginModalOpen} toggle={toggleLoginModal}>
+                <ModalHeader toggle={toggleLoginModal}>Login </ModalHeader>
+                <ModalBody>
+                    <LocalForm onSubmit={(values) => handleLogin(values)}>
+                        <Row className="form-group">
+                            <Label htmlFor="nic" md={3}>NIC</Label>
+                            <Col md={9}>
+                                <Control.text model=".nic" id="nic" name="nic"
+                                    placeholder="NIC"
+                                    className="form-control"
+                                    validators={{
+                                        required
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".nic"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="password" md={3}>Password</Label>
+                            <Col md={9}>
+                                <Control.password model=".password" id="password" name="password"
+                                    placeholder="Password"
+                                    className="form-control"
+                                    validators={{
+                                        required
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".password"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required'
 
-    handleLogin(event) {
-        this.toggleLoginModal();
-        alert(
-            "NIC: " +
-            this.nic.value +
-            " Password: " +
-            this.password.value
-        );
-        event.preventDefault();
-    }
-    render() {
-        return (
-            <React.Fragment>
-                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-                    <Container>
-                        <Navbar.Brand href="/home"><img src="assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licening System</Navbar.Brand>
-                        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                        <Navbar.Collapse id="responsive-navbar-nav">
-                            <Nav className="ms-auto">
-                                <Nav.Link href="#" onClick={this.toggleSignupModal}>Signup</Nav.Link>
-                                <Nav.Link href="#" onClick={this.toggleLoginModal}>
-                                        
-                                            <span className="fa fa-sign-in fa-lg"></span> Login
-                                        
-                                </Nav.Link>
-                            </Nav>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
-                
-                <Modal isOpen={this.state.isLoginModalOpen} toggle={this.toggleLoginModal}>
-                    <ModalHeader toggle={this.toggleLoginModal}>Login </ModalHeader>
-                    <ModalBody>
-                        <LocalForm onSubmit={(values) => this.handleLogin(values)}>
-                            <Row className="form-group">
-                                <Label htmlFor="nic" md={3}>NIC</Label>
-                                <Col md={9}>
-                                    <Control.text model=".nic" id="nic" name="nic"
-                                        placeholder="NIC"
-                                        className="form-control"
-                                        validators={{
-                                            required
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".nic"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="password" md={3}>Password</Label>
-                                <Col md={9}>
-                                    <Control.password model=".password" id="password" name="password"
-                                        placeholder="Password"
-                                        className="form-control"
-                                        validators={{
-                                            required
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".password"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Col md={{ size: 9, offset: 3 }}>
+                                <Button type="submit" color="primary">
+                                    Login
+                                </Button>
+                            </Col>
+                        </Row>
+                    </LocalForm>
 
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Col md={{ size: 9, offset: 3 }}>
-                                    <Button type="submit" color="primary">
-                                        Login
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </LocalForm>
+                </ModalBody>
+            </Modal>
+            <Modal isOpen={isSignupModalOpen} toggle={toggleSignupModal}>
+                <ModalHeader toggle={toggleSignupModal}>Signup </ModalHeader>
+                <ModalBody>
+                    <LocalForm onSubmit={(values) => handleSignup(values)} >
+                        <Row className="form-group">
+                            <Label htmlFor="firstName" md={3}>First Name</Label>
+                            <Col md={9}>
+                                <Control.text model=".firstName" id="firstName" name="firstName"
+                                    placeholder="First Name"
+                                    className="form-control"
+                                    validators={{
+                                        required, minLength: minLength(3), maxLength: maxLength(15)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".firstName"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
 
-                    </ModalBody>
-                </Modal>
-                <Modal isOpen={this.state.isSignupModalOpen} toggle={this.toggleSignupModal}>
-                    <ModalHeader toggle={this.toggleSignupModal}>Signup </ModalHeader>
-                    <ModalBody>
-                        <LocalForm onSubmit={(values) => this.handleSignup(values)} >
-                            <Row className="form-group">
-                                <Label htmlFor="firstName" md={3}>First Name</Label>
-                                <Col md={9}>
-                                    <Control.text model=".firstName" id="firstName" name="firstName"
-                                        placeholder="First Name"
-                                        className="form-control"
-                                        validators={{
-                                            required, minLength: minLength(3), maxLength: maxLength(15)
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".firstName"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            minLength: 'Must be greater than 2 characters',
-                                            maxLength: 'Must be 15 characters or less'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="lastName" md={3}>Last Name</Label>
-                                <Col md={9}>
-                                    <Control.text model=".lastName" id="lastName" name="lastName"
-                                        placeholder="Last Name"
-                                        className="form-control"
-                                        validators={{
-                                            required, minLength: minLength(3), maxLength: maxLength(15)
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".lastName"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            minLength: 'Must be greater than 2 characters',
-                                            maxLength: 'Must be 15 characters or less'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="contactNo" md={3}>Contact No.</Label>
-                                <Col md={9}>
-                                    <Control.text model=".contactNo" id="contactNo" name="contactNo"
-                                        placeholder="Tel. Number"
-                                        className="form-control"
-                                        validators={{
-                                            required, minLength: minLength(3), maxLength: maxLength(15), isNumber
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".contactNo"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            minLength: 'Must be greater than 2 numbers',
-                                            maxLength: 'Must be 15 numbers or less',
-                                            isNumber: 'Must be a number'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="email" md={3}>Email</Label>
-                                <Col md={9}>
-                                    <Control.text model=".email" id="email" name="email"
-                                        placeholder="Email"
-                                        className="form-control"
-                                        validators={{
-                                            required, validEmail
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".email"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            validEmail: 'Invalid Email Address'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="address" md={3}>Address</Label>
-                                <Col md={9}>
-                                    <Control.text model=".address" id="address" name="address"
-                                        placeholder="Address"
-                                        className="form-control"
-                                        validators={{
-                                            required, minLength: minLength(3)
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".address"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            minLength: 'Must be greater than 2 characters',
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="nic" md={3}>NIC</Label>
-                                <Col md={9}>
-                                    <Control.text model=".nic" id="nic" name="nic"
-                                        placeholder="NIC"
-                                        className="form-control"
-                                        validators={{
-                                            required, validNic
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".nic"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            validNic: 'Not a valid NIC'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="password" md={3}>Password</Label>
-                                <Col md={9}>
-                                    <Control.password onChange={this.handleChange} model=".password" id="password" name="password"
-                                        placeholder="Password"
-                                        className="form-control"
-                                        validators={{
-                                            required, validPass
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".password"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            validPass: 'Password must contain At least one upper case English letter, At least one lower case English letter, At least one digit, At least one special character(#?!@$%^&*-), Minimum eight in length'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="rePassword" md={3}>Re-Password</Label>
-                                <Col md={9}>
-                                    <Control.password model=".rePassword" id="rePassword" name="rePassword"
-                                        placeholder="Re-Password"
-                                        className="form-control"
-                                        validators={{
-                                            required, validRePass: validRePass(this.state.value)
-                                        }}
-                                    />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".rePassword"
-                                        show="touched"
-                                        messages={{
-                                            required: 'Required',
-                                            validRePass: 'Re-Password is not matching with Password'
-                                        }}
-                                        wrapper="ul"
-                                        component="li"
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Col md={{ size: 9, offset: 3 }}>
-                                    <Button type="submit" color="primary">
-                                        Signup
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </LocalForm>
-                    </ModalBody>
-                </Modal>
-            </React.Fragment>
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="lastName" md={3}>Last Name</Label>
+                            <Col md={9}>
+                                <Control.text model=".lastName" id="lastName" name="lastName"
+                                    placeholder="Last Name"
+                                    className="form-control"
+                                    validators={{
+                                        required, minLength: minLength(3), maxLength: maxLength(15)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".lastName"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="contactNo" md={3}>Contact No.</Label>
+                            <Col md={9}>
+                                <Control.text model=".contactNo" id="contactNo" name="contactNo"
+                                    placeholder="Tel. Number"
+                                    className="form-control"
+                                    validators={{
+                                        required, minLength: minLength(3), maxLength: maxLength(15), isNumber
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".contactNo"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 numbers',
+                                        maxLength: 'Must be 15 numbers or less',
+                                        isNumber: 'Must be a number'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="email" md={3}>Email</Label>
+                            <Col md={9}>
+                                <Control.text model=".email" id="email" name="email"
+                                    placeholder="Email"
+                                    className="form-control"
+                                    validators={{
+                                        required, validEmail
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".email"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validEmail: 'Invalid Email Address'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="address" md={3}>Address</Label>
+                            <Col md={9}>
+                                <Control.text model=".address" id="address" name="address"
+                                    placeholder="Address"
+                                    className="form-control"
+                                    validators={{
+                                        required, minLength: minLength(3)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".address"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="nic" md={3}>NIC</Label>
+                            <Col md={9}>
+                                <Control.text model=".nic" id="nic" name="nic"
+                                    placeholder="NIC"
+                                    className="form-control"
+                                    validators={{
+                                        required, validNic
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".nic"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validNic: 'Not a valid NIC'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="password" md={3}>Password</Label>
+                            <Col md={9}>
+                                <Control.password onChange={handleChange} model=".password" id="password" name="password"
+                                    placeholder="Password"
+                                    className="form-control"
+                                    validators={{
+                                        required, validPass
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".password"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validPass: 'Password must contain At least one upper case English letter, At least one lower case English letter, At least one digit, At least one special character(#?!@$%^&*-), Minimum eight in length'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="rePassword" md={3}>Re-Password</Label>
+                            <Col md={9}>
+                                <Control.password model=".rePassword" id="rePassword" name="rePassword"
+                                    placeholder="Re-Password"
+                                    className="form-control"
+                                    validators={{
+                                        required, validRePass: validRePass(value)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".rePassword"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validRePass: 'Re-Password is not matching with Password'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Col md={{ size: 9, offset: 3 }}>
+                                <Button type="submit" color="primary">
+                                    Signup
+                                </Button>
+                            </Col>
+                        </Row>
+                    </LocalForm>
+                </ModalBody>
+            </Modal>
+        </React.Fragment>
 
 
 
-        );
-    }
+    );
 
 }
 
