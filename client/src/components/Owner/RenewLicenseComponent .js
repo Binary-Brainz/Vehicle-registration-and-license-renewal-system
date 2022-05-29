@@ -146,17 +146,13 @@ function RenewLicense(props) {
     ]);
 
     const toggleModal = () => {
-        setIsModalOpen({
-            isModalOpen: !isModalOpen
-        });
+        setIsModalOpen(!isModalOpen);
     }
 
     const viewDetails = (Id) => {
         toggleModal();
         if(isModalOpen === false){
-            setId(
-                {id: Id}
-            )
+            setId(Id);
         };    
     }
 
