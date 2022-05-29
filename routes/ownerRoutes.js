@@ -27,4 +27,7 @@ router.post('/request', uploader.array('documents'), ownerController.send_reques
 //download pdf document sent by an officer
 router.get('/downloadFile/:notificationID', ownerController.download_file);
 
+//reserve date
+router.post('/reserve', ownerController.reserve_post);
+
 module.exports = router;
