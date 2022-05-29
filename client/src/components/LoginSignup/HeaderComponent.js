@@ -125,6 +125,7 @@ function Header(props) {
         }
         else{
 
+            sessionStorage.setItem('userData', JSON.stringify(response.data));
             sessionStorage.setItem('token', JSON.stringify(response.token));
             props.setAuthState(response);
 
