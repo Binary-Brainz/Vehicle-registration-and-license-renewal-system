@@ -14,16 +14,6 @@ const RegisterNewVehicle = () => {
     const [reservedDate, setReservedDate] = useState("");
     const [subStatus, setSubStatus] = useState(false);
 
-
-
-    // flipDate(e) {
-    //     this.setState(prevState => ({ dateFlipped: !prevState.dateFlipped }));
-    // }
-
-    // flipSub(e) {
-    //     this.setState(prevState => ({ subFlipped: !prevState.subFlipped }));
-    // }
-
     const flipDate = (e) => {
         setDateFlipped(!dateFlipped);
     }
