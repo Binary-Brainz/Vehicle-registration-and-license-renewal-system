@@ -30,8 +30,8 @@ let requireAuth = (req, res, next) => {
 };
 
 const maxAge = 1 * 24 * 60 * 60;
-const createToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_ENV, {
+const createToken = () => {
+    return jwt.sign({value: Date.now()}, process.env.JWT_ENV, {
         expiresIn: maxAge
     });
 };

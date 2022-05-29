@@ -10,12 +10,13 @@ const notificationSchema = new Schema({
         type: String,
         required: true
     },
-    requestID: {
-        type: String
-    },
     receiverID: {
         type: String,
         required: true
+    },
+    requestID: {
+        type: String,
+        default: null
     },
     files: [String],
     isViewed: {

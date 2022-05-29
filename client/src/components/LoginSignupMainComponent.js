@@ -5,10 +5,15 @@ import Home from "./LoginSignup/HomeComponent";
 
 
 class LoginSignup extends Component {
+
+    constructor(props){
+        super(props);
+    }
+
     render() {
         return (
             <div>
-                <Header />
+                <Header setAuthState={(response) => this.props.setAuthState(response)}/>
                 <Home />
                 <Footer />
             </div>
