@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const workdaySchema = new Schema({
   day: {
     type: Date,
-    required: true
+    required: true,
+    unique: true
   },
   owners: [String]
 }, { timestamps: true });

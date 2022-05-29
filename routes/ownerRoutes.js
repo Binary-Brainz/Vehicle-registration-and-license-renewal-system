@@ -11,6 +11,6 @@ router.post('/register', ownerController.register_post);
 router.post('/login', ownerController.login_post);
 
 //reserve date
-//router.post('/reserve', ownerController.reserve_post);
+router.post('/reserve', ownerController.reserve_post);
 
 module.exports = router;
