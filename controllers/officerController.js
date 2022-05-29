@@ -82,6 +82,106 @@ const login_post = async (req, res) => {
     }
 }
 
+//get officer dashboard info
+const get_dashboard = async (req, res) => {
+
+    let id = req.body.id;
+
+    try{
+
+        let user = await Officer.findById(mongoose.Types.ObjectId(id));
+
+        if(user !== null){
+
+            let requests = await Request.find({officerID: id});
+
+            res.json({
+                status: 'ok',
+                data: {
+                    user: user,
+                    requests: requests,
+                }
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid User!'
+            });
+        }  
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+//get all the requests of the officer
+const get_officer_requests = async (req, res) => {
+
+    let id = req.body.id;
+
+    try{
+
+        let requests = await Request.find({officerID: id});
+
+        res.json({
+            status: 'ok',
+            data: {requests: requests}
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+//get all vehicles - when fetching change the timezone to IST
+const get_vehicles = async (req, res) => {
+
+    try {
+        
+        let vehicles = await Vehicle.find();
+        let owners = await Owner.find();
+
+        if(vehicles.length > 0){
+
+            let result = [];
+
+            vehicles.forEach((vehicle) => {
+
+                let nic = vehicle.ownerNIC;
+
+                for (let i = 0; i < owners.length; i++) {
+
+                    let owner = owners[i];
+
+                    if(owner.nic === nic){
+
+                        result.push({
+                            vehicle,
+                            owner
+                        });
+                        continue;
+                    }
+                }
+            });
+
+            res.json({
+                status: 'ok',
+                result: result
+            });
+        }
+        else{
+            res.json({
+                status: 'empty',
+                result: []
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
 //edit officer profile
 const edit_officer = async (req, res) => {
 
@@ -412,82 +512,16 @@ const reject_request = async (req, res) => {
     });
 }
 
-//get all vehicles - when fetching change the timezone to IST
-const get_vehicles = async (req, res) => {
-
-    try {
-        
-        let vehicles = await Vehicle.find();
-        let owners = await Owner.find();
-
-        if(vehicles.length > 0){
-
-            let result = [];
-
-            vehicles.forEach((vehicle) => {
-
-                let nic = vehicle.ownerNIC;
-
-                for (let i = 0; i < owners.length; i++) {
-
-                    let owner = owners[i];
-
-                    if(owner.nic === nic){
-
-                        result.push({
-                            vehicle,
-                            owner
-                        });
-                        continue;
-                    }
-                }
-            });
-
-            res.json({
-                status: 'ok',
-                result: result
-            });
-        }
-        else{
-            res.json({
-                status: 'empty',
-                result: []
-            })
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-
-//get all the requests of the officer
-const get_officer_requests = async (req, res) => {
-
-    let id = req.body.id;
-
-    try{
-
-        let requests = await Request.find({officerID: id});
-
-        res.json({
-            status: 'ok',
-            data: {requests: requests}
-        });
-    }
-    catch(err){
-        console.log(err)
-    }
-}
-
 module.exports = {
     login_post,
+    get_dashboard,
+    get_officer_requests,
+    get_vehicles,
     edit_officer,
     add_vehicle,
     update_vehicle,
     reject_request,
     download_documents,
-    get_vehicles,
-    get_officer_requests,
 }
 
 //###optional

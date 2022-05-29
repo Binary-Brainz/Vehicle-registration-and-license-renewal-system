@@ -12,6 +12,12 @@ router.post('/register', ownerController.register_post);
 //login
 router.post('/login', ownerController.login_post);
 
+//get owner ralated data
+router.get('/dashboard', auth.requireAuth, ownerController.get_dashboard);
+router.get('/vehicles', auth.requireAuth, ownerController.get_owner_vehicles);
+router.get('/notifications', auth.requireAuth, ownerController.get_owner_notifications);
+router.get('/requests', auth.requireAuth, ownerController.get_owner_requests);
+
 //edit officer profile
 router.post('/editProfile', auth.requireAuth, ownerController.edit_owner);
 
@@ -20,10 +26,5 @@ router.post('/request', uploader.array('documents'), ownerController.send_reques
 
 //download pdf document sent by an officer
 router.get('/downloadFile/:notificationID', ownerController.download_file);
-
-//get owner ralated data
-router.get('/vehicles', auth.requireAuth, ownerController.get_owner_vehicles);
-router.get('/notifications', auth.requireAuth, ownerController.get_owner_notifications);
-router.get('/requests', auth.requireAuth, ownerController.get_owner_requests);
 
 module.exports = router;
