@@ -142,6 +142,60 @@ const login_post = async (req, res) => {
     }
 }
 
+//edit owner profile
+const edit_owner = async (req, res) => {
+
+    let data = req.body;
+    let id = req.body.id;
+    delete data.id
+
+    let new_data = {};
+
+    for(let key in data){
+        if(data[key] !== ''){
+            new_data[key] = data[key];
+        }
+    }
+
+    try {
+
+        if(Object.keys(new_data).length > 0){
+        
+            Owner.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {new: true}, async (err, new_owner) => {
+    
+                if (err){
+                    res.json({
+                        status: 'error',
+                        error: err
+                    });
+                }
+                else if(new_owner === null){
+
+                    res.json({
+                        status: 'error',
+                        error: 'Invalid User!'
+                    })
+                }
+                else{
+                    
+                    res.json({
+                        status: 'ok',
+                    });
+                }
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Update fields cannot be empty!'
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
 //owner request
 const send_request = async (req, res) => {
 
@@ -294,6 +348,7 @@ const get_owner_requests = async (req, res) => {
 module.exports = {
     register_post,
     login_post,
+    edit_owner,
     send_request,
     download_file,
     get_owner_vehicles,

@@ -7,6 +7,9 @@ const router = express.Router();
 //login
 router.post('/login', officerController.login_post);
 
+//edit officer profile
+router.post('/editProfile', auth.requireAuth, officerController.edit_officer);
+
 //add new vehicle
 router.post('/addVehicle', auth.requireAuth, officerController.add_vehicle);
 

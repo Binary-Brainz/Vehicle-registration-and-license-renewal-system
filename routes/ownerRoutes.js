@@ -10,7 +10,10 @@ const uploader = require('../middleware/fileUploader');
 router.post('/register', ownerController.register_post);
 
 //login
-router.post('/login', ownerController.login_post)
+router.post('/login', ownerController.login_post);
+
+//edit officer profile
+router.post('/editProfile', auth.requireAuth, ownerController.edit_owner);
 
 //request with file upload
 router.post('/request', uploader.array('documents'), ownerController.send_request);

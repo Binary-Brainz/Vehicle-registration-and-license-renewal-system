@@ -82,6 +82,60 @@ const login_post = async (req, res) => {
     }
 }
 
+//edit officer profile
+const edit_officer = async (req, res) => {
+
+    let data = req.body;
+    let id = req.body.id;
+    delete data.id
+
+    let new_data = {};
+
+    for(let key in data){
+        if(data[key] !== ''){
+            new_data[key] = data[key];
+        }
+    }
+
+    try {
+
+        if(Object.keys(new_data).length > 0){
+        
+            Officer.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {new: true}, async (err, new_officer) => {
+    
+                if (err){
+                    res.json({
+                        status: 'error',
+                        error: err
+                    });
+                }
+                else if(new_officer === null){
+
+                    res.json({
+                        status: 'error',
+                        error: 'Invalid User!'
+                    })
+                }
+                else{
+                    
+                    res.json({
+                        status: 'ok',
+                    });
+                }
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Update fields cannot be empty!'
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
 // add new vehicle - change application status/send notification to user with a generated liscense
 const add_vehicle = async (req, res) => {
 
@@ -249,7 +303,8 @@ const update_vehicle = async (req, res) => {
         }
         else{
             res.json({
-                status: 'ok'
+                status: 'error',
+                error: 'Update fields cannot be empty!'
             });
         }
     }
@@ -426,6 +481,7 @@ const get_officer_requests = async (req, res) => {
 
 module.exports = {
     login_post,
+    edit_officer,
     add_vehicle,
     update_vehicle,
     reject_request,
