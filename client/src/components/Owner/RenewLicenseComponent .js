@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, Modal } from 'react-bootstrap';
 import { Form, Input } from 'reactstrap';
+import RenewalComponent from './RenewalComponent';
 
 
 function RenewLicense(props) {
@@ -146,17 +147,13 @@ function RenewLicense(props) {
     ]);
 
     const toggleModal = () => {
-        setIsModalOpen({
-            isModalOpen: !isModalOpen
-        });
+        setIsModalOpen(!isModalOpen);
     }
 
     const viewDetails = (Id) => {
         toggleModal();
-        if(isModalOpen === false){
-            setId(
-                {id: Id}
-            )
+        if(!isModalOpen){
+            setId(id);
         };    
     }
 
@@ -183,17 +180,14 @@ function RenewLicense(props) {
             </div>
             <Modal show={isModalOpen} onHide={toggleModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{id}</Modal.Title>
+                    <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    
+                    <RenewalComponent/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={toggleModal}>
                         Close
-                    </Button>
-                    <Button variant="primary" onClick={toggleModal}>
-                        Save Changes
                     </Button>
                 </Modal.Footer>
             </Modal>
