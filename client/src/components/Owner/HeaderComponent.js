@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Button, Container, Modal, Nav, Navbar, NavDropdown, NavItem } from "react-bootstrap";
-import { NavLink } from "reactstrap";
+import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
 
 
@@ -29,9 +28,10 @@ export default class Header extends Component {
     render() {
         return (
             <div>
+                <div className="">
                 <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                     <Container>
-                        <LinkContainer to="/ownvehicles"><Navbar.Brand ><img src="assets/images/logo04.png" height="40" width="40" alt="logo.png" /></Navbar.Brand></LinkContainer>
+                        <Navbar.Brand href="/ownvehicles"><img src="assets/images/logo04.png" height="40" width="40" alt="logo.png" /></Navbar.Brand>
                         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                         <Navbar.Collapse id="responsive-navbar-nav">
                             <Nav className="me-auto">
@@ -63,6 +63,7 @@ export default class Header extends Component {
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
                 <Modal show={this.state.isModalOpen} onHide={this.toggleModal}>
                     <Modal.Header closeButton>
