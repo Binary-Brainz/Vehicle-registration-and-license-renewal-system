@@ -17,12 +17,14 @@
     "react-bootstrap": "^2.4.0",
     "react-card-flip": "^1.1.5",
     "react-dom": "^18.1.0",
+    "react-hook-form": "^7.31.3",
     "react-redux": "^8.0.2",
     "react-redux-form": "^1.16.14",
     "react-router-bootstrap": "^0.26.1",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "reactstrap": "^9.0.2",
+    "redux": "^4.2.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
