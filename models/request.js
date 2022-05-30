@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const requestSchema = new Schema({
+    ownerName: {
+        type: String,
+        required: true
+    },
     ownerID: {
         type: String,
         required: true

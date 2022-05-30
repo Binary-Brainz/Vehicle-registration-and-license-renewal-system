@@ -4,8 +4,20 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 
+async function addNewVehicle(data) {
+
+    return fetch('http://localhost:5000/owner/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
 
 const UploadComponent = () => {
+    
     const onSubmit = (data) => {
         console.log(data);
     }
