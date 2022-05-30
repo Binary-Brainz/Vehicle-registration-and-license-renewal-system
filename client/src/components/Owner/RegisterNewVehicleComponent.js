@@ -3,8 +3,8 @@ import { Badge, Button, Card } from "react-bootstrap";
 import ReactCardFlip from 'react-card-flip';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
-import { useSelector, useDispatch } from 'react-redux'
-import { gotId, gotNic } from '../userSlice'
+import { useSelector, useDispatch } from 'react-redux';
+import { gotId, gotNic } from '../userSlice';
 import DateReservationComponent from "./ReservationComponent";
 import UploadComponent from "./UploadComponent";
 

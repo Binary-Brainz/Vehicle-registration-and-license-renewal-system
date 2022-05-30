@@ -3,23 +3,36 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
+import { useSelector, useDispatch } from 'react-redux';
+import { gotId, gotNic } from '../userSlice';
 
-async function addNewVehicle(data) {
-
-    return fetch('http://localhost:5000/owner/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(data => data.json())
-}
 
 const UploadComponent = () => {
+
+    const id = useSelector(state => state.user.id);
+    const fullName = useSelector(state => state.user.fullName);
     
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+
+        console.log(data.file);
+        const formData = new FormData();
+
+        formData.append("type", 'Vehicle Registration');//need to add Update vehicle
+        formData.append("ownerID", id);
+        formData.append("ownerName", fullName);
+        //add regNo if type = update vehicle
+
+        for(let i =0; i < data.file.length; i++) {
+                formData.append("documents", data.file[i]);
+        }
+
+        let response = await fetch("http://localhost:5000/owner/request", {
+            method: 'POST',
+            body: formData,
+        })
+
+        let returned_data = await response.json();
+        console.log(returned_data);
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm();

@@ -16,7 +16,7 @@ const requestSchema = new Schema({
     },
     regNo: {
         type: String,
-        required: true
+        default: null
     },
     type: {
         type: String,
@@ -25,7 +25,7 @@ const requestSchema = new Schema({
     state: {
         type: String,
         required: true,
-        default: 'pending'
+        default: 'new'
     },
     files: [String],
     isViewed: {
