@@ -29,30 +29,21 @@ const DateReservationComponent = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     return (
-        <div>
-            <Modal.Header closeButton>
-                <Modal.Title>Reserve a Date</Modal.Title>
-            </Modal.Header>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form.Group>
+                <Form.Label>Register a date</Form.Label>
+                <Form.Control type="date" name='reservation' min={disablePastDate()} max={disableFutureDate()} {...register("reservation", {
+                    required: true
+                })}
+                />
+            </Form.Group>
+            {errors.date && <p className='errorMsg'>Please Reserve a valid Date!</p>}
+            <br></br>
+            <Button variant="primary" type="submit">
+                Reserve Date
+            </Button>
+        </Form>
 
-            <Modal.Body>
-                <Form>
-                    <Form.Group>
-                        <Form.Label>Register a date</Form.Label>
-                        <Form.Control type="date" name='reservation' min={disablePastDate()} max={disableFutureDate()} {...register("reservation", {
-                            required: true
-                        })}
-                        />
-                    </Form.Group>
-                    {errors.date && <p className='errorMsg'>Please Reserve a valid Date!</p>}
-                </Form>
-            </Modal.Body>
-
-            <Modal.Footer>
-                <Button onClick={handleSubmit(onSubmit)} variant="primary" type="submit">
-                    Reserve Date
-                </Button>
-            </Modal.Footer>
-        </div>
     )
 }
 

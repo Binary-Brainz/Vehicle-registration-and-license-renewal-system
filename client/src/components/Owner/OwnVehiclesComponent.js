@@ -6,7 +6,7 @@ import { gotId, gotNic } from '../userSlice';
 
 const axios = require('axios').default;
 
-const OwnVehiclesComponent = () => {
+const OwnVehicles = () => {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
@@ -91,4 +91,4 @@ const OwnVehiclesComponent = () => {
 
 }
 
-export default OwnVehiclesComponent
+export default OwnVehicles
