@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 
-async function submitRequest(data) {
+async function addNewVehicle(data) {
 
     return fetch('http://localhost:5000/owner/login', {
       method: 'POST',

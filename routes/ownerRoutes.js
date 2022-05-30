@@ -31,6 +31,6 @@ router.post('/request', uploader.array('documents'), ownerController.send_reques
 router.get('/downloadFile/:notificationID', ownerController.download_file);
 
 //reserve date
-router.post('/reserve', ownerController.reserve_post);
+router.post('/reserve', auth.requireAuth, ownerController.reserve_post);
 
 module.exports = router;

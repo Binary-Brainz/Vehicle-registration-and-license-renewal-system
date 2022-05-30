@@ -8,10 +8,13 @@ import { gotId, gotNic } from '../userSlice';
 
 async function reserveDate(data) {
 
+    const token = sessionStorage.getItem('token');
+
     return fetch('http://localhost:5000/owner/reserve', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        token: token,
       },
       body: JSON.stringify(data)
     })
