@@ -5,18 +5,17 @@ import {Outlet} from "react-router-dom";
 
 
 
-class VehicleOwnerMain extends Component {
-    render() {
-        return (
-            <div>
-                <Header />
+function VehicleOwnerMain() {
+    
+    return (
+        <div>
+            <Header />
 
-                    <Outlet />
-                
-                <Footer />
-            </div>
-        );
-    }
+                <Outlet />
+            
+            <Footer />
+        </div>
+    );
 }
 
 export default VehicleOwnerMain;

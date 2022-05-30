@@ -59,7 +59,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             max={disableFutureDate()}
                             defaultValue={vehicle.registeredDate}
                             disabled={disabled}
-                            {...register("registerDate", {
+                            {...register("registeredDate", {
                                 required: true,
                                 validate: defaultValue => new Date(defaultValue) < new Date()
                             })}
