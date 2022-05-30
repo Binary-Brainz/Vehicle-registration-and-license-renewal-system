@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
-import { useSelector, useDispatch } from 'react-redux'
-import { gotId, gotNic } from '../userSlice'
+import { useSelector, useDispatch } from 'react-redux';
+import { gotId, gotNic } from '../userSlice';
 
 const axios = require('axios').default;
 
