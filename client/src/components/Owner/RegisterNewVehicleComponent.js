@@ -54,7 +54,7 @@ const RegisterNewVehicle = () => {
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ paddingLeft: "30px", paddingRight: "30px" }}>
                     <ReactCardFlip isFlipped={dateFlipped} flipDirection="vertical">
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="assets/images/date.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Reserve a Date</Card.Title>
                                 <Card.Subtitle>Reserved Date: {(reservedDate) ? <Badge bg="warning" text="dark">{reservedDate}</Badge> : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
@@ -66,7 +66,7 @@ const RegisterNewVehicle = () => {
                             </Card.Body>
                         </Card>
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="assets/images/date.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Select a Date</Card.Title>
                                 <DateReservationComponent />
@@ -79,7 +79,7 @@ const RegisterNewVehicle = () => {
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ paddingLeft: "30px", paddingRight: "30px" }}>
                     <ReactCardFlip isFlipped={subFlipped} flipDirection="vertical">
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="assets/images/fileSub.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Submit Vehicle Details Form</Card.Title>
                                 <Card.Subtitle>{(subStatus) ? <Badge bg="warning" text="dark">Submited</Badge> : <Badge bg="secondary">No Submission</Badge>}</Card.Subtitle>
@@ -91,7 +91,7 @@ const RegisterNewVehicle = () => {
                             </Card.Body>
                         </Card>
                         <Card>
-                            <Card.Img variant="top" src="assets/images/fileSub.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Upload Documents to Register your new Vehicle</Card.Title>
                                 <UploadComponent />
