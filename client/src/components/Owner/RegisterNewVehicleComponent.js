@@ -22,39 +22,13 @@ const RegisterNewVehicle = () => {
         setSubFlipped(!subFlipped);
     }
 
-    const disablePastDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const disableFutureDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 4).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
-    const onReserve = (data) => {
-        console.log(data);
-    }
-
-    const onUpload = (data) => {
-        console.log(data);
-    }
-
     return (
         <div className="container">
             <div className="row ">
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ paddingLeft: "30px", paddingRight: "30px" }}>
                     <ReactCardFlip isFlipped={dateFlipped} flipDirection="vertical">
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="assets/images/date.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Reserve a Date</Card.Title>
                                 <Card.Subtitle>Reserved Date: {(reservedDate) ? <Badge bg="warning" text="dark">{reservedDate}</Badge> : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
@@ -66,7 +40,7 @@ const RegisterNewVehicle = () => {
                             </Card.Body>
                         </Card>
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="assets/images/date.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Select a Date</Card.Title>
                                 <DateReservationComponent />
@@ -79,7 +53,7 @@ const RegisterNewVehicle = () => {
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ paddingLeft: "30px", paddingRight: "30px" }}>
                     <ReactCardFlip isFlipped={subFlipped} flipDirection="vertical">
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="assets/images/fileSub.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Submit Vehicle Details Form</Card.Title>
                                 <Card.Subtitle>{(subStatus) ? <Badge bg="warning" text="dark">Submited</Badge> : <Badge bg="secondary">No Submission</Badge>}</Card.Subtitle>
@@ -91,7 +65,7 @@ const RegisterNewVehicle = () => {
                             </Card.Body>
                         </Card>
                         <Card>
-                            <Card.Img variant="top" src="assets/images/fileSub.gif" height="350" />
+                            <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Upload Documents to Register your new Vehicle</Card.Title>
                                 <UploadComponent />
