@@ -4,7 +4,7 @@ import { DataView } from 'primereact/dataview';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { ProductService } from '../service/ProductService';
-import './DataViewDemo.css';
+import '../../styles/DataTable.css';
 import { Card } from 'react-bootstrap';
 
 const DataTable = () => {
