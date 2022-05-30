@@ -146,7 +146,7 @@ const login_post = async (req, res) => {
 //get owner dashboard info
 const get_dashboard = async (req, res) => {
 
-    let id = req.body.id;
+    let id = req.params.id;
 
     try{
 
@@ -158,10 +158,50 @@ const get_dashboard = async (req, res) => {
 
             res.json({
                 status: 'ok',
-                data: {
-                    user: user,
-                    vehicles: vehicles,
+                user: user,
+                vehicles: vehicles,
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid User!'
+            });
+        }  
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+const expired_vehicles = async (req, res) => {
+
+    let id = req.params.id;
+
+    try{
+
+        let user = await Owner.findById(mongoose.Types.ObjectId(id));
+
+        if(user !== null){
+
+            let vehicles = await Vehicle.find({ownerNIC: user.nic});
+
+            let expired_vehicles = [];
+            for(let i = 0; i < vehicles.length; i++){
+
+                let regDate = new Date(vehicles[i].registeredDate);
+                const exDate = new Date(regDate);
+                exDate.setFullYear(regDate.getFullYear() + 1);
+
+                if(Date.now() > exDate){
+                    expired_vehicles.push(vehicles[i]);
                 }
+            }
+
+            res.json({
+                status: 'ok',
+                user: user,
+                vehicles: expired_vehicles,
             });
         }
         else{
@@ -299,8 +339,8 @@ const edit_owner = async (req, res) => {
 //owner request
 const send_request = async (req, res) => {
 
-    let data = req.body
-    let type = data.type
+    let data = req.body;
+    let type = data.type;
 
     if(data.files){
 
@@ -458,6 +498,7 @@ module.exports = {
     register_post,
     login_post,
     get_dashboard,
+    expired_vehicles,
     get_owner_vehicles,
     get_owner_notifications,
     get_owner_requests,
