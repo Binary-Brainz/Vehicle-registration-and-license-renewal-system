@@ -180,10 +180,20 @@ const get_dashboard = async (req, res) => {
             //     return_vehicles.push(sample_vehicle);
             // }
 
+            for(let i = 0; i < vehicles.length; i++){
+
+                if(vehicles[i].expireDate <= Date.now()){
+
+                    await Vehicle.findOneAndUpdate({_id: mongoose.Types.ObjectId(vehicles[i]._id)}, {isExpired: true});
+                }
+            }
+
+            let return_vehicles = await Vehicle.find({ownerNIC: user.nic});
+
             res.json({
                 status: 'ok',
                 user: user,
-                vehicles: vehicles,
+                vehicles: return_vehicles,
             });
         }
         else{
@@ -208,36 +218,34 @@ const expired_vehicles = async (req, res) => {
 
         if(user !== null){
 
-            let vehicles = await Vehicle.find({ownerNIC: user.nic});
+            let expired_vehicles = await Vehicle.find({ownerNIC: user.nic, isExpired: true});
 
-            let expired_vehicles = [];
-            for(let i = 0; i < vehicles.length; i++){
+            // let expired_vehicles = [];
+            // for(let i = 0; i < vehicles.length; i++){
 
-                let regDate = new Date(vehicles[i].registeredDate);
-                const exDate = new Date(regDate);
-                exDate.setFullYear(regDate.getFullYear() + 1);
+            //     let exDate = new Date(vehicles[i].expireDate);
 
-                if(Date.now() > exDate){
+            //     if(Date.now() >= exDate){
 
-                    // let sample_vehicle = {};
+            //         // let sample_vehicle = {};
 
-                    // for(const key in vehicles[i]){
+            //         // for(const key in vehicles[i]){
 
-                    //     if(key === 'registeredDate'){
+            //         //     if(key === 'registeredDate'){
 
-                    //         let registeredDate = regDate.getFullYear().toString() + '.' + regDate.getMonth().toString() + '.' + regDate.getDate().toString();
+            //         //         let registeredDate = regDate.getFullYear().toString() + '.' + regDate.getMonth().toString() + '.' + regDate.getDate().toString();
 
-                    //         sample_vehicle[key] = registeredDate;
-                    //     }
-                    //     else{
-                    //         sample_vehicle[key] = vehicles[i][key];
-                    //     }
-                    // }
-                    // expired_vehicles.push(sample_vehicle);
+            //         //         sample_vehicle[key] = registeredDate;
+            //         //     }
+            //         //     else{
+            //         //         sample_vehicle[key] = vehicles[i][key];
+            //         //     }
+            //         // }
+            //         // expired_vehicles.push(sample_vehicle);
 
-                    expired_vehicles.push(vehicles[i]);
-                }
-            }
+            //         expired_vehicles.push(vehicles[i]);
+            //     }
+            // }
 
             res.json({
                 status: 'ok',
@@ -297,6 +305,29 @@ const unread_notification_count = async (req, res) => {
         res.json({
             status: 'ok',
             notificationCount: notifications.length,
+        });  
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+const get_owner_reservedDates = async (req, res) => {
+
+    let id = req.params.id;
+
+    try{
+
+        let workdays = await Workday.find({ owners: { $all: [id] } });
+        
+        let ownerReservedDates = []
+        for(let i = 0; i < workdays.length; i++){
+            ownerReservedDates.push(workdays[i].day);
+        }
+
+        res.json({
+            status: 'ok',
+            ownerReservedDates: ownerReservedDates,
         });  
     }
     catch(err){
@@ -486,16 +517,9 @@ const reserve_post = async (req, res) => {
     const date = req.body.date;
 
     try{
-        const dateObj = new Date(date); 
+        const dateObj = new Date(date);
 
-        var year = dateObj.getFullYear();
-        var month = dateObj.getMonth()+1;
-        var day= dateObj.getDate()+1;
-
-        var dateStr = year.toString()+"-"+month.toString()+"-"+day.toString();
-        const daytt = new Date(dateStr);
-
-        const newWorkday = await Workday.findOne({day:daytt});
+        const newWorkday = await Workday.findOne({day: dateObj});
 
         if(newWorkday !== null){
 
@@ -503,31 +527,44 @@ const reserve_post = async (req, res) => {
 
             if(ownersList.length < 10){
 
-                Workday.updateOne({day:daytt},{$push: {owners:id}},function(err,response){
+                if(ownersList.includes(id)){
+                    res.json({
+                        status: 'error',
+                        error: 'You have already reserved this date!'
+                    });
+                }
+                else{
 
-                    if(err){
-                        res.json({
-                            status: 'error',
-                            error: err,
-                        });
-                    }
-                    else{
-                        res.json({
-                            status: 'ok',
-                            workday: response
-                        });
-                    }
-                });
-            }else{
+                    Workday.findByIdAndUpdate(mongoose.Types.ObjectId(newWorkday._id),{$push: {owners:id}},function(err,response){
 
-                res.status(500).send({message:"The date you picked is already booked"});
-
+                        if(err){
+                            res.json({
+                                status: 'error',
+                                error: err,
+                            });
+                        }
+                        else{
+                            res.json({
+                                status: 'ok',
+                                workday: dateObj
+                            });
+                        }
+                    });
+                }
             }
-        }else{
+            else{
+
+                res.json({
+                    status: 'error',
+                    error: 'Requested date is not available!'
+                });
+            }
+        }
+        else{
 
             let newWorkday1 = new Workday({
 
-                day: new Date(dateStr),
+                day: dateObj,
                 owners: [id]
 
             });
@@ -542,7 +579,7 @@ const reserve_post = async (req, res) => {
                 else{
                     res.json({
                         status: 'ok',
-                        workday: newWorkday1
+                        workday: dateObj
                     });
                 }
             })
@@ -550,9 +587,10 @@ const reserve_post = async (req, res) => {
         }
     }
     catch (err){
-        console.log(error.message);
+        console.log(err.message);
     }
 }
+
 
 module.exports = {
     register_post,
@@ -561,6 +599,7 @@ module.exports = {
     expired_vehicles,
     get_owner_vehicles,
     unread_notification_count,
+    get_owner_reservedDates,
     get_owner_notifications,
     get_owner_requests,
     edit_owner,

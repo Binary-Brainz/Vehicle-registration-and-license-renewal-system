@@ -3,11 +3,33 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
+import { useSelector, useDispatch } from 'react-redux';
+import { gotId, gotNic } from '../userSlice';
 
+async function reserveDate(data) {
+
+    return fetch('http://localhost:5000/owner/reserve', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
 
 const DateReservationComponent = () => {
-    const onSubmit = (data) => {
-        console.log(data);
+
+    const id = useSelector(state => state.user.id);
+
+    const onSubmit = async (data) => {
+
+        let body_data = {};
+        body_data['date'] = data.reservation;
+        body_data['id'] = id;
+
+        let response = await reserveDate(body_data);
+        console.log(response);
     }
 
     const disablePastDate = () => {

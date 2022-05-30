@@ -42,6 +42,14 @@ const vehicleSchema = new Schema({
   registeredDate: {
     type: Date,
     required: true
+  },
+  expireDate: {
+    type: Date,
+    required: true
+  },
+  nextYearFee: {
+      type: String,
+      required: true
   }
 }, { timestamps: true });
 
