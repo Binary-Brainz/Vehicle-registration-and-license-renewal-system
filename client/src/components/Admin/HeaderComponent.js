@@ -31,12 +31,12 @@ export default class Header extends Component {
                 <div className="">
                 <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                     <Container>
-                        <Navbar.Brand href="/requests" text="info"><img src="assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Admin</Navbar.Brand>
+                        <Navbar.Brand href="/adminDashboard/requests" text="info"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Admin</Navbar.Brand>
                         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                         <Navbar.Collapse id="responsive-navbar-nav">
                             <Nav className="me-auto">
-                                <LinkContainer to="/requests"><Nav.Link ><span className="fa fa-id-card-o fa-lg"></span> Requests </Nav.Link></LinkContainer>
-                                <LinkContainer to="/vehicledetails"><Nav.Link ><span className="fa fa-car fa-lg"></span> View Vehicle Details </Nav.Link></LinkContainer>
+                                <LinkContainer to="/adminDashboard/requests"><Nav.Link ><span className="fa fa-id-card-o fa-lg"></span> Requests </Nav.Link></LinkContainer>
+                                <LinkContainer to="/adminDashboard/vehicledetails"><Nav.Link ><span className="fa fa-car fa-lg"></span> View Vehicle Details </Nav.Link></LinkContainer>
                             </Nav>
                             <Nav>
                                 <Navbar.Brand></Navbar.Brand>
@@ -54,7 +54,6 @@ export default class Header extends Component {
                         <div className="row row-header">
                             <div className="col-12 col-sm-8">
                                 <h1>Vehicle Registration and Licening System </h1>
-                                <h2>Admin</h2>
                                 <p>We take inspiration from the World's best cuisines, and create a unique fusion experience. Our lipsmacking creations will tickle your culinary senses!</p>
                             </div>
                         </div>
