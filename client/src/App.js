@@ -9,6 +9,8 @@ import AdminMain from './components/AdminMainComponent';
 import OwnVehicles from "./components/Owner/OwnVehiclesComponent";
 import RegisterNewVehicle from "./components/Owner/RegisterNewVehicleComponent";
 import RenewLicense from "./components/Owner/RenewLicenseComponent ";
+import Requests from './components/Admin/RequestsComponent';
+import ViewVehicles from './components/Admin/ViewVehicles';
 
 
 class App extends Component {
@@ -39,11 +41,16 @@ class App extends Component {
                     <Route path="/" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
                     <Route path="ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}>
                         <Route path="" element={<OwnVehicles />}></Route>
-                        <Route index path="ownvehicles" element={<OwnVehicles />}></Route>
+                        <Route path="ownvehicles" element={<OwnVehicles />}></Route>
                         <Route exact path="registernewvehicle" element={<RegisterNewVehicle />} ></Route>  
                         <Route exact path="renewlicense" element={<RenewLicense />} ></Route>
-                    </Route>  
-                    {/* {/* <Route exact path="officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
+                    </Route> 
+                    <Route path="adminDashboard" element={<AdminMain response={this.state.authResponse}/>}>
+                        <Route path="" element={<Requests />}></Route>
+                        <Route exact path="requests" element={<Requests />}></Route>
+                        <Route exact path="vehicledetails" element={<ViewVehicles />}></Route>    
+                    </Route> 
+                    {/* <Route exact path="officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
                 </Routes>
 
             </div>

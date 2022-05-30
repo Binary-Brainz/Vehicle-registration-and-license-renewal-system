@@ -7,8 +7,12 @@ import { Collapse } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import DateReservationComponent from './ReservationComponent';
 import UploadComponent from './UploadComponent';
+import { useSelector, useDispatch } from 'react-redux';
+import { gotId, gotNic } from '../userSlice';
 
 const ViewVehicleComponent = ({vehicle}) => {
+
+const user_id = useSelector(state => state.user.id);
 
   const { register, formState: { errors } } = useForm();
 
@@ -29,7 +33,7 @@ const ViewVehicleComponent = ({vehicle}) => {
               type="hidden"
               id="ownerID"
               name="ownerID"
-              value="ownerID"
+              value={user_id}
             // where is this ID coming from?
             />
           </Form.Group>
