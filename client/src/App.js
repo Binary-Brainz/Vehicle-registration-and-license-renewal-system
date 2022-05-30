@@ -10,7 +10,7 @@ import OwnVehicles from "./components/Owner/OwnVehiclesComponent";
 import RegisterNewVehicle from "./components/Owner/RegisterNewVehicleComponent";
 import RenewLicense from "./components/Owner/RenewLicenseComponent ";
 import Requests from './components/Admin/RequestsComponent';
-import ViewVehicles from './components/Admin/ViewVehicles';
+import ViewVehicles from './components/Admin/ViewVehiclesComponent';
 
 
 class App extends Component {

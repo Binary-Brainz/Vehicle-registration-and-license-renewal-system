@@ -10,9 +10,7 @@ function VehicleOwnerMain() {
     return (
         <div>
             <Header />
-
-                <Outlet />
-            
+            <Outlet />    
             <Footer />
         </div>
     );
