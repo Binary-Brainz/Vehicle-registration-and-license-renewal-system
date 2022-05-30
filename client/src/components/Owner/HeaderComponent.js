@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
+import NotificationTable from "./NotificationComponent";
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
 
+
 const axios = require('axios').default;
 
-function Header(props) {
+function Header() {
 
     const userData = JSON.parse(sessionStorage.getItem("userData"));
 
@@ -18,8 +20,10 @@ function Header(props) {
     const nic = (stored_nic !== '')? stored_nic : userData.nic;
     const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [notificationOpen, setNotificationOpen] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
+
+    const toggleNotif = () => setNotificationOpen(!notificationOpen);
 
     useEffect(() => {
 
@@ -48,11 +52,7 @@ function Header(props) {
             })
     }, []);
 
-    const toggleModal = () => {
-        setIsModalOpen({
-            isModalOpen: !isModalOpen
-        });
-    }
+    
 
     return (
         <div>
@@ -68,7 +68,7 @@ function Header(props) {
                             <LinkContainer to="/ownerDashboard/renewlicense"><Nav.Link ><span className="fa fa-id-card-o fa-lg"></span> Renew License </Nav.Link></LinkContainer>
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#" onClick={toggleModal}><div className="fa fa-bell-o fa-lg">
+                            <Nav.Link href="#" onClick={toggleNotif}><div className="fa fa-bell-o fa-lg">
                                 <span className="e-badge e-badge-danger e-badge-overlap e-badge-notification e-badge-circle" style={{ transform: "translateY(-10px) translateX(-9px)", position: "unset" }}>{notificationCount}</span>
                             </div></Nav.Link>
 
@@ -93,21 +93,11 @@ function Header(props) {
                 </div>
             </div>
             </div>
-            <Modal show={isModalOpen} onHide={toggleModal}>
+            <Modal show={notificationOpen} onHide={toggleNotif}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Notifications</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={toggleModal}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={toggleModal}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
+                <NotificationTable />
             </Modal>
         </div>
     );
