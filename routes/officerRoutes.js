@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/login', officerController.login_post);
 
 //get officer dashboard info
-router.get('/dashboard', auth.requireAuth, officerController.get_dashboard);
+router.get('/dashboard/:id', auth.requireAuth, officerController.get_dashboard);
 
 //get officer requests
 router.get('/requests', auth.requireAuth, officerController.get_officer_requests);

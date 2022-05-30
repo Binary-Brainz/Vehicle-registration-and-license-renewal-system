@@ -20,7 +20,7 @@ function RenderCard(props) {
                             
                         </Card.Header>
                         <Card.Body >
-                            <DataTable />
+                            <DataTable state={props.state}/>
                         </Card.Body>
                     </Card>
                 </ReactCardFlip>

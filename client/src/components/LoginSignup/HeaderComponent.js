@@ -43,6 +43,7 @@ async function loginOwner(data) {
 }
 
 async function loginOfficer(data) {
+
     return fetch('http://localhost:5000/officer/login', {
       method: 'POST',
       headers: {
@@ -110,12 +111,12 @@ function Header(props) {
                 password: event.password
             });
         }
-        else if(nic_arr[1].toLowerCase() === 'officer'){
+        else if(nic_arr[1].trim().toLowerCase() === 'officer'){
 
             type = 'officer';
 
             response = await loginOfficer({
-                nic: nic_arr[1],
+                nic: nic_arr[0].trim(),
                 password: event.password
             });
         }
@@ -134,7 +135,7 @@ function Header(props) {
             }
             else{
                 console.log("in officer");
-                // navigate('/officerDashboard', { replace: true });
+                navigate('/adminDashboard', { replace: true });
             }
         }
     }

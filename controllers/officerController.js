@@ -14,6 +14,7 @@ const Request = require('../models/request');
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 const pdfGenerator = require('../middleware/pdfGenerator');
+const { type } = require('express/lib/response');
 
 //login - get all requests(requests by officerID)
 const login_post = async (req, res) => {
@@ -32,13 +33,15 @@ const login_post = async (req, res) => {
             if(password_check){
 
                 let token = auth.createToken();
+                let fullName = user.firstName + " " + user.lastName;
 
                 res.json({
                     status: 'ok',
                     token: token,
                     data: {
                         nic: nic,
-                        id: user._id
+                        id: user._id,
+                        fullName: fullName
                     }
                 });
 
@@ -85,7 +88,8 @@ const login_post = async (req, res) => {
 //get officer dashboard info
 const get_dashboard = async (req, res) => {
 
-    let id = req.body.id;
+    let id = req.params.id;
+    let state = req.headers['state'];
 
     try{
 
@@ -93,14 +97,43 @@ const get_dashboard = async (req, res) => {
 
         if(user !== null){
 
-            let requests = await Request.find({officerID: id});
+            let state_check = [];
+
+            if(state === 'pending'){
+                state_check = ['new', 'pending'];
+            }
+            else{
+                state_check = [state]
+            } 
+
+            let requests = await Request.find({officerID: id, state: { $in: state_check}});
+
+            let return_requests = [];
+
+            for(let i = 0; i < requests.length; i++){
+
+                let sample_request = {};
+
+                for(const key in requests[i]._doc){
+
+                    if(key === 'createdAt'){
+
+                        let dt = new Date(requests[i]._doc[key]);
+                        let createdAtDate = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+
+                        sample_request[key] = createdAtDate;
+                    }
+                    else{
+                        sample_request[key] = requests[i]._doc[key];
+                    }
+                }
+                return_requests.push(sample_request);
+            }
 
             res.json({
                 status: 'ok',
-                data: {
-                    user: user,
-                    requests: requests,
-                }
+                user: user,
+                requests: return_requests,
             });
         }
         else{
