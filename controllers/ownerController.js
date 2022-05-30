@@ -91,13 +91,15 @@ const login_post = async (req, res) => {
             if(password_check){
 
                 let token = auth.createToken();
+                let fullName = user.firstName + " " + user.lastName;
 
                 res.json({
                     status: 'ok',
                     token: token,
                     data: {
                         nic: nic,
-                        id: user._id
+                        id: user._id,
+                        fullName: fullName
                     }
                 });
 
@@ -146,7 +148,7 @@ const login_post = async (req, res) => {
 //get owner dashboard info
 const get_dashboard = async (req, res) => {
 
-    let id = req.body.id;
+    let id = req.params.id;
 
     try{
 
@@ -156,12 +158,91 @@ const get_dashboard = async (req, res) => {
 
             let vehicles = await Vehicle.find({ownerNIC: user.nic});
 
+            // let return_vehicles = [];
+
+            // for(let i = 0; i < vehicles.length; i++){
+
+            //     let sample_vehicle = {};
+
+            //     for(const key in vehicles[i]._doc){
+
+            //         if(key === 'registeredDate'){
+
+            //             let dt = new Date(vehicles[i]._doc[key]);
+            //             let registeredDate = dt.getFullYear().toString() + '/' + dt.getMonth().toString() + '/' + dt.getDate().toString();
+
+            //             sample_vehicle[key] = registeredDate;
+            //         }
+            //         else{
+            //             sample_vehicle[key] = vehicles[i]._doc[key];
+            //         }
+            //     }
+            //     return_vehicles.push(sample_vehicle);
+            // }
+
             res.json({
                 status: 'ok',
-                data: {
-                    user: user,
-                    vehicles: vehicles,
+                user: user,
+                vehicles: vehicles,
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid User!'
+            });
+        }  
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+const expired_vehicles = async (req, res) => {
+
+    let id = req.params.id;
+
+    try{
+
+        let user = await Owner.findById(mongoose.Types.ObjectId(id));
+
+        if(user !== null){
+
+            let vehicles = await Vehicle.find({ownerNIC: user.nic});
+
+            let expired_vehicles = [];
+            for(let i = 0; i < vehicles.length; i++){
+
+                let regDate = new Date(vehicles[i].registeredDate);
+                const exDate = new Date(regDate);
+                exDate.setFullYear(regDate.getFullYear() + 1);
+
+                if(Date.now() > exDate){
+
+                    // let sample_vehicle = {};
+
+                    // for(const key in vehicles[i]){
+
+                    //     if(key === 'registeredDate'){
+
+                    //         let registeredDate = regDate.getFullYear().toString() + '.' + regDate.getMonth().toString() + '.' + regDate.getDate().toString();
+
+                    //         sample_vehicle[key] = registeredDate;
+                    //     }
+                    //     else{
+                    //         sample_vehicle[key] = vehicles[i][key];
+                    //     }
+                    // }
+                    // expired_vehicles.push(sample_vehicle);
+
+                    expired_vehicles.push(vehicles[i]);
                 }
+            }
+
+            res.json({
+                status: 'ok',
+                user: user,
+                vehicles: expired_vehicles,
             });
         }
         else{
@@ -203,6 +284,25 @@ const get_owner_vehicles = async (req, res) => {
         console.log(err)
     }
 } 
+
+//get unread notification count
+const unread_notification_count = async (req, res) => {
+
+    let id = req.params.id;
+
+    try{
+
+        let notifications = await Notification.find({receiverID: id, isViewed: false});
+
+        res.json({
+            status: 'ok',
+            notificationCount: notifications.length,
+        });  
+    }
+    catch(err){
+        console.log(err)
+    }
+}
 
 //get all the notifications of the owner
 const get_owner_notifications = async (req, res) => {
@@ -299,8 +399,8 @@ const edit_owner = async (req, res) => {
 //owner request
 const send_request = async (req, res) => {
 
-    let data = req.body
-    let type = data.type
+    let data = req.body;
+    let type = data.type;
 
     if(data.files){
 
@@ -458,7 +558,9 @@ module.exports = {
     register_post,
     login_post,
     get_dashboard,
+    expired_vehicles,
     get_owner_vehicles,
+    unread_notification_count,
     get_owner_notifications,
     get_owner_requests,
     edit_owner,

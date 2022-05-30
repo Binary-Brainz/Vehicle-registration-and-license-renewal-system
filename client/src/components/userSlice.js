@@ -4,7 +4,8 @@ const initData = JSON.parse(sessionStorage.getItem("userData"));
 
 const initialState = {
   id: (initData)? initData.id : '',
-  nic: (initData)? initData.nic : ''
+  nic: (initData)? initData.nic : '',
+  fullName: (initData)? initData.fullName : '',
 }
 
 const userSlice = createSlice({

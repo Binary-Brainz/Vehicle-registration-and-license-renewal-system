@@ -12,7 +12,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
 
     return (
         <div>
-            <Form.Group>
+            {/* <Form.Group>
                 <Form.Label htmlFor="ownerName">Owner Name</Form.Label>
                 <Form.Control
                     type="text"
@@ -27,12 +27,12 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                 />
             </Form.Group>
             {errors.ownerName && errors.ownerName.type === "required" && <p className='errorMsg'>Owner's name is required!</p>}
-            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='errorMsg'>Please enter a valid name!</p>}
+            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='errorMsg'>Please enter a valid name!</p>} */}
 
             <Form.Group>
-                <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label>
+                {/* <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label> */}
                 <Form.Control
-                    type="ownerNIC"
+                    type="hidden"
                     id="ownerNIC"
                     name="ownerNIC"
                     defaultValue={vehicle.ownerNIC}
@@ -57,9 +57,9 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             id="registerDate"
                             name="registerDate"
                             max={disableFutureDate()}
-                            defaultValue={vehicle.registerDate}
+                            defaultValue={vehicle.registeredDate}
                             disabled={disabled}
-                            {...register("registerDate", {
+                            {...register("registeredDate", {
                                 required: true,
                                 validate: defaultValue => new Date(defaultValue) < new Date()
                             })}
@@ -183,7 +183,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             type="number"
                             id="doors"
                             name="doors"
-                            defaultValue={vehicle.doors}
+                            defaultValue={vehicle.noOfDoors}
                             disabled={disabled}
                             {...register("doors", {
                                 required: true

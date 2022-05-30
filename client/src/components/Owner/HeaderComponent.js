@@ -1,15 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux'
 import { gotId, gotNic } from '../userSlice'
 
-
+const axios = require('axios').default;
 
 function Header(props) {
 
-    const nic = useSelector(state => state.user.nic)
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+
+    const stored_fullName = useSelector(state => state.user.fullName);
+    const stored_id = useSelector(state => state.user.id);
+    const stored_nic = useSelector(state => state.user.nic);
+    
+    const user_id = (stored_id !== '')? stored_id : userData.id;
+    const nic = (stored_nic !== '')? stored_nic : userData.nic;
+    const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
+
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [notificationCount, setNotificationCount] = useState(0);
+
+    useEffect(() => {
+
+        const token = sessionStorage.getItem('token');
+
+        axios.get(`http://localhost:5000/owner/unreadNotificationCount/${user_id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                token: token,
+            }
+        })
+            .then(response => {
+
+                let status = response.data.status;
+                let notificationCount = response.data.notificationCount;
+
+                if(status === 'ok'){
+                    setNotificationCount(notificationCount)
+                }
+                else{
+                    console.log(response.error);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, []);
 
     const toggleModal = () => {
         setIsModalOpen({
@@ -22,7 +59,7 @@ function Header(props) {
             <div className="">
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
-                    <Navbar.Brand href="/ownvehicles"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /></Navbar.Brand>
+                    <Navbar.Brand href="/ownerDashboard/ownvehicles"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /></Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
@@ -32,10 +69,10 @@ function Header(props) {
                         </Nav>
                         <Nav>
                             <Nav.Link href="#" onClick={toggleModal}><div className="fa fa-bell-o fa-lg">
-                                <span className="e-badge e-badge-danger e-badge-overlap e-badge-notification e-badge-circle" style={{ transform: "translateY(-10px) translateX(-9px)", position: "unset" }}>99</span>
+                                <span className="e-badge e-badge-danger e-badge-overlap e-badge-notification e-badge-circle" style={{ transform: "translateY(-10px) translateX(-9px)", position: "unset" }}>{notificationCount}</span>
                             </div></Nav.Link>
 
-                            <NavDropdown  title={<><span className="fa fa-user fa-lg"></span> firstname lastname long</>} id="collasible-nav-dropdown">
+                            <NavDropdown  title={<><span className="fa fa-user fa-lg"></span> {fullName} </>} id="collasible-nav-dropdown">
                                 <NavDropdown.Header >{nic}</NavDropdown.Header>
                                 <NavDropdown.Item href="#"><span className="fa fa-cogs fa-lg"></span> Account Settings</NavDropdown.Item>
                                 <NavDropdown.Divider />

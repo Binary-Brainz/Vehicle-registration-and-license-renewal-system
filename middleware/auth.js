@@ -2,7 +2,16 @@ const jwt = require('jsonwebtoken');
 
 let requireAuth = (req, res, next) => {
 
-    const token = req.headers['token'].replace(/['"]+/g, '');
+    let token;
+    try {
+        token = req.headers['token'].replace(/['"]+/g, '');
+    }
+    catch (err) {
+        res.json({
+            status: 'error',
+            error: "unidentified token!"
+        });
+    }
 
     //check whether jwt exists and it is verified
     if(token){
