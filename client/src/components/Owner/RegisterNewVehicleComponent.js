@@ -84,7 +84,7 @@ const RegisterNewVehicle = () => {
     return (
         <div className="container">
             <div className="row ">
-                <div className="col-12 col-md-6 d-flex justify-content-center" style={{ paddingLeft: "30px", paddingRight: "30px" }}>
+                <div className="col-12 col-md-6 d-flex justify-content-center" style={{ padding: "50px" }}>
                     <ReactCardFlip isFlipped={dateFlipped} flipDirection="vertical">
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
                             <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
@@ -109,7 +109,7 @@ const RegisterNewVehicle = () => {
                         </Card>
                     </ReactCardFlip>
                 </div>
-                <div className="col-12 col-md-6 d-flex justify-content-center" style={{ paddingLeft: "30px", paddingRight: "30px" }}>
+                <div className="col-12 col-md-6 d-flex justify-content-center" style={{ padding: "50px" }}>
                     <ReactCardFlip isFlipped={subFlipped} flipDirection="vertical">
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
                             <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
