@@ -10,7 +10,15 @@ const axios = require('axios').default;
 
 function RenewLicense(props) {
 
-    const user_id = useSelector(state => state.user.id);
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+
+    const stored_fullName = useSelector(state => state.user.fullName);
+    const stored_id = useSelector(state => state.user.id);
+    const stored_nic = useSelector(state => state.user.nic);
+    
+    const user_id = (stored_id !== '')? stored_id : userData.id;
+    const nic = (stored_nic !== '')? stored_nic : userData.nic;
+    const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
 
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);

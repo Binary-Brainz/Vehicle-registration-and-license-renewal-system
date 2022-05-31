@@ -12,7 +12,15 @@ const axios = require('axios').default;
 
 const RegisterNewVehicle = () => {
 
-    const id = useSelector(state => state.user.id);
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+
+    const stored_fullName = useSelector(state => state.user.fullName);
+    const stored_id = useSelector(state => state.user.id);
+    const stored_nic = useSelector(state => state.user.nic);
+    
+    const user_id = (stored_id !== '')? stored_id : userData.id;
+    const nic = (stored_nic !== '')? stored_nic : userData.nic;
+    const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
 
     const [dateFlipped, setDateFlipped] = useState(false);
     const [subFlipped, setSubFlipped] = useState(false);
@@ -24,7 +32,7 @@ const RegisterNewVehicle = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`/owner/reservedDates/${id}`, {
+        axios.get(`/owner/reservedDates/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,
