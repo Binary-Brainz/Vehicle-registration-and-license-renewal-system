@@ -13,7 +13,9 @@ const axios = require('axios').default;
 
 const DataTable = (props) => {
 
-    const user_id = useSelector(state => state.user.id);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const stored_id = useSelector(state => state.user.id);
+    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
 
     const [products, setProducts] = useState(null);
     const [displayResponsive, setDisplayResponsive] = useState(false);
