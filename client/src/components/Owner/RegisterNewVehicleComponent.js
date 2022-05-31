@@ -12,7 +12,9 @@ const axios = require('axios').default;
 
 const RegisterNewVehicle = () => {
 
-    const id = useSelector(state => state.user.id);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const stored_id = useSelector(state => state.user.id);
+    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
 
     const [dateFlipped, setDateFlipped] = useState(false);
     const [subFlipped, setSubFlipped] = useState(false);
@@ -24,7 +26,7 @@ const RegisterNewVehicle = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`http://localhost:5000/owner/reservedDates/${id}`, {
+        axios.get(`http://localhost:5000/owner/reservedDates/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,
@@ -34,7 +36,6 @@ const RegisterNewVehicle = () => {
 
                 let status = response.data.status;
                 let ownerReservedDates = response.data.ownerReservedDates;
-
                 if(status === 'ok'){
                     setOwnerReservedDates(ownerReservedDates)
                 }
@@ -89,8 +90,8 @@ const RegisterNewVehicle = () => {
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
                             <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
-                                <Card.Title>Reserve a Date</Card.Title>
-                                <Card.Subtitle>Reserved Date: {(reservedDate) ? <Badge bg="warning" text="dark">{reservedDate}</Badge> : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
+                                <Card.Title>Reserve a Date</Card.Title> 
+                                <Card.Subtitle>Reserved Date: { (ownerReservedDates) ? ownerReservedDates.map((dt)=> <Badge bg="warning" text="dark">{dt}</Badge>) : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
                                 <Card.Text>
                                     This is a longer card with supporting text below as a natural
                                     lead-in to additional content. This content is a little bit longer.
@@ -127,7 +128,7 @@ const RegisterNewVehicle = () => {
                             <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Upload Documents to Register your new Vehicle</Card.Title>
-                                <UploadComponent />
+                                <UploadComponent type={'Vehicle Registration'}/>
                                 <br></br>
                                 <Button onClick={flipSub}>Click to flip</Button>
                             </Card.Body>

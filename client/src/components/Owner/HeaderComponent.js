@@ -3,6 +3,7 @@ import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootst
 import { LinkContainer } from 'react-router-bootstrap';
 import NotificationTable from "./NotificationComponent";
 import { useSelector, useDispatch } from 'react-redux';
+import { Dialog } from 'primereact/dialog';
 import { gotId, gotNic } from '../userSlice';
 
 
@@ -52,6 +53,18 @@ function Header() {
             })
     }, []);
 
+    const [displayResponsive, setDisplayResponsive] = useState(false);
+
+    const dialogFuncMap = {
+        'displayResponsive': setDisplayResponsive
+    }
+    const onClick = (type) => {
+        dialogFuncMap[`${type}`](true);
+    }
+
+    const onHide = (name) => {
+        dialogFuncMap[`${name}`](false);
+    }
     
 
     return (
@@ -68,7 +81,7 @@ function Header() {
                             <LinkContainer to="/ownerDashboard/renewlicense"><Nav.Link ><span className="fa fa-id-card-o fa-lg"></span> Renew License </Nav.Link></LinkContainer>
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#" onClick={toggleNotif}><div className="fa fa-bell-o fa-lg">
+                            <Nav.Link href="#" onClick={() => onClick('displayResponsive')}><div className="fa fa-bell-o fa-lg">
                                 <span className="e-badge e-badge-danger e-badge-overlap e-badge-notification e-badge-circle" style={{ transform: "translateY(-10px) translateX(-9px)", position: "unset" }}>{notificationCount}</span>
                             </div></Nav.Link>
 
@@ -93,11 +106,15 @@ function Header() {
                 </div>
             </div>
             </div>
+            <Dialog header="Notifications" maximizable  visible={displayResponsive} onHide={() => onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} position="top-right" >
+                <NotificationTable />
+
+            </Dialog>
             <Modal show={notificationOpen} onHide={toggleNotif}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Notifications</Modal.Title>
+                    
                 </Modal.Header>
-                <NotificationTable />
+                
             </Modal>
         </div>
     );

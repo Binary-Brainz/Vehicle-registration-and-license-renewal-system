@@ -32,7 +32,14 @@ const DateReservationComponent = () => {
         body_data['id'] = id;
 
         let response = await reserveDate(body_data);
-        console.log(response);
+        
+        let status = response.status;
+        if(status === 'ok'){
+            //set store status
+        }
+        else{
+            console.log(response.error);
+        }
     }
 
     const disablePastDate = () => {

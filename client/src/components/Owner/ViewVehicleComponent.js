@@ -77,7 +77,7 @@ const ViewVehicleComponent = ({ vehicle }) => {
             </Modal.Header>
 
             <Modal.Body>
-              <UploadComponent />
+                <UploadComponent type={'Update Vehicle'} regNo={vehicle.regNo}/>
             </Modal.Body>
 
           </div>

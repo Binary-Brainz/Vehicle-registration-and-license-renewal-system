@@ -10,7 +10,9 @@ const axios = require('axios').default;
 
 function RenewLicense(props) {
 
-    const user_id = useSelector(state => state.user.id);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const stored_id = useSelector(state => state.user.id);
+    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
 
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
@@ -84,7 +86,10 @@ function RenewLicense(props) {
                     <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <RenewalComponent/>
+                    {ownVehicles.filter(vehicle => vehicle._id === id).map(vehicle => (
+                        <RenewalComponent regNo={vehicle.regNo}/>
+                    ))}
+                    
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={toggleModal}>
