@@ -325,7 +325,6 @@ const get_owner_reservedDates = async (req, res) => {
             let dt = new Date(workdays[i].day);
             let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
             ownerReservedDates.push(dtstr);
-
         }
 
         res.json({
@@ -341,15 +340,44 @@ const get_owner_reservedDates = async (req, res) => {
 //get all the notifications of the owner
 const get_owner_notifications = async (req, res) => {
 
-    let id = req.body.id;
+    let id = req.params.id;
+
+    //first mark all the notifications as viewed
+    //retriev and parse created at
+    //return
+
+    //change owner controller to add regNo.
 
     try{
 
+        await Notification.updateMany({receiverID: id}, {isViewed: true});
         let notifications = await Notification.find({receiverID: id});
+
+        let return_notifications = [];
+
+            for(let i = 0; i < notifications.length; i++){
+
+                let sample_notification = {};
+
+                for(const key in notifications[i]._doc){
+
+                    if(key === 'createdAt'){
+
+                        let dt = new Date(notifications[i]._doc[key]);
+                        let createdAtDate = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+
+                        sample_notification[key] = createdAtDate;
+                    }
+                    else{
+                        sample_notification[key] = notifications[i]._doc[key];
+                    }
+                }
+                return_notifications.push(sample_notification);
+            }
 
         res.json({
             status: 'ok',
-            data: {notifications: notifications}
+            notifications: return_notifications
         });
     }
     catch(err){

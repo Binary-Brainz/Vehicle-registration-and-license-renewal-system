@@ -41,7 +41,8 @@ const login_post = async (req, res) => {
                     data: {
                         nic: nic,
                         id: user._id,
-                        fullName: fullName
+                        fullName: fullName,
+                        officerType: user.type
                     }
                 });
 
@@ -304,6 +305,8 @@ const add_vehicle = async (req, res) => {
 
                     let notification_data = {
                         type: request.type,
+                        regNo: vehicle.regNo,
+                        state: 'approved',
                         message: `A new vehicle is registered under registration No. ${vehicle.regNo}`,
                         receiverID: owner._id,
                         requestID: requestID,
@@ -395,6 +398,8 @@ const update_vehicle = async (req, res) => {
         
                             let notification_data = {
                                 type: request.type,
+                                regNo: updated_vehicle.regNo,
+                                state: 'approved',
                                 message: `${request.type} - registration No. ${updated_vehicle.regNo}`,
                                 receiverID: owner._id,
                                 requestID: requestID,
@@ -515,12 +520,27 @@ const reject_request = async (req, res) => {
             })
         }
         else{
-            
-            let notification_data = {
-                type: request.type,
-                message: `Your request for ${request.type} has rejected - ${reason}`,
-                receiverID: request.ownerID,
-                requestID: request._id,
+
+            let notification_data;
+
+            if(request.type === 'Vehicle Registration'){
+                notification_data = {
+                    type: request.type,
+                    state: 'rejected',
+                    message: `Your request for ${request.type} has rejected - ${reason}`,
+                    receiverID: request.ownerID,
+                    requestID: request._id,
+                }
+            }
+            else{
+                notification_data = {
+                    type: request.type,
+                    regNo: request.regNo,
+                    state: 'rejected',
+                    message: `Your request for ${request.type} of ${request.regNo} has rejected - ${reason}`,
+                    receiverID: request.ownerID,
+                    requestID: request._id,
+                }
             }
 
             let notification = new Notification(notification_data);

@@ -8,6 +8,11 @@ import '../../styles/DataTable.css';
 import { Card } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import { Modal, Collapse } from 'react-bootstrap';
+import NewVehicle from './NewVehicleComponent';
+import UpdateVehicle from './UpdateVehicleComponent';
+import LicenseRenewalOfficer from './LicenseRenewalComponent';
+import RequestRejection from './RequestRejectionComponent';
 
 const axios = require('axios').default;
 
@@ -22,6 +27,11 @@ const DataTable = (props) => {
     const [name, setname] = useState('');
     const [requests, setRequests] = useState([]);
 
+    const [openRegistration, setOpenRegistration] = useState(false);
+    const [openUpdate, setOpenUpdate] = useState(false);
+    const [openRenewal, setOpenRenewal] = useState(false);
+    const [openRejection, setOpenRejection] = useState(false);
+
     const productService = new ProductService();
     useEffect(() => {
 
@@ -31,27 +41,27 @@ const DataTable = (props) => {
         async function fetchData() {
 
             try {
-            
+
                 const token = sessionStorage.getItem('token');
-    
+
                 let response = await axios.get(`http://localhost:5000/officer/dashboard/${user_id}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         token: token,
-                        state: props.state 
+                        state: props.state
                     }
                 });
-    
+
                 let status = response.data.status;
                 let returned_requests = response.data.requests;
 
-                if(status === 'ok'){
+                if (status === 'ok') {
                     setRequests(returned_requests);
                 }
-                else{
+                else {
                     console.log(response.error);
                 }
-            } 
+            }
             catch (err) {
                 console.log(err)
             }
@@ -104,6 +114,29 @@ const DataTable = (props) => {
 
     }
 
+    const renderCollapsible = () => {
+        switch (storageUserData.officerType) {
+            case "Vehicle Registration":
+                setOpenRegistration(!openRegistration);
+                break;
+            case "Update Vehicle":
+                setOpenUpdate(!openUpdate);
+                break;
+            case "Renew License":
+                setOpenRenewal(!openRenewal);
+                break;
+        }
+        setOpenRejection(false);
+    }
+    console.log(storageUserData.type);
+
+    const renderRejection = () => {
+        setOpenRejection(!openRejection);
+        setOpenRegistration(false);
+        setOpenUpdate(false);
+        setOpenRenewal(false);
+    }
+
     return (
 
         <div className="dataview-demo">
@@ -114,6 +147,70 @@ const DataTable = (props) => {
                 <Card>
                     <Card.Body>
                         <Card.Title>{name}</Card.Title>
+                        <div>
+                            <p> Files submitted by Vehicle Owner:</p>
+                            <a href="" download>
+                                Click to download
+                            </a>
+                        </div>
+
+                        <br></br>
+                        <div >
+                            <Button className="btn mr-1" onClick={renderCollapsible}>
+                                Approve
+                            </Button>
+                            <Button className='btn btn-primary margin-left float-right' onClick={renderRejection}>
+                                Reject
+                            </Button>
+                        </div>
+
+                        <Collapse in={openRegistration}>
+                            <div >
+                                <Modal.Header>
+                                    <Modal.Title>Register New Vehicle</Modal.Title>
+                                </Modal.Header>
+
+                                <Modal.Body>
+                                    <NewVehicle />
+                                </Modal.Body>
+                            </div>
+                        </Collapse>
+
+                        <Collapse in={openUpdate}>
+                            <div >
+                                <Modal.Header>
+                                    <Modal.Title>Update Vehicle Details</Modal.Title>
+                                </Modal.Header>
+
+                                <Modal.Body>
+                                    <UpdateVehicle />
+                                </Modal.Body>
+                            </div>
+                        </Collapse>
+
+                        <Collapse in={openRenewal}>
+                            <div >
+                                <Modal.Header>
+                                    <Modal.Title>Renew Vehicle License</Modal.Title>
+                                </Modal.Header>
+
+                                <Modal.Body>
+                                    <LicenseRenewalOfficer />
+                                </Modal.Body>
+                            </div>
+                        </Collapse>
+
+                        <Collapse in={openRejection}>
+                            <div >
+                                <Modal.Header>
+                                    <Modal.Title>Reject Request</Modal.Title>
+                                </Modal.Header>
+
+                                <Modal.Body>
+                                    <RequestRejection />
+                                </Modal.Body>
+                            </div>
+                        </Collapse>
                     </Card.Body>
                 </Card>
             </Dialog>

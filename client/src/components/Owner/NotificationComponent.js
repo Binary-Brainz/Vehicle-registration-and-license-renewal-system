@@ -7,17 +7,61 @@ import { ProductService } from '../service/ProductService';
 import '../../styles/DataTable.css';
 import { Badge, Card } from 'react-bootstrap';
 import { InputTextarea } from 'primereact/inputtextarea';
+import { useSelector, useDispatch } from 'react-redux';
+import { gotId, gotNic } from '../userSlice';
+
+const axios = require('axios').default;
+
 
 
 const NotificationTable = (props) => {
+
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const stored_id = useSelector(state => state.user.id);
+    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
+
     const [products, setProducts] = useState(null);
     const [displayResponsive, setDisplayResponsive] = useState(false);
     const [name, setname] = useState('');
+    const [notifications, setNotifications] = useState([]);
 
     const productService = new ProductService();
     useEffect(() => {
-        console.log(productService.getProductsWithOrdersSmall());
-        productService.getProductsWithOrdersSmall().then(data => setProducts(data));
+
+        // console.log(productService.getProductsWithOrdersSmall());
+        // productService.getProductsWithOrdersSmall().then(data => setProducts(data));
+
+        async function fetchData() {
+
+            try {
+            
+                const token = sessionStorage.getItem('token');
+    
+                let response = await axios.get(`http://localhost:5000/owner/notifications/${user_id}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        token: token,
+                        state: props.state 
+                    }
+                });
+    
+                let status = response.data.status;
+                let returned_notifications = response.data.notifications;
+
+                if(status === 'ok'){
+                    console.log(returned_notifications);
+                    setNotifications(returned_notifications);
+                }
+                else{
+                    console.log(response.error);
+                }
+            } 
+            catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchData();
     }, []);
 
 

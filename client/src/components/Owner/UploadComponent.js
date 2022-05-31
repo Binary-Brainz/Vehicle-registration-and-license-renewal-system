@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
 
 
-const UploadComponent = () => {
+const UploadComponent = (props) => {
 
     const id = useSelector(state => state.user.id);
     const fullName = useSelector(state => state.user.fullName);
@@ -17,10 +17,13 @@ const UploadComponent = () => {
         console.log(data.file);
         const formData = new FormData();
 
-        formData.append("type", 'Vehicle Registration');//need to add Update vehicle
+        formData.append("type", props.type);
         formData.append("ownerID", id);
         formData.append("ownerName", fullName);
         //add regNo if type = update vehicle
+        if(props.type === 'Update Vehicle'){
+            formData.append('regNo', props.regNo);
+        }
 
         for(let i =0; i < data.file.length; i++) {
                 formData.append("documents", data.file[i]);
