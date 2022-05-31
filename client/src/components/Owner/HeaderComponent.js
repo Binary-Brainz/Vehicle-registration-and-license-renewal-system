@@ -60,6 +60,7 @@ function Header() {
     }
     const onClick = (type) => {
         dialogFuncMap[`${type}`](true);
+        setNotificationCount(0);
     }
 
     const onHide = (name) => {

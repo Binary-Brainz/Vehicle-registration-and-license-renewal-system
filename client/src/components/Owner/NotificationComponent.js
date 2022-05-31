@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { DataView } from 'primereact/dataview';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -15,6 +16,8 @@ const axios = require('axios').default;
 
 
 const NotificationTable = (props) => {
+
+    let navigate = useNavigate();
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
@@ -49,7 +52,6 @@ const NotificationTable = (props) => {
                 let returned_notifications = response.data.notifications;
 
                 if(status === 'ok'){
-                    console.log(returned_notifications);
                     setNotifications(returned_notifications);
                 }
                 else{
@@ -69,19 +71,23 @@ const NotificationTable = (props) => {
     const dialogFuncMap = {
         'displayResponsive': setDisplayResponsive
     }
-    const onClick = (type, name) => {
+    const onClick = async (type, name) => {
+
         dialogFuncMap[`${type}`](true);
         setname(name);
     }
 
     const onHide = (name) => {
+
         dialogFuncMap[`${name}`](false);
     }
 
 
-    const renderListItem = (data) => {
+    const renderListItem = (notification) => {
 
-        if (displayResponsive && name === data.name) {
+        let file_url = "http://localhost:5000/owner/downloadFile/" + notification._id;
+
+        if (displayResponsive && name === notification._id) {
             return (
                 <div className={`col-12 shadow noti`} style={{ border: "1px solid #bfd8ef" }}>
                     <Card>
@@ -96,16 +102,17 @@ const NotificationTable = (props) => {
                                 <div className='col-12 col-md-9'>
                                     <Card.Text>
                                         <Card body>
-                                        This is the notification 
+                                        {notification.message}
                                         </Card>
                                         
                                     </Card.Text>
                                 </div>
-
+                                {(notification.state !== 'rejected')? 
                                 <div className='col-12 col-md-3 text-center align-self-center'>
                                     Attached File<br/>
-                                    <Card.Link className='product-name' ><span className='fa fa-download'></span></Card.Link>
-                                </div>
+                                    <Card.Link href={file_url} className='product-name' ><span className='fa fa-download'></span></Card.Link>
+                                </div> : ''}
+                                
                             </div><br />
                         </div>
                     </Card>
@@ -113,15 +120,15 @@ const NotificationTable = (props) => {
             );
         } else {
             return (
-                <div onClick={() => onClick('displayResponsive', data.name)} className={`col-12 shadow noti`} style={{ border: "1px solid #bfd8ef", backgroundColor: `${(data.state === "new") ? "rgb(224 236 244)" : 'none'}` }}>
+                <div onClick={() => onClick('displayResponsive', notification._id)} className={`col-12 shadow noti`} style={{ border: "1px solid #bfd8ef", backgroundColor: `${(!notification.isViewed) ? "rgb(224 236 244)" : 'none'}` }}>
                     <div className="product-list-item">
                         <div className="product-list-detail">
-                            <div className="product-badge">{data.name}</div>
-                            <Badge pill bg="dark">Dark</Badge>
+                            <div className="product-badge">{notification.type}</div>
+                            <Badge pill bg="dark">{notification.regNo}</Badge>
 
                         </div>
                         <div className="product-list-action">
-                            <div className="product-badge">{data.description}</div>
+                            <div className="product-badge">{notification.createdAt}</div>
                         </div>
                     </div>
 
@@ -136,11 +143,11 @@ const NotificationTable = (props) => {
     }
 
 
-    const itemTemplate = (product) => {
-        if (!product) {
+    const itemTemplate = (notification) => {
+        if (!notification) {
             return;
         }
-        return renderListItem(product);
+        return renderListItem(notification);
 
     }
 
@@ -148,7 +155,7 @@ const NotificationTable = (props) => {
 
         <div className="dataview-demo">
             <div className="">
-                <DataView value={products} itemTemplate={itemTemplate} paginator rows={5} />
+                <DataView value={notifications} itemTemplate={itemTemplate} paginator rows={5} />
             </div>
 
         </div>
