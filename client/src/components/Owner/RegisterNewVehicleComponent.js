@@ -12,7 +12,9 @@ const axios = require('axios').default;
 
 const RegisterNewVehicle = () => {
 
-    const id = useSelector(state => state.user.id);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const stored_id = useSelector(state => state.user.id);
+    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
 
     const [dateFlipped, setDateFlipped] = useState(false);
     const [subFlipped, setSubFlipped] = useState(false);
@@ -24,7 +26,7 @@ const RegisterNewVehicle = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`http://localhost:5000/owner/reservedDates/${id}`, {
+        axios.get(`http://localhost:5000/owner/reservedDates/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

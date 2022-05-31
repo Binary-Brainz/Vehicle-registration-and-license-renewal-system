@@ -107,7 +107,7 @@ function Header(props) {
             type = 'owner';
 
             response = await loginOwner({
-                nic: event.nic,
+                nic: event.nic.toLowerCase(),
                 password: event.password
             });
         }
@@ -116,7 +116,7 @@ function Header(props) {
             type = 'officer';
 
             response = await loginOfficer({
-                nic: nic_arr[0].trim(),
+                nic: nic_arr[0].trim().toLowerCase(),
                 password: event.password
             });
         }
