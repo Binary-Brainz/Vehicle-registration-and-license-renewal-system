@@ -20,7 +20,7 @@ const DataTable = (props) => {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
-    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
+    const user_id = (stored_id !== '') ? stored_id : storageUserData.id;
 
     const [products, setProducts] = useState(null);
     const [displayResponsive, setDisplayResponsive] = useState(false);
@@ -147,21 +147,19 @@ const DataTable = (props) => {
                 <Card>
                     <Card.Body>
                         <Card.Title>{name}</Card.Title>
-                        <div>
-                            <p> Files submitted by Vehicle Owner:</p>
-                            <a href="" download>
-                                Click to download
-                            </a>
+                        <div className='col-12 col-md-3 text-center align-self-center'>
+                            Attached File<br />
+                            <Card.Link href={""} className='product-name' ><span className='fa fa-download'></span></Card.Link>
                         </div>
 
                         <br></br>
                         <div >
-                            <Button className="btn mr-1" onClick={renderCollapsible}>
+                            {(props.state==="pending") && <Button className="btn mr-1" onClick={renderCollapsible}>
                                 Approve
-                            </Button>
-                            <Button className='btn btn-primary margin-left float-right' onClick={renderRejection}>
+                            </Button>}
+                            {(props.state==="pending") && <Button className='btn btn-primary margin-left float-right' onClick={renderRejection}>
                                 Reject
-                            </Button>
+                            </Button>}
                         </div>
 
                         <Collapse in={openRegistration}>
