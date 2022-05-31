@@ -115,7 +115,7 @@ const DataTable = (props) => {
     }
 
     const renderCollapsible = () => {
-        switch (props.type) {
+        switch (storageUserData.officerType) {
             case "Vehicle Registration":
                 setOpenRegistration(!openRegistration);
                 break;
@@ -128,6 +128,7 @@ const DataTable = (props) => {
         }
         setOpenRejection(false);
     }
+    console.log(storageUserData.type);
 
     const renderRejection = () => {
         setOpenRejection(!openRejection);
