@@ -9,7 +9,7 @@ function RenderCard(props) {
     
     if (props.cond) {
         return (
-            <div className="col-12 d-flex justify-content-center" style={{ padding: "50px" }}>
+            <div className="col-12 d-flex justify-content-center order-first" style={{ padding: "50px" }}>
                 <ReactCardFlip isFlipped={props.cond} flipDirection="vertical">
                     <Card>
                     </Card>

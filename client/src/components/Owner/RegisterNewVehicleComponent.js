@@ -36,7 +36,6 @@ const RegisterNewVehicle = () => {
 
                 let status = response.data.status;
                 let ownerReservedDates = response.data.ownerReservedDates;
-
                 if(status === 'ok'){
                     setOwnerReservedDates(ownerReservedDates)
                 }
@@ -91,8 +90,8 @@ const RegisterNewVehicle = () => {
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
                             <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
-                                <Card.Title>Reserve a Date</Card.Title>
-                                <Card.Subtitle>Reserved Date: {(reservedDate) ? <Badge bg="warning" text="dark">{reservedDate}</Badge> : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
+                                <Card.Title>Reserve a Date</Card.Title> 
+                                <Card.Subtitle>Reserved Date: { (ownerReservedDates) ? ownerReservedDates.map((dt)=> <Badge bg="warning" text="dark">{dt}</Badge>) : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
                                 <Card.Text>
                                     This is a longer card with supporting text below as a natural
                                     lead-in to additional content. This content is a little bit longer.

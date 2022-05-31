@@ -120,3 +120,8 @@
     }
     
 }
+
+.noti:hover{
+    background-color: rgb(224, 237, 239);
+    cursor: pointer;
+}
