@@ -322,7 +322,10 @@ const get_owner_reservedDates = async (req, res) => {
         
         let ownerReservedDates = []
         for(let i = 0; i < workdays.length; i++){
-            ownerReservedDates.push(workdays[i].day);
+            let dt = new Date(workdays[i].day);
+            let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+            ownerReservedDates.push(dtstr);
+
         }
 
         res.json({
