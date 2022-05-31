@@ -26,7 +26,7 @@ const UploadComponent = () => {
                 formData.append("documents", data.file[i]);
         }
 
-        let response = await fetch("http://localhost:5000/owner/request", {
+        let response = await fetch("https://vrse17-backend.herokuapp.com/owner/request", {
             method: 'POST',
             body: formData,
         })

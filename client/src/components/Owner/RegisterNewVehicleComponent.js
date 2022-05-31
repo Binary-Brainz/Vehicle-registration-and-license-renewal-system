@@ -24,7 +24,7 @@ const RegisterNewVehicle = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`http://localhost:5000/owner/reservedDates/${id}`, {
+        axios.get(`https://vrse17-backend.herokuapp.com/reservedDates/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

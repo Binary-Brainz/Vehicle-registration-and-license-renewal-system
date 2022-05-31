@@ -21,7 +21,7 @@ const validRePass = (val1) => (val2) => val1 === val2;
 const validNic = (val) => (/^[VX0-9]{10}$/i.test(val)) || (/^[0-9]{12}$/i.test(val));
 
 async function signUpUser(data) {
-    return fetch('http://localhost:5000/owner/register', {
+    return fetch('https://vrse17-backend.herokuapp.com/owner/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -32,7 +32,7 @@ async function signUpUser(data) {
 }
 
 async function loginOwner(data) {
-    return fetch('http://localhost:5000/owner/login', {
+    return fetch('https://vrse17-backend.herokuapp.com/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ async function loginOwner(data) {
 
 async function loginOfficer(data) {
 
-    return fetch('http://localhost:5000/officer/login', {
+    return fetch('https://vrse17-backend.herokuapp.com/officer/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
