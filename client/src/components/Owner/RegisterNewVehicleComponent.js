@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import { Badge, Button, Card } from "react-bootstrap";
+import { Badge, Button, Card, CloseButton } from "react-bootstrap";
 import ReactCardFlip from 'react-card-flip';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
@@ -14,11 +14,10 @@ const RegisterNewVehicle = () => {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
-    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
+    const user_id = (stored_id !== '') ? stored_id : storageUserData.id;
 
     const [dateFlipped, setDateFlipped] = useState(false);
     const [subFlipped, setSubFlipped] = useState(false);
-    const [reservedDate, setReservedDate] = useState("");
     const [subStatus, setSubStatus] = useState(false);
     const [ownerReservedDates, setOwnerReservedDates] = useState([]);
 
@@ -36,10 +35,10 @@ const RegisterNewVehicle = () => {
 
                 let status = response.data.status;
                 let ownerReservedDates = response.data.ownerReservedDates;
-                if(status === 'ok'){
+                if (status === 'ok') {
                     setOwnerReservedDates(ownerReservedDates)
                 }
-                else{
+                else {
                     console.log(response.error);
                 }
             })
@@ -56,32 +55,6 @@ const RegisterNewVehicle = () => {
         setSubFlipped(!subFlipped);
     }
 
-    const disablePastDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const disableFutureDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 4).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
-    const onReserve = (data) => {
-        console.log(data);
-    }
-
-    const onUpload = (data) => {
-        console.log(data);
-    }
-
     return (
         <div className="container">
             <div className="row ">
@@ -90,8 +63,8 @@ const RegisterNewVehicle = () => {
                         <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
                             <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
-                                <Card.Title>Reserve a Date</Card.Title> 
-                                <Card.Subtitle>Reserved Date: { (ownerReservedDates) ? ownerReservedDates.map((dt)=> <Badge bg="warning" text="dark">{dt}</Badge>) : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
+                                <Card.Title>Reserve a Date</Card.Title>
+                                <Card.Subtitle>Reserved Date: {(ownerReservedDates) ? ownerReservedDates.map((dt) => <Badge bg="warning" text="dark">{dt}</Badge>) : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
                                 <Card.Text>
                                     This is a longer card with supporting text below as a natural
                                     lead-in to additional content. This content is a little bit longer.
@@ -99,13 +72,21 @@ const RegisterNewVehicle = () => {
                                 <Button onClick={flipDate}>Click to Reserve a Date</Button>
                             </Card.Body>
                         </Card>
-                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
-                            <Card.Body>
-                                <Card.Title>Select a Date</Card.Title>
+                        <Card body bg="dark" style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
+                            <Card.Header>
+                                
+                                    <div className='row '>
+                                        <div className="col-10 align-self-center">
+                                            <Card.Title style={{ color: "white" }}>Select a Date</Card.Title>
+                                        </div>
+                                        <div className='col text-end p-3'>
+                                            <CloseButton variant="white" onClick={flipDate} />
+                                        </div>
+                                    </div>
+                                
+                            </Card.Header>
+                            <Card.Body className="text-center">
                                 <DateReservationComponent />
-                                <br></br>
-                                <Button onClick={flipDate}>Click to Cancel</Button>
                             </Card.Body>
                         </Card>
                     </ReactCardFlip>

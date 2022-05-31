@@ -4,7 +4,6 @@ mongoose.Promise = global.Promise;
 const archiver = require('archiver');
 const path = require('path');
 
-const SuperUser = require('../models/superuser');
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
 const Notification = require('../models/notification');
@@ -14,7 +13,6 @@ const Request = require('../models/request');
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 const pdfGenerator = require('../middleware/pdfGenerator');
-const { type } = require('express/lib/response');
 
 //login - get all requests(requests by officerID)
 const login_post = async (req, res) => {
@@ -45,27 +43,6 @@ const login_post = async (req, res) => {
                         officerType: user.type
                     }
                 });
-
-                // try {
-                    
-                //     let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
-
-                //     let return_data = {};
-                    
-                //     return_data['officer'] = user;
-                //     return_data['requests'] = requests;
-                    
-                //     let token = auth.createToken(user._id);
-
-                //     res.json({
-                //         status: 'ok',
-                //         token: token,
-                //         data: return_data
-                //     });
-                // } 
-                // catch (err) {
-                //     console.log(err);
-                // }
             }
             else{
                 res.json({
@@ -576,8 +553,3 @@ module.exports = {
     reject_request,
     download_documents,
 }
-
-//###optional
-// get one vehicle
-// get one request
-// get vehicles after any vehicle change

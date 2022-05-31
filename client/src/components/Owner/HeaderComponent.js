@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
 import NotificationTable from "./NotificationComponent";
 import { useSelector, useDispatch } from 'react-redux';
 import { Dialog } from 'primereact/dialog';
-import { gotId, gotNic } from '../userSlice';
+import { Toast } from 'primereact/toast';
+import { useRef } from "react";
+import { vehRegDateResed } from "../statusSlice";
 
 
 const axios = require('axios').default;
 
 function Header() {
 
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    const dispatch = useDispatch();
+    const toast = useRef(null);
+
     const userData = JSON.parse(sessionStorage.getItem("userData"));
 
     const stored_fullName = useSelector(state => state.user.fullName);
     const stored_id = useSelector(state => state.user.id);
     const stored_nic = useSelector(state => state.user.nic);
+
+    const isVehRegDate = useSelector(state =>state.status.vehRegDateRes);
+    
+    
+    if (isVehRegDate) { 
+        toast.current.show({severity: 'success', summary: "Date successfully Reserved!" , life: 5000});
+        delay(5000);
+        dispatch(vehRegDateResed());  
+    }
     
     const user_id = (stored_id !== '')? stored_id : userData.id;
     const nic = (stored_nic !== '')? stored_nic : userData.nic;
@@ -60,6 +75,7 @@ function Header() {
     }
     const onClick = (type) => {
         dialogFuncMap[`${type}`](true);
+        setNotificationCount(0);
     }
 
     const onHide = (name) => {
@@ -70,6 +86,7 @@ function Header() {
     return (
         <div>
             <div className="">
+            <Toast ref={toast} />
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand href="/ownerDashboard/ownvehicles"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /></Navbar.Brand>
@@ -115,7 +132,7 @@ function Header() {
                     
                 </Modal.Header>
                 
-            </Modal>
+            </Modal>      
         </div>
     );
 }
