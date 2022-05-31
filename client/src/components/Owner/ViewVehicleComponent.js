@@ -10,9 +10,9 @@ import UploadComponent from './UploadComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
 
-const ViewVehicleComponent = ({vehicle}) => {
+const ViewVehicleComponent = ({ vehicle }) => {
 
-const user_id = useSelector(state => state.user.id);
+  const user_id = useSelector(state => state.user.id);
 
   const { register, formState: { errors } } = useForm();
 
@@ -50,12 +50,12 @@ const user_id = useSelector(state => state.user.id);
         </Button>
         <Collapse in={openReservation}>
           <div >
-          <Modal.Header closeButton>
-                <Modal.Title>Reserve a Date</Modal.Title>
+            <Modal.Header>
+              <Modal.Title>Reserve a Date</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <DateReservationComponent/>
+              <DateReservationComponent />
             </Modal.Body>
 
           </div>
@@ -72,12 +72,12 @@ const user_id = useSelector(state => state.user.id);
         </Button>
         <Collapse in={openUpload}>
           <div >
-          <Modal.Header closeButton>
-                <Modal.Title>Upload Documents</Modal.Title>
+            <Modal.Header>
+              <Modal.Title>Upload Documents</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <UploadComponent/>
+              <UploadComponent />
             </Modal.Body>
 
           </div>

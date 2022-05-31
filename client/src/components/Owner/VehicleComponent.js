@@ -39,14 +39,12 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                     disabled={update ? update : disabled}
                     {...register("ownerNIC", {
                         required: true,
-                        minLength: 10,
-                        maxLength: 12
+                        validate: value => (/^[VX0-9]{10}$/i.test(value)) || (/^[0-9]{12}$/i.test(value))
                     })}
                 />
             </Form.Group>
             {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='errorMsg'>Owner's NIC is required!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "minLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "maxLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "validate" && <p className='errorMsg'>Owner's NIC invalid!</p>}
 
             <div className="row">
                 <div className="col-sm">
