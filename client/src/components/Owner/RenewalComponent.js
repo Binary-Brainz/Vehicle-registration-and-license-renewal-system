@@ -29,7 +29,7 @@ const RenewalComponent = () => {
             formData.append("documents", data.ecoTest[i]);
         }
 
-        let response = await fetch("https://vrse17-backend.herokuapp.com/owner/request", {
+        let response = await fetch("/owner/request", {
             method: 'POST',
             body: formData,
         })

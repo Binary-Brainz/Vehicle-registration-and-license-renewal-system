@@ -32,7 +32,7 @@ const DataTable = (props) => {
             
                 const token = sessionStorage.getItem('token');
     
-                let response = await axios.get(`https://vrse17-backend.herokuapp.com/officer/dashboard/${user_id}`, {
+                let response = await axios.get(`/officer/dashboard/${user_id}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         token: token,

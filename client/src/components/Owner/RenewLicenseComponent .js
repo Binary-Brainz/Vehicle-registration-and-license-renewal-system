@@ -22,7 +22,7 @@ function RenewLicense(props) {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`https://vrse17-backend.herokuapp.com/expiredVehicles/${user_id}`, {
+        axios.get(`/owner/expiredVehicles/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

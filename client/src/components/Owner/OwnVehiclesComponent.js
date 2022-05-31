@@ -22,7 +22,7 @@ const OwnVehicles = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`https://vrse17-backend.herokuapp.com/dashboard/${user_id}`, {
+        axios.get(`/owner/dashboard/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

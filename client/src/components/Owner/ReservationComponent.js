@@ -10,7 +10,7 @@ async function reserveDate(data) {
 
     const token = sessionStorage.getItem('token');
 
-    return fetch('https://vrse17-backend.herokuapp.com/owner/reserve', {
+    return fetch('/owner/reserve', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
