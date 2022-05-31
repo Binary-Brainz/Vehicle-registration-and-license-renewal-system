@@ -20,7 +20,7 @@ app.use(express.json());
 const dbURI = process.env.DB_URI;
 
 // middleware & static files
-app.use(express.static("public"))
+// app.use(express.static("public"))
 app.use(express.urlencoded({ extended: true }));
 
 // ?????
