@@ -5,10 +5,10 @@ import { useState } from 'react';
 import VehicleComponent from './VehicleComponent';
 import { Collapse } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import DateReservationComponent from './ReservationComponent';
 import UploadComponent from './UploadComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import ReserveDate from './ReserveDateComponent';
 
 const ViewVehicleComponent = ({ vehicle }) => {
 
@@ -55,7 +55,7 @@ const ViewVehicleComponent = ({ vehicle }) => {
             </Modal.Header>
 
             <Modal.Body>
-              <DateReservationComponent />
+              <ReserveDate />
             </Modal.Body>
 
           </div>
