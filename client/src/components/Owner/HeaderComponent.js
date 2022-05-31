@@ -29,7 +29,7 @@ function Header() {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`/unreadNotificationCount/${user_id}`, {
+        axios.get(`owner/unreadNotificationCount/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,
