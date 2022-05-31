@@ -275,7 +275,7 @@ const add_vehicle = async (req, res) => {
 
                 try {
 
-                    let request = await Request.findByIdAndUpdate(requestID, {status: 'approved'});
+                    let request = await Request.findByIdAndUpdate(requestID, {state: 'approved'});
                 
                     let doc_name = pdfGenerator.makePdf(data);
                     let files = [doc_name];
@@ -297,14 +297,14 @@ const add_vehicle = async (req, res) => {
 
                             res.json({
                                 status: 'error',
-                                error: err
+                                error: err.message
                             })
                         }
                         else{
 
                             res.json({
                                 status: 'ok',
-                                vehicle: vehicle
+                                message: `A new vehicle is registered under registration No. ${vehicle.regNo}`
                             });
                         }
                     })
@@ -368,7 +368,7 @@ const update_vehicle = async (req, res) => {
 
                         if(owner !== null){
 
-                            let request = await Request.findByIdAndUpdate(requestID, {status: 'approved'});
+                            let request = await Request.findByIdAndUpdate(requestID, {state: 'approved'});
                         
                             let doc_name = pdfGenerator.makePdf(updated_vehicle);
                             let files = [doc_name];
@@ -390,14 +390,14 @@ const update_vehicle = async (req, res) => {
         
                                     res.json({
                                         status: 'error',
-                                        error: err
+                                        error: err.message
                                     })
                                 }
                                 else{
         
                                     res.json({
                                         status: 'ok',
-                                        vehicle: updated_vehicle
+                                        message: `The vehicle ${updated_vehicle.regNo} is successfully updated!`
                                     });
                                 }
                             })
@@ -435,9 +435,13 @@ const download_documents = async (req, res) => {
     
     try {
 
-        let request_data = await Request.findByIdAndUpdate(mongoose.Types.ObjectId(request_id), {status: 'pending'}, {new: true});
+        let request_data = await Request.findById(mongoose.Types.ObjectId(request_id));
         
         if(request_data){
+
+            if(request_data.state === 'new'){
+                await Request.findByIdAndUpdate(mongoose.Types.ObjectId(request_id), {state: 'pending'});
+            }
 
             let fileNames = request_data.files;
             console.log(fileNames);
@@ -484,10 +488,10 @@ const download_documents = async (req, res) => {
 //reject request
 const reject_request = async (req, res) => {
 
-    let requestID = req.params.requestID;
+    let requestID = req.body.requestID;
     let reason = req.body.reason;
         
-    Request.findOneAndUpdate({_id: mongoose.Types.ObjectId(requestID)}, {status: 'rejected'}, {new: true}, async (err, request) => {
+    Request.findOneAndUpdate({_id: mongoose.Types.ObjectId(requestID)}, {state: 'rejected'}, {new: true}, async (err, request) => {
 
         if(err){
 
@@ -528,13 +532,14 @@ const reject_request = async (req, res) => {
 
                     res.json({
                         status: 'error',
-                        error: err
+                        error: err.message
                     })
                 }
                 else{
 
                     res.json({
                         status: 'ok',
+                        message: `The request from ${request.ownerName} is rejected!`
                     });
                 }
             })

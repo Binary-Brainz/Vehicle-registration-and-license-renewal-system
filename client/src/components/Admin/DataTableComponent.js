@@ -19,12 +19,14 @@ const axios = require('axios').default;
 const DataTable = (props) => {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
-    const stored_id = useSelector(state => state.user.id);
-    const user_id = (stored_id !== '') ? stored_id : storageUserData.id;
+    const user_id = storageUserData.id;
 
     const [products, setProducts] = useState(null);
     const [displayResponsive, setDisplayResponsive] = useState(false);
     const [name, setname] = useState('');
+    const [regNo, setRegNo] = useState('');
+    const [reqId, setReqId] = useState('');
+    const [ownerID, setOwnerId] = useState('');
     const [requests, setRequests] = useState([]);
 
     const [openRegistration, setOpenRegistration] = useState(false);
@@ -59,7 +61,7 @@ const DataTable = (props) => {
                     setRequests(returned_requests);
                 }
                 else {
-                    console.log(response.error);
+                    console.log(response.data.error);
                 }
             }
             catch (err) {
@@ -75,9 +77,12 @@ const DataTable = (props) => {
     const dialogFuncMap = {
         'displayResponsive': setDisplayResponsive
     }
-    const onClick = (type, name) => {
+    const onClick = (type, name, regNo, reqId, ownerID) => {
         dialogFuncMap[`${type}`](true);
         setname(name);
+        setRegNo(regNo);
+        setReqId(reqId);
+        setOwnerId(ownerID);
     }
 
     const onHide = (name) => {
@@ -95,7 +100,7 @@ const DataTable = (props) => {
 
                     </div>
                     <div className="product-list-action">
-                        <Button label="Show" icon="pi pi-external-link" onClick={() => onClick('displayResponsive', request.ownerName)} className="p-button-info p-button-sm p-button-rounded" />
+                        <Button label="Show" icon="pi pi-external-link" onClick={() => onClick('displayResponsive', request.ownerName, request.regNo, request._id, request.ownerID)} className="p-button-info p-button-sm p-button-rounded" />
                         <div className="product-badge">{request.createdAt}</div>
                     </div>
                 </div>
@@ -128,7 +133,6 @@ const DataTable = (props) => {
         }
         setOpenRejection(false);
     }
-    console.log(storageUserData.type);
 
     const renderRejection = () => {
         setOpenRejection(!openRejection);
@@ -146,10 +150,10 @@ const DataTable = (props) => {
             <Dialog header={name} visible={displayResponsive} onHide={() => onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} >
                 <Card>
                     <Card.Body>
-                        <Card.Title>{name}</Card.Title>
+                        <Card.Title>{regNo}</Card.Title>
                         <div className='col-12 col-md-3 text-center align-self-center'>
                             Attached File<br />
-                            <Card.Link href={""} className='product-name' ><span className='fa fa-download'></span></Card.Link>
+                            <Card.Link href={`http://localhost:5000/officer/downloadDocumets/${reqId}`} className='product-name' ><span className='fa fa-download'></span></Card.Link>
                         </div>
 
                         <br></br>
@@ -169,7 +173,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <NewVehicle />
+                                    <NewVehicle ownerID={ownerID}/>
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -181,7 +185,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <UpdateVehicle />
+                                    <UpdateVehicle ownerID={ownerID}/>
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -193,7 +197,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <LicenseRenewalOfficer />
+                                    <LicenseRenewalOfficer ownerID={ownerID}/>
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -205,7 +209,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <RequestRejection />
+                                    <RequestRejection reqId={reqId}/>
                                 </Modal.Body>
                             </div>
                         </Collapse>

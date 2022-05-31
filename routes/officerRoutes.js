@@ -29,7 +29,7 @@ router.post('/updateVehicle/:id', auth.requireAuth, officerController.update_veh
 router.post('/renewLicense/:id', auth.requireAuth, officerController.update_vehicle);
 
 //reject request
-router.post('/reject/:request_id', officerController.reject_request);
+router.post('/reject', officerController.reject_request);
 
 //download documents belong to an application
 router.get('/downloadDocumets/:request_id', officerController.download_documents);

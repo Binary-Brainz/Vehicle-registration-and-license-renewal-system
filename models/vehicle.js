@@ -48,8 +48,8 @@ const vehicleSchema = new Schema({
     required: true
   },
   nextYearFee: {
-      type: String,
-      required: true
+      type: Number,
+      default: 1000
   }
 }, { timestamps: true });
 

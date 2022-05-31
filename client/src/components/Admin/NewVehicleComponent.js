@@ -5,12 +5,29 @@ import { useForm } from "react-hook-form";
 import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 
-const NewVehicle = () => {
+async function addVehicle(data) {
+
+    const token = sessionStorage.getItem('token');
+
+    return fetch('http://localhost:5000/officer/addVehicle', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        token: token,
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
+
+const NewVehicle = (props) => {
+
     const onSubmit = (data) => {
-        console.log(data);
-        alert(
-            data
-        );
+        data['ownerID'] = props.ownerID;
+        console.log("data");
+        // alert(
+        //     data
+        // );
         setVehicle(data);
     }
 

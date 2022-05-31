@@ -29,8 +29,8 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
             {errors.ownerName && errors.ownerName.type === "required" && <p className='text-danger'>Owner's name is required!</p>}
             {errors.ownerName && errors.ownerName.type === "pattern" && <p className='text-danger'>Please enter a valid name!</p>} */}
 
-            <Form.Group>
-                {/* <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label> */}
+            {/* <Form.Group>
+                <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label>
                 <Form.Control
                     type="hidden"
                     id="ownerNIC"
@@ -44,7 +44,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                 />
             </Form.Group>
             {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='text-danger'>Owner's NIC is required!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "validate" && <p className='text-danger'>Owner's NIC invalid!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "validate" && <p className='text-danger'>Owner's NIC invalid!</p>} */}
 
             <div className="row">
                 <div className="col-sm">
