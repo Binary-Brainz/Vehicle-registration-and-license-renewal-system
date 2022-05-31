@@ -7,6 +7,18 @@ const router = express.Router();
 //login
 router.post('/login', officerController.login_post);
 
+//get officer dashboard info
+router.get('/dashboard/:id', auth.requireAuth, officerController.get_dashboard);
+
+//get officer requests
+router.get('/requests', auth.requireAuth, officerController.get_officer_requests);
+
+//get all vehicles
+router.get('/allVehicles', auth.requireAuth, officerController.get_vehicles);
+
+//edit officer profile
+router.post('/editProfile', auth.requireAuth, officerController.edit_officer);
+
 //add new vehicle
 router.post('/addVehicle', auth.requireAuth, officerController.add_vehicle);
 
@@ -18,9 +30,6 @@ router.post('/renewLicense/:id', auth.requireAuth, officerController.update_vehi
 
 //reject request
 router.post('/reject/:request_id', officerController.reject_request);
-
-//get all vehicles
-router.get('/getAllVehicles', auth.requireAuth, officerController.get_vehicles);
 
 //download documents belong to an application
 router.get('/downloadDocumets/:request_id', officerController.download_documents);

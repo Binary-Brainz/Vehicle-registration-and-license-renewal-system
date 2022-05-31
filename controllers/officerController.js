@@ -14,6 +14,7 @@ const Request = require('../models/request');
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 const pdfGenerator = require('../middleware/pdfGenerator');
+const { type } = require('express/lib/response');
 
 //login - get all requests(requests by officerID)
 const login_post = async (req, res) => {
@@ -31,26 +32,39 @@ const login_post = async (req, res) => {
 
             if(password_check){
 
-                try {
-                    
-                    let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
+                let token = auth.createToken();
+                let fullName = user.firstName + " " + user.lastName;
 
-                    let return_data = {};
-                    
-                    return_data['officer'] = user;
-                    return_data['requests'] = requests;
-                    
-                    let token = auth.createToken(user._id);
+                res.json({
+                    status: 'ok',
+                    token: token,
+                    data: {
+                        nic: nic,
+                        id: user._id,
+                        fullName: fullName
+                    }
+                });
 
-                    res.json({
-                        status: 'ok',
-                        token: token,
-                        data: return_data
-                    });
-                } 
-                catch (err) {
-                    console.log(err);
-                }
+                // try {
+                    
+                //     let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
+
+                //     let return_data = {};
+                    
+                //     return_data['officer'] = user;
+                //     return_data['requests'] = requests;
+                    
+                //     let token = auth.createToken(user._id);
+
+                //     res.json({
+                //         status: 'ok',
+                //         token: token,
+                //         data: return_data
+                //     });
+                // } 
+                // catch (err) {
+                //     console.log(err);
+                // }
             }
             else{
                 res.json({
@@ -68,6 +82,190 @@ const login_post = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+    }
+}
+
+//get officer dashboard info
+const get_dashboard = async (req, res) => {
+
+    let id = req.params.id;
+    let state = req.headers['state'];
+
+    try{
+
+        let user = await Officer.findById(mongoose.Types.ObjectId(id));
+
+        if(user !== null){
+
+            let state_check = [];
+
+            if(state === 'pending'){
+                state_check = ['new', 'pending'];
+            }
+            else{
+                state_check = [state]
+            } 
+
+            let requests = await Request.find({officerID: id, state: { $in: state_check}});
+
+            let return_requests = [];
+
+            for(let i = 0; i < requests.length; i++){
+
+                let sample_request = {};
+
+                for(const key in requests[i]._doc){
+
+                    if(key === 'createdAt'){
+
+                        let dt = new Date(requests[i]._doc[key]);
+                        let createdAtDate = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+
+                        sample_request[key] = createdAtDate;
+                    }
+                    else{
+                        sample_request[key] = requests[i]._doc[key];
+                    }
+                }
+                return_requests.push(sample_request);
+            }
+
+            res.json({
+                status: 'ok',
+                user: user,
+                requests: return_requests,
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Invalid User!'
+            });
+        }  
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+//get all the requests of the officer
+const get_officer_requests = async (req, res) => {
+
+    let id = req.body.id;
+
+    try{
+
+        let requests = await Request.find({officerID: id});
+
+        res.json({
+            status: 'ok',
+            data: {requests: requests}
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+//get all vehicles - when fetching change the timezone to IST
+const get_vehicles = async (req, res) => {
+
+    try {
+        
+        let vehicles = await Vehicle.find();
+        let owners = await Owner.find();
+
+        if(vehicles.length > 0){
+
+            let result = [];
+
+            vehicles.forEach((vehicle) => {
+
+                let nic = vehicle.ownerNIC;
+
+                for (let i = 0; i < owners.length; i++) {
+
+                    let owner = owners[i];
+
+                    if(owner.nic === nic){
+
+                        result.push({
+                            vehicle,
+                            owner
+                        });
+                        continue;
+                    }
+                }
+            });
+
+            res.json({
+                status: 'ok',
+                result: result
+            });
+        }
+        else{
+            res.json({
+                status: 'empty',
+                result: []
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+//edit officer profile
+const edit_officer = async (req, res) => {
+
+    let data = req.body;
+    let id = req.body.id;
+    delete data.id
+
+    let new_data = {};
+
+    for(let key in data){
+        if(data[key] !== ''){
+            new_data[key] = data[key];
+        }
+    }
+
+    try {
+
+        if(Object.keys(new_data).length > 0){
+        
+            Officer.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {new: true}, async (err, new_officer) => {
+    
+                if (err){
+                    res.json({
+                        status: 'error',
+                        error: err
+                    });
+                }
+                else if(new_officer === null){
+
+                    res.json({
+                        status: 'error',
+                        error: 'Invalid User!'
+                    })
+                }
+                else{
+                    
+                    res.json({
+                        status: 'ok',
+                    });
+                }
+            });
+        }
+        else{
+            res.json({
+                status: 'error',
+                error: 'Update fields cannot be empty!'
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
     }
 }
 
@@ -238,56 +436,9 @@ const update_vehicle = async (req, res) => {
         }
         else{
             res.json({
-                status: 'ok'
+                status: 'error',
+                error: 'Update fields cannot be empty!'
             });
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-
-//get all vehicles - when fetching change the timezone to IST
-const get_vehicles = async (req, res) => {
-
-    try {
-        
-        let vehicles = await Vehicle.find();
-        let owners = await Owner.find();
-
-        if(vehicles.length > 0){
-
-            let result = [];
-
-            vehicles.forEach((vehicle) => {
-
-                let nic = vehicle.ownerNIC;
-
-                for (let i = 0; i < owners.length; i++) {
-
-                    let owner = owners[i];
-
-                    if(owner.nic === nic){
-
-                        result.push({
-                            vehicle,
-                            owner
-                        });
-                        continue;
-                    }
-                }
-            });
-
-            res.json({
-                status: 'ok',
-                result: result
-            });
-        }
-        else{
-            res.json({
-                status: 'empty',
-                result: []
-            })
         }
     }
     catch (err) {
@@ -396,15 +547,17 @@ const reject_request = async (req, res) => {
 
 module.exports = {
     login_post,
+    get_dashboard,
+    get_officer_requests,
+    get_vehicles,
+    edit_officer,
     add_vehicle,
     update_vehicle,
     reject_request,
-    get_vehicles,
     download_documents,
 }
 
 //###optional
 // get one vehicle
 // get one request
-// get all requests after any status update
 // get vehicles after any vehicle change

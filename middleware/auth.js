@@ -2,7 +2,16 @@ const jwt = require('jsonwebtoken');
 
 let requireAuth = (req, res, next) => {
 
-    const token = req.headers['token'].replace(/['"]+/g, '');
+    let token;
+    try {
+        token = req.headers['token'].replace(/['"]+/g, '');
+    }
+    catch (err) {
+        res.json({
+            status: 'error',
+            error: "unidentified token!"
+        });
+    }
 
     //check whether jwt exists and it is verified
     if(token){
@@ -30,8 +39,8 @@ let requireAuth = (req, res, next) => {
 };
 
 const maxAge = 1 * 24 * 60 * 60;
-const createToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_ENV, {
+const createToken = () => {
+    return jwt.sign({value: Date.now()}, process.env.JWT_ENV, {
         expiresIn: maxAge
     });
 };

@@ -23,6 +23,10 @@ const vehicleSchema = new Schema({
     type: String,
     required: true
   },
+  manufacturedYear: {
+    type: String,
+    required: true
+  },
   ownerNIC: {
     type: String,
     required: true
@@ -38,6 +42,14 @@ const vehicleSchema = new Schema({
   registeredDate: {
     type: Date,
     required: true
+  },
+  expireDate: {
+    type: Date,
+    required: true
+  },
+  nextYearFee: {
+      type: String,
+      required: true
   }
 }, { timestamps: true });
 
