@@ -14,6 +14,10 @@ const notificationSchema = new Schema({
         type: String,
         required: true
     },
+    reservedDate: {
+        type: Date,
+        default: null
+    },
     message: {
         type: String,
         required: true

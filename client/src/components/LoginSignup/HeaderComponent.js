@@ -134,7 +134,6 @@ function Header(props) {
                 navigate('/ownerDashboard', { replace: true });
             }
             else{
-                console.log("in officer");
                 navigate('/adminDashboard', { replace: true });
             }
         }

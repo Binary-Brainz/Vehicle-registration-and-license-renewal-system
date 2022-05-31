@@ -82,13 +82,15 @@ const login_post = async (req, res) => {
                 const today = new Date(dtstr);
 
                 const reservedDateList = await Workday.find({day: today, owners: { $all: [user._id] }});
+                const todayNotification = await Notification.findOne({receiverID: user._id, reservedDate: today});
 
-                if(reservedDateList.length > 0){
+                if(reservedDateList.length > 0 && todayNotification === null){
 
                     let notification_data = {
                         type: 'Date Reservation',
                         regNo: '',
                         state: 'pending',
+                        reservedDate: today,
                         message: `Today(${dtstr}) is reserved for you!`,
                         receiverID: user._id,
                     };

@@ -107,7 +107,7 @@ const NotificationTable = (props) => {
                                         
                                     </Card.Text>
                                 </div>
-                                {(notification.state !== 'rejected')? 
+                                {(notification.state === 'approved')? 
                                 <div className='col-12 col-md-3 text-center align-self-center'>
                                     Attached File<br/>
                                     <Card.Link href={file_url} className='product-name' ><span className='fa fa-download'></span></Card.Link>
