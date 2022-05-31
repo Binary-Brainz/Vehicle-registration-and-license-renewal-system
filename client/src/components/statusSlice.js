@@ -10,9 +10,9 @@ const ststusSlice = createSlice({
   initialState,
   reducers: {
     vehRegDateResed: (state) => {
-      state.vehRegDateRes = true
+      state.vehRegDateRes = !state.vehRegDateRes
     },
-    
+
   }
 })
 
