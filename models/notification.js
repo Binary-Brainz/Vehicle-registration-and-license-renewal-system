@@ -6,6 +6,14 @@ const notificationSchema = new Schema({
         type: String,
         required: true
     },
+    regNo: {
+        type: String,
+        default: 'Unregistered'
+    },
+    state: {
+        type: String,
+        required: true
+    },
     message: {
         type: String,
         required: true

@@ -48,7 +48,9 @@ function RenderCard(props) {
 }
 
 export default function Requests() {
-    const type = '';
+
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const type = userData.officerType;
 
     const [newFlipped, setNewFlipped] = useState(false);
     const flipNew = () => setNewFlipped(!newFlipped);

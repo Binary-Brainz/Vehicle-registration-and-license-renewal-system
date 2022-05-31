@@ -129,7 +129,7 @@ const RegisterNewVehicle = () => {
                             <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Upload Documents to Register your new Vehicle</Card.Title>
-                                <UploadComponent />
+                                <UploadComponent type={'Vehicle Registration'}/>
                                 <br></br>
                                 <Button onClick={flipSub}>Click to flip</Button>
                             </Card.Body>

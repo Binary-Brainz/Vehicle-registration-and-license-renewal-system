@@ -86,7 +86,10 @@ function RenewLicense(props) {
                     <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <RenewalComponent/>
+                    {ownVehicles.filter(vehicle => vehicle._id === id).map(vehicle => (
+                        <RenewalComponent regNo={vehicle.regNo}/>
+                    ))}
+                    
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={toggleModal}>

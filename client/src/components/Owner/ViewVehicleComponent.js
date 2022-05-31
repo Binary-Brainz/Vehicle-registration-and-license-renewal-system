@@ -77,7 +77,7 @@ const user_id = useSelector(state => state.user.id);
             </Modal.Header>
 
             <Modal.Body>
-                <UploadComponent/>
+                <UploadComponent type={'Update Vehicle'} regNo={vehicle.regNo}/>
             </Modal.Body>
 
           </div>
