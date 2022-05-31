@@ -26,8 +26,8 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                     })}
                 />
             </Form.Group>
-            {errors.ownerName && errors.ownerName.type === "required" && <p className='errorMsg'>Owner's name is required!</p>}
-            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='errorMsg'>Please enter a valid name!</p>} */}
+            {errors.ownerName && errors.ownerName.type === "required" && <p className='text-danger'>Owner's name is required!</p>}
+            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='text-danger'>Please enter a valid name!</p>} */}
 
             <Form.Group>
                 {/* <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label> */}
@@ -39,14 +39,12 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                     disabled={update ? update : disabled}
                     {...register("ownerNIC", {
                         required: true,
-                        minLength: 10,
-                        maxLength: 12
+                        validate: value => (/^[VX0-9]{10}$/i.test(value)) || (/^[0-9]{12}$/i.test(value))
                     })}
                 />
             </Form.Group>
-            {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='errorMsg'>Owner's NIC is required!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "minLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "maxLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='text-danger'>Owner's NIC is required!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "validate" && <p className='text-danger'>Owner's NIC invalid!</p>}
 
             <div className="row">
                 <div className="col-sm">
@@ -65,7 +63,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.registerDate && <p className='errorMsg'>Valid Register Date is required!</p>}
+                    {errors.registerDate && <p className='text-danger'>Valid Register Date is required!</p>}
                 </div>
 
                 <div className="col-sm">
@@ -83,7 +81,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.manufacturedYear && <p className='errorMsg'>Vehicle Model is required!</p>}
+                    {errors.manufacturedYear && <p className='text-danger'>Vehicle Model is required!</p>}
                 </div>
             </div>
 
@@ -99,7 +97,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             <option value="3">Motor Bike</option>
                         </Form.Select>
                     </Form.Group>
-                    {errors.type && <p className='errorMsg'>Vehicle Type is required!</p>}
+                    {errors.type && <p className='text-danger'>Vehicle Type is required!</p>}
 
                 </div>
                 <div className="col-sm">
@@ -116,7 +114,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.regNo && <p className='errorMsg'>Vehicle Registration Number is required!</p>}
+                    {errors.regNo && <p className='text-danger'>Vehicle Registration Number is required!</p>}
                 </div>
             </div>
 
@@ -135,7 +133,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.color && <p className='errorMsg'>Vehicle Color is required!</p>}
+                    {errors.color && <p className='text-danger'>Vehicle Color is required!</p>}
 
                 </div>
                 <div className="col-sm">
@@ -152,7 +150,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.weight && <p className='errorMsg'>Vehicle Weight is required!</p>}
+                    {errors.weight && <p className='text-danger'>Vehicle Weight is required!</p>}
 
                 </div>
             </div>
@@ -172,7 +170,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.model && <p className='errorMsg'>Vehicle Model is required!</p>}
+                    {errors.model && <p className='text-danger'>Vehicle Model is required!</p>}
 
                 </div>
 
@@ -190,7 +188,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.doors && <p className='errorMsg'>Number of door is required!</p>}
+                    {errors.doors && <p className='text-danger'>Number of door is required!</p>}
                 </div>
             </div>
 
