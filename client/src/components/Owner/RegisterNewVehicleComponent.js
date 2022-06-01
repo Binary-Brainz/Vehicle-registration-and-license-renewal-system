@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import { Badge, Button, Card } from "react-bootstrap";
+import { Badge, Button, Card, CloseButton } from "react-bootstrap";
 import ReactCardFlip from 'react-card-flip';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
@@ -12,19 +12,12 @@ const axios = require('axios').default;
 
 const RegisterNewVehicle = () => {
 
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
-
-    const stored_fullName = useSelector(state => state.user.fullName);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
-    const stored_nic = useSelector(state => state.user.nic);
-    
-    const user_id = (stored_id !== '')? stored_id : userData.id;
-    const nic = (stored_nic !== '')? stored_nic : userData.nic;
-    const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
+    const user_id = (stored_id !== '') ? stored_id : storageUserData.id;
 
     const [dateFlipped, setDateFlipped] = useState(false);
     const [subFlipped, setSubFlipped] = useState(false);
-    const [reservedDate, setReservedDate] = useState("");
     const [subStatus, setSubStatus] = useState(false);
     const [ownerReservedDates, setOwnerReservedDates] = useState([]);
 
@@ -32,7 +25,7 @@ const RegisterNewVehicle = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`/owner/reservedDates/${user_id}`, {
+        axios.get(`http://localhost:5000/owner/reservedDates/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,
@@ -42,11 +35,10 @@ const RegisterNewVehicle = () => {
 
                 let status = response.data.status;
                 let ownerReservedDates = response.data.ownerReservedDates;
-
-                if(status === 'ok'){
+                if (status === 'ok') {
                     setOwnerReservedDates(ownerReservedDates)
                 }
-                else{
+                else {
                     console.log(response.error);
                 }
             })
@@ -63,42 +55,16 @@ const RegisterNewVehicle = () => {
         setSubFlipped(!subFlipped);
     }
 
-    const disablePastDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const disableFutureDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 4).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
-    const onReserve = (data) => {
-        console.log(data);
-    }
-
-    const onUpload = (data) => {
-        console.log(data);
-    }
-
     return (
         <div className="container">
             <div className="row ">
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ padding: "50px" }}>
                     <ReactCardFlip isFlipped={dateFlipped} flipDirection="vertical">
-                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
+                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }} className="shadow-lg" >
                             <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Reserve a Date</Card.Title>
-                                <Card.Subtitle>Reserved Date: {(reservedDate) ? <Badge bg="warning" text="dark">{reservedDate}</Badge> : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
+                                <Card.Subtitle>Reserved Date: {(ownerReservedDates) ? ownerReservedDates.map((dt) => <Badge bg="warning" text="dark">{dt}</Badge>) : <Badge bg="secondary">No Reservation</Badge>}</Card.Subtitle>
                                 <Card.Text>
                                     This is a longer card with supporting text below as a natural
                                     lead-in to additional content. This content is a little bit longer.
@@ -106,20 +72,28 @@ const RegisterNewVehicle = () => {
                                 <Button onClick={flipDate}>Click to Reserve a Date</Button>
                             </Card.Body>
                         </Card>
-                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
-                            <Card.Body>
-                                <Card.Title>Select a Date</Card.Title>
+                        <Card body border="info" className="shadow-lg" style={{ "paddingLeft": "0px", "paddingRight": "0px", backgroundColor: "#d2ebeb"}}>
+
+
+                            <div className='row '>
+                                <div className="col-10 align-self-center">
+                                    <Card.Title style={{  }}>Select a Date</Card.Title>
+                                </div>
+                                <div className='col text-end p-3'>
+                                    <CloseButton  onClick={flipDate} />
+                                </div>
+                            </div>
+
+
+                            <Card.Body className="text-center">
                                 <DateReservationComponent />
-                                <br></br>
-                                <Button onClick={flipDate}>Click to Cancel</Button>
                             </Card.Body>
                         </Card>
                     </ReactCardFlip>
                 </div>
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ padding: "50px" }}>
                     <ReactCardFlip isFlipped={subFlipped} flipDirection="vertical">
-                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
+                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }} className="shadow-lg" >
                             <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Submit Vehicle Details Form</Card.Title>
@@ -131,13 +105,16 @@ const RegisterNewVehicle = () => {
                                 <Button onClick={flipSub}>Click to Submit Form</Button>
                             </Card.Body>
                         </Card>
-                        <Card>
-                            <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
+                        <Card className="shadow-lg" >
+                            <Card.Img variant="top" src="/assets/images/upload.png" height="350" />
+                            <Card.ImgOverlay className="text-end">
+                                <CloseButton  onClick={flipSub} />
+                            </Card.ImgOverlay>
                             <Card.Body>
                                 <Card.Title>Upload Documents to Register your new Vehicle</Card.Title>
-                                <UploadComponent />
+                                <UploadComponent type={'Vehicle Registration'} />
                                 <br></br>
-                                <Button onClick={flipSub}>Click to flip</Button>
+                                
                             </Card.Body>
                         </Card>
                     </ReactCardFlip>

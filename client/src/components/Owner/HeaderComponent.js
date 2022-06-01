@@ -1,24 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
 import NotificationTable from "./NotificationComponent";
 import { useSelector, useDispatch } from 'react-redux';
-import { gotId, gotNic } from '../userSlice';
+import { Dialog } from 'primereact/dialog';
+import { Toast } from 'primereact/toast';
+import { useRef } from "react";
+import { vehRegDateResed } from "../statusSlice";
 
 
 const axios = require('axios').default;
 
 function Header() {
 
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    const dispatch = useDispatch();
+    const toast = useRef(null);
+
     const userData = JSON.parse(sessionStorage.getItem("userData"));
 
     const stored_fullName = useSelector(state => state.user.fullName);
     const stored_id = useSelector(state => state.user.id);
     const stored_nic = useSelector(state => state.user.nic);
+
+    const isVehRegDate = useSelector(state =>state.status.vehRegDateRes);
     
-    const user_id = (stored_id !== '')? stored_id : userData.id;
-    const nic = (stored_nic !== '')? stored_nic : userData.nic;
-    const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
+    
+    if (isVehRegDate) { 
+        toast.current.show({severity: 'success', summary: "Date successfully Reserved!" , life: 5000});
+        delay(5000);
+        dispatch(vehRegDateResed());  
+    }
+    
+    const user_id = userData.id;
+    const nic = userData.nic;
+    const fullName = userData.fullName;
 
     const [notificationOpen, setNotificationOpen] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
@@ -29,7 +45,7 @@ function Header() {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`/owner/unreadNotificationCount/${user_id}`, {
+        axios.get(`http://localhost:5000/owner/unreadNotificationCount/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,
@@ -52,11 +68,25 @@ function Header() {
             })
     }, []);
 
+    const [displayResponsive, setDisplayResponsive] = useState(false);
+
+    const dialogFuncMap = {
+        'displayResponsive': setDisplayResponsive
+    }
+    const onClick = (type) => {
+        dialogFuncMap[`${type}`](true);
+        setNotificationCount(0);
+    }
+
+    const onHide = (name) => {
+        dialogFuncMap[`${name}`](false);
+    }
     
 
     return (
         <div>
             <div className="">
+            <Toast ref={toast} />
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand href="/ownerDashboard/ownvehicles"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /></Navbar.Brand>
@@ -68,7 +98,7 @@ function Header() {
                             <LinkContainer to="/ownerDashboard/renewlicense"><Nav.Link ><span className="fa fa-id-card-o fa-lg"></span> Renew License </Nav.Link></LinkContainer>
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#" onClick={toggleNotif}><div className="fa fa-bell-o fa-lg">
+                            <Nav.Link href="#" onClick={() => onClick('displayResponsive')}><div className="fa fa-bell-o fa-lg">
                                 <span className="e-badge e-badge-danger e-badge-overlap e-badge-notification e-badge-circle" style={{ transform: "translateY(-10px) translateX(-9px)", position: "unset" }}>{notificationCount}</span>
                             </div></Nav.Link>
 
@@ -93,12 +123,16 @@ function Header() {
                 </div>
             </div>
             </div>
+            <Dialog header="Notifications" maximizable  visible={displayResponsive} onHide={() => onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} position="top-right" >
+                <NotificationTable />
+
+            </Dialog>
             <Modal show={notificationOpen} onHide={toggleNotif}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Notifications</Modal.Title>
+                    
                 </Modal.Header>
-                <NotificationTable />
-            </Modal>
+                
+            </Modal>      
         </div>
     );
 }

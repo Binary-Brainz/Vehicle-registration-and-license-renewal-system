@@ -18,7 +18,7 @@ router.get('/expiredVehicles/:id', auth.requireAuth, ownerController.expired_veh
 router.get('/vehicles', auth.requireAuth, ownerController.get_owner_vehicles);
 router.get('/unreadNotificationCount/:id', auth.requireAuth, ownerController.unread_notification_count);
 router.get('/reservedDates/:id', auth.requireAuth, ownerController.get_owner_reservedDates);
-router.get('/notifications', auth.requireAuth, ownerController.get_owner_notifications);
+router.get('/notifications/:id', auth.requireAuth, ownerController.get_owner_notifications);
 router.get('/requests', auth.requireAuth, ownerController.get_owner_requests);
 
 //edit officer profile

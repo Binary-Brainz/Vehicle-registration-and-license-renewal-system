@@ -10,6 +10,13 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
         return yyyy + "-" + mm + "-" + dd;
     };
 
+    const getDateString = () => {
+        const dd = String(vehicle.registeredDate.getDate()).padStart(2, "0");
+        const mm = String(vehicle.registeredDate.getMonth() + 1).padStart(2, "0"); //January is 0!
+        const yyyy = vehicle.registeredDate.getFullYear();
+        return yyyy + "-" + mm + "-" + dd;
+    };
+
     return (
         <div>
             {/* <Form.Group>
@@ -26,11 +33,11 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                     })}
                 />
             </Form.Group>
-            {errors.ownerName && errors.ownerName.type === "required" && <p className='errorMsg'>Owner's name is required!</p>}
-            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='errorMsg'>Please enter a valid name!</p>} */}
+            {errors.ownerName && errors.ownerName.type === "required" && <p className='text-danger'>Owner's name is required!</p>}
+            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='text-danger'>Please enter a valid name!</p>} */}
 
-            <Form.Group>
-                {/* <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label> */}
+            {/* <Form.Group>
+                <Form.Label htmlFor="ownerNIC">Owner NIC</Form.Label>
                 <Form.Control
                     type="hidden"
                     id="ownerNIC"
@@ -39,86 +46,90 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                     disabled={update ? update : disabled}
                     {...register("ownerNIC", {
                         required: true,
-                        minLength: 10,
-                        maxLength: 12
+                        validate: value => (/^[VX0-9]{10}$/i.test(value)) || (/^[0-9]{12}$/i.test(value))
                     })}
                 />
             </Form.Group>
-            {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='errorMsg'>Owner's NIC is required!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "minLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "maxLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='text-danger'>Owner's NIC is required!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "validate" && <p className='text-danger'>Owner's NIC invalid!</p>} */}
+            {!update && <div>
+                <div className="row">
+                    <div className="col-sm">
+                        <div>
 
-            <div className="row">
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label htmlFor="registerDate">Register Date</Form.Label>
-                        <Form.Control
-                            type="date"
-                            id="registerDate"
-                            name="registerDate"
-                            max={disableFutureDate()}
-                            defaultValue={vehicle.registeredDate}
-                            disabled={disabled}
-                            {...register("registeredDate", {
-                                required: true,
-                                validate: defaultValue => new Date(defaultValue) < new Date()
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.registerDate && <p className='errorMsg'>Valid Register Date is required!</p>}
+                        </div>
+                        <Form.Group>
+                            <Form.Label htmlFor="registerDate">Register Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                id="registerDate"
+                                name="registerDate"
+                                max={disableFutureDate()}
+                                defaultValue={vehicle.registeredDate}
+                                disabled={disabled}
+                                {...register("registeredDate", {
+                                    required: true,
+                                    validate: defaultValue => new Date(defaultValue) < new Date()
+                                })}
+                            />
+                            {errors.registerDate && <p className='text-danger'>Valid Register Date is required!</p>}
+                        </Form.Group>
+                    </div>
+
+                    <div className="col-sm">
+                        <Form.Group>
+                            <Form.Label htmlFor="manufacturedYear">Vehicle manufactured Year</Form.Label>
+                            <Form.Control
+                                type="text"
+                                id="manufacturedYear"
+                                name="manufacturedYear"
+                                defaultValue={vehicle.manufacturedYear}
+                                disabled={update ? update : disabled}
+                                {...register("manufacturedYear", {
+                                    required: true.valueOf,
+                                    pattern: { value: /^[0-9 ]*$/ }
+                                })}
+                            />
+                        </Form.Group>
+                        {errors.manufacturedYear && <p className='text-danger'>Vehicle Manufactured Year is required!</p>}
+                    </div>
                 </div>
 
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label htmlFor="manufacturedYear">Vehicle manufactured Year</Form.Label>
-                        <Form.Control
-                            type="text"
-                            id="manufacturedYear"
-                            name="manufacturedYear"
-                            defaultValue={vehicle.manufacturedYear}
-                            disabled={update ? update : disabled}
-                            {...register("manufacturedYear", {
-                                required: true.valueOf,
-                                pattern: { value: /^[0-9 ]*$/ }
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.manufacturedYear && <p className='errorMsg'>Vehicle Model is required!</p>}
-                </div>
-            </div>
+                <div className="row">
+                    <div className="col-sm">
+                        <Form.Group>
+                            <Form.Label>Vehicle Type</Form.Label>
+                            <br></br>
+                            <Form.Select name="type" defaultValue={vehicle.type} {...register("type", { validate: defaultValue => defaultValue !== 'default' })} disabled={update ? update : disabled}>
+                                <option value={"default"} disabled={disabled} >Choose an Option</option>
+                                <option value="1">Car</option>
+                                <option value="2">Van</option>
+                                <option value="3">Motor Bike</option>
+                            </Form.Select>
+                        </Form.Group>
+                        {errors.type && <p className='text-danger'>Vehicle Type is required!</p>}
 
-            <div className="row">
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label>Vehicle Type</Form.Label>
-                        <br></br>
-                        <Form.Select name="type" defaultValue={vehicle.type} {...register("type", { validate: defaultValue => defaultValue !== 'default' })} disabled={update ? update : disabled}>
-                            <option value={"default"} disabled={disabled} >Choose an Option</option>
-                            <option value="1">Car</option>
-                            <option value="2">Van</option>
-                            <option value="3">Motor Bike</option>
-                        </Form.Select>
-                    </Form.Group>
-                    {errors.type && <p className='errorMsg'>Vehicle Type is required!</p>}
+                    </div>
+                    <div className="col-sm">
+                        <Form.Group>
+                            <Form.Label htmlFor="regNo">Vehicle Registration Number</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="regNo"
+                                defaultValue={vehicle.regNo}
+                                placeholder={vehicle.regNo}
+                                {...register("regNo", {
+                                    required: true
+                                })}
+                                disabled={update ? update : disabled}
+                                onChange={(e) => { vehicle.regNo = e.target.value }}
 
+                            />
+                        </Form.Group>
+                        {errors.regNo && <p className='text-danger'>Vehicle Registration Number is required!</p>}
+                    </div>
                 </div>
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label htmlFor="regNo">Vehicle Registration Number</Form.Label>
-                        <Form.Control
-                            type="text"
-                            id="regNo"
-                            name="regNo"
-                            defaultValue={vehicle.regNo}
-                            disabled={update ? update : disabled}
-                            {...register("regNo", {
-                                required: true
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.regNo && <p className='errorMsg'>Vehicle Registration Number is required!</p>}
-                </div>
-            </div>
+            </div>}
 
             <div className="row">
                 <div className="col-sm">
@@ -135,7 +146,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.color && <p className='errorMsg'>Vehicle Color is required!</p>}
+                    {errors.color && <p className='text-danger'>Vehicle Color is required!</p>}
 
                 </div>
                 <div className="col-sm">
@@ -152,7 +163,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.weight && <p className='errorMsg'>Vehicle Weight is required!</p>}
+                    {errors.weight && <p className='text-danger'>Vehicle Weight is required!</p>}
 
                 </div>
             </div>
@@ -160,6 +171,22 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
             <div className="row">
                 <div className="col-sm">
                     <Form.Group>
+                        <Form.Label htmlFor="noOfDoors">Number of Doors</Form.Label>
+                        <Form.Control
+                            type="number"
+                            id="noOfDoors"
+                            name="noOfDoors"
+                            defaultValue={vehicle.noOfDoors}
+                            disabled={disabled}
+                            {...register("noOfDoors", {
+                                required: true
+                            })}
+                        />
+                    </Form.Group>
+                    {errors.noOfDoors && <p className='text-danger'>Number of door is required!</p>}
+                </div>
+                <div className="col-sm">
+                    {!update && <Form.Group>
                         <Form.Label htmlFor="model">Vehicle Model</Form.Label>
                         <Form.Control
                             type="text"
@@ -171,26 +198,9 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                                 required: true
                             })}
                         />
-                    </Form.Group>
-                    {errors.model && <p className='errorMsg'>Vehicle Model is required!</p>}
+                        {errors.model && <p className='text-danger'>Vehicle Model is required!</p>}
+                    </Form.Group>}
 
-                </div>
-
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label htmlFor="doors">Number of Doors</Form.Label>
-                        <Form.Control
-                            type="number"
-                            id="doors"
-                            name="doors"
-                            defaultValue={vehicle.noOfDoors}
-                            disabled={disabled}
-                            {...register("doors", {
-                                required: true
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.doors && <p className='errorMsg'>Number of door is required!</p>}
                 </div>
             </div>
 

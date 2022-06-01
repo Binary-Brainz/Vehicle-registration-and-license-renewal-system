@@ -5,14 +5,14 @@ import { useState } from 'react';
 import VehicleComponent from './VehicleComponent';
 import { Collapse } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import DateReservationComponent from './ReservationComponent';
 import UploadComponent from './UploadComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import ReserveDate from './ReserveDateComponent';
 
-const ViewVehicleComponent = ({vehicle}) => {
+const ViewVehicleComponent = ({ vehicle }) => {
 
-const user_id = useSelector(state => state.user.id);
+  const user_id = useSelector(state => state.user.id);
 
   const { register, formState: { errors } } = useForm();
 
@@ -34,7 +34,6 @@ const user_id = useSelector(state => state.user.id);
               id="ownerID"
               name="ownerID"
               value={user_id}
-            // where is this ID coming from?
             />
           </Form.Group>
           <VehicleComponent vehicle={vehicle} register={register} errors={errors} disabled={1} />
@@ -50,12 +49,12 @@ const user_id = useSelector(state => state.user.id);
         </Button>
         <Collapse in={openReservation}>
           <div >
-          <Modal.Header closeButton>
-                <Modal.Title>Reserve a Date</Modal.Title>
+            <Modal.Header>
+              <Modal.Title>Reserve a Date</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <DateReservationComponent/>
+              <ReserveDate />
             </Modal.Body>
 
           </div>
@@ -72,12 +71,12 @@ const user_id = useSelector(state => state.user.id);
         </Button>
         <Collapse in={openUpload}>
           <div >
-          <Modal.Header closeButton>
-                <Modal.Title>Upload Documents</Modal.Title>
+            <Modal.Header>
+              <Modal.Title>Upload Documents</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <UploadComponent/>
+                <UploadComponent type={'Update Vehicle'} regNo={vehicle.regNo}/>
             </Modal.Body>
 
           </div>

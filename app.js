@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const superuserRoutes = require('./routes/superuserRoutes');
@@ -20,10 +19,9 @@ app.use(express.json());
 const dbURI = process.env.DB_URI;
 
 // middleware & static files
-// app.use(express.static("public"))
 app.use(express.urlencoded({ extended: true }));
 
-// ?????
+// set static file path for productioin build
 if (process.env.NODE_ENV === 'production'){
 	app.use(express.static('client/build'));
 }

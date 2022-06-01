@@ -10,7 +10,7 @@ const OwnVehicles = () => {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
-    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
+    const user_id = storageUserData.id;
 
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
@@ -22,7 +22,7 @@ const OwnVehicles = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`/owner/dashboard/${user_id}`, {
+        axios.get(`http://localhost:5000/owner/dashboard/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

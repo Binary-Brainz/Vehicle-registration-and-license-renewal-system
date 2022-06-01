@@ -1,7 +1,6 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const SuperUser = require('../models/superuser');
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
 const Notification = require('../models/notification');
@@ -45,36 +44,11 @@ const register_post = async (req, res) => {
                     id: user._id
                 }
             });
-            
-            // try {
-                
-            //     let user = await Owner.findOne({nic});
-
-            //     let vehicles = await Vehicle.find({ownerNIC: user.nic});
-            //     let notifications = await Notification.find({receiverID: user._id})
-
-            //     let return_data = {};
-                
-            //     return_data['owner'] = user;
-            //     return_data['vehicles'] = vehicles;
-            //     return_data['notifications'] = notifications;
-
-            //     let token = auth.createToken(user._id);
-
-            //     res.json({
-            //         status: 'ok',
-            //         token: token,
-            //         data: user
-            //     });
-            // } 
-            // catch (err) {
-            //     console.log(err);
-            // }
         }
     })
 }
 
-//login - get all owner vehicles/notifications(optional)
+//login
 const login_post = async (req, res) => {
 
     const nic = req.body.nic;
@@ -93,7 +67,7 @@ const login_post = async (req, res) => {
                 let token = auth.createToken();
                 let fullName = user.firstName + " " + user.lastName;
 
-                res.json({
+                return_data = {
                     status: 'ok',
                     token: token,
                     data: {
@@ -101,30 +75,40 @@ const login_post = async (req, res) => {
                         id: user._id,
                         fullName: fullName
                     }
-                });
+                }
 
-                // try {
-                    
-                //     let vehicles = await Vehicle.find({ownerNIC: nic});
-                //     let notifications = await Notification.find({receiverID: user._id})
+                let dt = new Date();
+                let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+                const today = new Date(dtstr);
 
-                //     let return_data = {};
-                    
-                //     return_data['owner'] = user;
-                //     return_data['vehicles'] = vehicles;
-                //     return_data['notifications'] = notifications;
+                const reservedDateList = await Workday.find({day: today, owners: { $all: [user._id] }});
+                const todayNotification = await Notification.findOne({receiverID: user._id, reservedDate: today});
 
-                //     let token = auth.createToken(user._id);
+                if(reservedDateList.length > 0 && todayNotification === null){
 
-                //     res.json({
-                //         status: 'ok',
-                //         token: token,
-                //         data: return_data
-                //     });
-                // } 
-                // catch (err) {
-                //     console.log(err);
-                // }
+                    let notification_data = {
+                        type: 'Date Reservation',
+                        regNo: '',
+                        state: 'pending',
+                        reservedDate: today,
+                        message: `Today(${dtstr}) is reserved for you!`,
+                        receiverID: user._id,
+                    };
+
+                    let notification = new Notification(notification_data);
+                    notification.save((err) => {
+
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            res.json(return_data);
+                        }
+                    });
+                }
+                else{
+                    res.json(return_data);
+                }
             }
             else{
                 res.json({
@@ -141,7 +125,7 @@ const login_post = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error.message);
+        console.log(error);
     }
 }
 
@@ -157,28 +141,6 @@ const get_dashboard = async (req, res) => {
         if(user !== null){
 
             let vehicles = await Vehicle.find({ownerNIC: user.nic});
-
-            // let return_vehicles = [];
-
-            // for(let i = 0; i < vehicles.length; i++){
-
-            //     let sample_vehicle = {};
-
-            //     for(const key in vehicles[i]._doc){
-
-            //         if(key === 'registeredDate'){
-
-            //             let dt = new Date(vehicles[i]._doc[key]);
-            //             let registeredDate = dt.getFullYear().toString() + '/' + dt.getMonth().toString() + '/' + dt.getDate().toString();
-
-            //             sample_vehicle[key] = registeredDate;
-            //         }
-            //         else{
-            //             sample_vehicle[key] = vehicles[i]._doc[key];
-            //         }
-            //     }
-            //     return_vehicles.push(sample_vehicle);
-            // }
 
             for(let i = 0; i < vehicles.length; i++){
 
@@ -219,33 +181,6 @@ const expired_vehicles = async (req, res) => {
         if(user !== null){
 
             let expired_vehicles = await Vehicle.find({ownerNIC: user.nic, isExpired: true});
-
-            // let expired_vehicles = [];
-            // for(let i = 0; i < vehicles.length; i++){
-
-            //     let exDate = new Date(vehicles[i].expireDate);
-
-            //     if(Date.now() >= exDate){
-
-            //         // let sample_vehicle = {};
-
-            //         // for(const key in vehicles[i]){
-
-            //         //     if(key === 'registeredDate'){
-
-            //         //         let registeredDate = regDate.getFullYear().toString() + '.' + regDate.getMonth().toString() + '.' + regDate.getDate().toString();
-
-            //         //         sample_vehicle[key] = registeredDate;
-            //         //     }
-            //         //     else{
-            //         //         sample_vehicle[key] = vehicles[i][key];
-            //         //     }
-            //         // }
-            //         // expired_vehicles.push(sample_vehicle);
-
-            //         expired_vehicles.push(vehicles[i]);
-            //     }
-            // }
 
             res.json({
                 status: 'ok',
@@ -318,11 +253,18 @@ const get_owner_reservedDates = async (req, res) => {
 
     try{
 
+        let today = new Date();
         let workdays = await Workday.find({ owners: { $all: [id] } });
         
         let ownerReservedDates = []
         for(let i = 0; i < workdays.length; i++){
-            ownerReservedDates.push(workdays[i].day);
+
+            let dt = new Date(workdays[i].day);
+
+            if(dt > today){
+                let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+                ownerReservedDates.push(dtstr);
+            }
         }
 
         res.json({
@@ -338,15 +280,38 @@ const get_owner_reservedDates = async (req, res) => {
 //get all the notifications of the owner
 const get_owner_notifications = async (req, res) => {
 
-    let id = req.body.id;
+    let id = req.params.id;
 
     try{
 
         let notifications = await Notification.find({receiverID: id});
 
+        let return_notifications = [];
+
+        for(let i = 0; i < notifications.length; i++){
+
+            let sample_notification = {};
+
+            for(const key in notifications[i]._doc){
+
+                if(key === 'createdAt'){
+
+                    let dt = new Date(notifications[i]._doc[key]);
+                    let createdAtDate = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+
+                    sample_notification[key] = createdAtDate;
+                }
+                else{
+                    sample_notification[key] = notifications[i]._doc[key];
+                }
+            }
+            return_notifications.push(sample_notification);
+        }
+        await Notification.updateMany({receiverID: id}, {isViewed: true});
+
         res.json({
             status: 'ok',
-            data: {notifications: notifications}
+            notifications: return_notifications
         });
     }
     catch(err){
@@ -518,72 +483,82 @@ const reserve_post = async (req, res) => {
 
     try{
         const dateObj = new Date(date);
+        const today = new Date();
 
-        const newWorkday = await Workday.findOne({day: dateObj});
+        if(dateObj <= today){
+            res.json({
+                status: 'error',
+                error: 'Cannot reserve today or past dates!'
+            });
+        }
+        else{
 
-        if(newWorkday !== null){
+            const newWorkday = await Workday.findOne({day: dateObj});
 
-            const ownersList = newWorkday.owners;
+            if(newWorkday !== null){
 
-            if(ownersList.length < 10){
+                const ownersList = newWorkday.owners;
 
-                if(ownersList.includes(id)){
-                    res.json({
-                        status: 'error',
-                        error: 'You have already reserved this date!'
-                    });
+                if(ownersList.length < 10){
+
+                    if(ownersList.includes(id)){
+                        res.json({
+                            status: 'error',
+                            error: 'You have already reserved this date!'
+                        });
+                    }
+                    else{
+
+                        Workday.findByIdAndUpdate(mongoose.Types.ObjectId(newWorkday._id),{$push: {owners:id}},function(err,response){
+
+                            if(err){
+                                res.json({
+                                    status: 'error',
+                                    error: err,
+                                });
+                            }
+                            else{
+                                res.json({
+                                    status: 'ok',
+                                    workday: dateObj
+                                });
+                            }
+                        });
+                    }
                 }
                 else{
 
-                    Workday.findByIdAndUpdate(mongoose.Types.ObjectId(newWorkday._id),{$push: {owners:id}},function(err,response){
-
-                        if(err){
-                            res.json({
-                                status: 'error',
-                                error: err,
-                            });
-                        }
-                        else{
-                            res.json({
-                                status: 'ok',
-                                workday: dateObj
-                            });
-                        }
+                    res.json({
+                        status: 'error',
+                        error: 'Requested date is not available!'
                     });
                 }
             }
             else{
 
-                res.json({
-                    status: 'error',
-                    error: 'Requested date is not available!'
+                let newWorkday1 = new Workday({
+
+                    day: dateObj,
+                    owners: [id]
+
                 });
+                newWorkday1.save((err)=>{
+
+                    if(err){
+                        res.json({
+                            status: 'error',
+                            error: err,
+                        });
+                    }
+                    else{
+                        res.json({
+                            status: 'ok',
+                            workday: dateObj
+                        });
+                    }
+                })
+
             }
-        }
-        else{
-
-            let newWorkday1 = new Workday({
-
-                day: dateObj,
-                owners: [id]
-
-            });
-            newWorkday1.save((err)=>{
-
-                if(err){
-                    res.json({
-                        status: 'error',
-                        error: err,
-                    });
-                }
-                else{
-                    res.json({
-                        status: 'ok',
-                        workday: dateObj
-                    });
-                }
-            })
-
         }
     }
     catch (err){

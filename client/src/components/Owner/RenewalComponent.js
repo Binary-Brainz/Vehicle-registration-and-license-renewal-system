@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
 
-const RenewalComponent = () => {
+const RenewalComponent = (props) => {
 
     const id = useSelector(state => state.user.id);
     const fullName = useSelector(state => state.user.fullName);
@@ -21,6 +21,7 @@ const RenewalComponent = () => {
         formData.append("ownerID", id);
         formData.append("ownerName", fullName);
         //add regNo
+        formData.append('regNo', props.regNo);
 
         for(let i =0; i < data.receipt.length; i++) {
             formData.append("documents", data.receipt[i]);
@@ -29,7 +30,7 @@ const RenewalComponent = () => {
             formData.append("documents", data.ecoTest[i]);
         }
 
-        let response = await fetch("/owner/request", {
+        let response = await fetch("http://localhost:5000/owner/request", {
             method: 'POST',
             body: formData,
         })

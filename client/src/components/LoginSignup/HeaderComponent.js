@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     
@@ -8,6 +8,7 @@ import {
 } from 'reactstrap';
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Control, Errors, LocalForm } from 'react-redux-form';
+import { Toast } from 'primereact/toast';
 import VehicleOwnerMain from "../VehicleOwnerMainComponent";
 import AdminMainComponent from "../AdminMainComponent";
 
@@ -21,7 +22,7 @@ const validRePass = (val1) => (val2) => val1 === val2;
 const validNic = (val) => (/^[VX0-9]{10}$/i.test(val)) || (/^[0-9]{12}$/i.test(val));
 
 async function signUpUser(data) {
-    return fetch('/owner/register', {
+    return fetch('http://localhost:5000/owner/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -32,7 +33,7 @@ async function signUpUser(data) {
 }
 
 async function loginOwner(data) {
-    return fetch('/owner/login', {
+    return fetch('http://localhost:5000/owner/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -44,7 +45,7 @@ async function loginOwner(data) {
 
 async function loginOfficer(data) {
 
-    return fetch('/officer/login', {
+    return fetch('http://localhost:5000/officer/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -63,6 +64,7 @@ function Header(props) {
     const [loginError, setLoginError] = useState('');
     const [signUpError, setSignUpError] = useState('');
     const [value, setValue] = useState('');
+    const toast = useRef(null);
 
     const handleChange = (event) => {
         setValue(event.target.value );
@@ -78,14 +80,15 @@ function Header(props) {
 
     const handleSignup = async (values) => {
 
-        toggleSignupModal();
 
         const response = await signUpUser(values);
 
         if(response.status === 'error'){
             setSignUpError(response.error );
+            toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid signup!", life: 5000});
         }
         else{
+            toggleSignupModal();
 
             sessionStorage.setItem('token', JSON.stringify(response.token));
             props.setAuthState(response);
@@ -96,7 +99,6 @@ function Header(props) {
 
     const handleLogin = async (event) => {
 
-        toggleLoginModal();
 
         let response;
         let type;
@@ -107,7 +109,7 @@ function Header(props) {
             type = 'owner';
 
             response = await loginOwner({
-                nic: event.nic,
+                nic: event.nic.toLowerCase(),
                 password: event.password
             });
         }
@@ -116,15 +118,17 @@ function Header(props) {
             type = 'officer';
 
             response = await loginOfficer({
-                nic: nic_arr[0].trim(),
+                nic: nic_arr[0].trim().toLowerCase(),
                 password: event.password
             });
         }
 
         if(response.status === 'error'){
             setLoginError(response.error );
+            toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid login details!", life: 5000});
         }
         else{
+            toggleLoginModal();
 
             sessionStorage.setItem('userData', JSON.stringify(response.data));
             sessionStorage.setItem('token', JSON.stringify(response.token));
@@ -134,7 +138,6 @@ function Header(props) {
                 navigate('/ownerDashboard', { replace: true });
             }
             else{
-                console.log("in officer");
                 navigate('/adminDashboard', { replace: true });
             }
         }
@@ -142,6 +145,7 @@ function Header(props) {
     
     return (
         <React.Fragment>
+            <Toast ref={toast} position="top-center"/>
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand href="/home"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licening System</Navbar.Brand>

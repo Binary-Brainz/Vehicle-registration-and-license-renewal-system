@@ -4,7 +4,6 @@ mongoose.Promise = global.Promise;
 const archiver = require('archiver');
 const path = require('path');
 
-const SuperUser = require('../models/superuser');
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
 const Notification = require('../models/notification');
@@ -14,7 +13,6 @@ const Request = require('../models/request');
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 const pdfGenerator = require('../middleware/pdfGenerator');
-const { type } = require('express/lib/response');
 
 //login - get all requests(requests by officerID)
 const login_post = async (req, res) => {
@@ -41,30 +39,10 @@ const login_post = async (req, res) => {
                     data: {
                         nic: nic,
                         id: user._id,
-                        fullName: fullName
+                        fullName: fullName,
+                        officerType: user.type
                     }
                 });
-
-                // try {
-                    
-                //     let requests = await Request.find({officerID: mongoose.Types.ObjectId(user._id)});
-
-                //     let return_data = {};
-                    
-                //     return_data['officer'] = user;
-                //     return_data['requests'] = requests;
-                    
-                //     let token = auth.createToken(user._id);
-
-                //     res.json({
-                //         status: 'ok',
-                //         token: token,
-                //         data: return_data
-                //     });
-                // } 
-                // catch (err) {
-                //     console.log(err);
-                // }
             }
             else{
                 res.json({
@@ -107,6 +85,7 @@ const get_dashboard = async (req, res) => {
             } 
 
             let requests = await Request.find({officerID: id, state: { $in: state_check}});
+            let vehicles = await Vehicle.find();
 
             let return_requests = [];
 
@@ -127,6 +106,17 @@ const get_dashboard = async (req, res) => {
                         sample_request[key] = requests[i]._doc[key];
                     }
                 }
+
+                if(requests[i]._doc.regNo){
+
+                    for(let j = 0; j < vehicles.length; j++){
+
+                        if(vehicles[j].regNo === requests[i]._doc.regNo){
+                            sample_request['vehicle'] = vehicles[j];
+                        }
+                    }
+                }
+
                 return_requests.push(sample_request);
             }
 
@@ -273,14 +263,22 @@ const edit_officer = async (req, res) => {
 const add_vehicle = async (req, res) => {
 
     let data = req.body;
-    let ownerNIC = data.ownerNIC;
+
+    let ownerID = data.ownerID;
+    delete data.ownerID
 
     let requestID = data.requestID;
     delete data.requestID
 
-    const owner = await Owner.findOne({nic: ownerNIC})
+    const owner = await Owner.findById(mongoose.Types.ObjectId(ownerID));
 
     if(owner !== null){
+
+        data['ownerNIC'] = owner.nic;
+
+        let expireDate = new Date(data.registeredDate)
+        expireDate.setFullYear(expireDate.getFullYear() + 1);
+        data['expireDate'] = expireDate;
 
         const vehicle = new Vehicle(data);
 
@@ -297,13 +295,15 @@ const add_vehicle = async (req, res) => {
 
                 try {
 
-                    let request = await Request.findByIdAndUpdate(requestID, {status: 'approved'});
+                    let request = await Request.findByIdAndUpdate(requestID, {state: 'approved', regNo: data.regNo});
                 
                     let doc_name = pdfGenerator.makePdf(data);
                     let files = [doc_name];
 
                     let notification_data = {
                         type: request.type,
+                        regNo: vehicle.regNo,
+                        state: 'approved',
                         message: `A new vehicle is registered under registration No. ${vehicle.regNo}`,
                         receiverID: owner._id,
                         requestID: requestID,
@@ -317,14 +317,14 @@ const add_vehicle = async (req, res) => {
 
                             res.json({
                                 status: 'error',
-                                error: err
+                                error: err.message
                             })
                         }
                         else{
 
                             res.json({
                                 status: 'ok',
-                                vehicle: vehicle
+                                message: `A new vehicle is registered under registration No. ${vehicle.regNo}`
                             });
                         }
                     })
@@ -348,7 +348,7 @@ const add_vehicle = async (req, res) => {
 const update_vehicle = async (req, res) => {
 
     let data = req.body;
-    let vehicleID = req.params.id;
+    let regNo = req.body.regNo;
 
     let requestID = data.requestID;
     delete data.requestID
@@ -365,7 +365,7 @@ const update_vehicle = async (req, res) => {
 
         if(Object.keys(new_data).length > 0){
         
-            Vehicle.findOneAndUpdate({_id: mongoose.Types.ObjectId(vehicleID)}, data, {new: true}, async (err, updated_vehicle) => {
+            Vehicle.findOneAndUpdate({regNo: regNo}, new_data, {new: true}, async (err, updated_vehicle) => {
     
                 if (err){
                     res.json({
@@ -388,13 +388,15 @@ const update_vehicle = async (req, res) => {
 
                         if(owner !== null){
 
-                            let request = await Request.findByIdAndUpdate(requestID, {status: 'approved'});
+                            let request = await Request.findByIdAndUpdate(requestID, {state: 'approved'});
                         
                             let doc_name = pdfGenerator.makePdf(updated_vehicle);
                             let files = [doc_name];
         
                             let notification_data = {
                                 type: request.type,
+                                regNo: updated_vehicle.regNo,
+                                state: 'approved',
                                 message: `${request.type} - registration No. ${updated_vehicle.regNo}`,
                                 receiverID: owner._id,
                                 requestID: requestID,
@@ -408,14 +410,14 @@ const update_vehicle = async (req, res) => {
         
                                     res.json({
                                         status: 'error',
-                                        error: err
+                                        error: err.message
                                     })
                                 }
                                 else{
         
                                     res.json({
                                         status: 'ok',
-                                        vehicle: updated_vehicle
+                                        message: `The vehicle ${updated_vehicle.regNo} is successfully updated!`
                                     });
                                 }
                             })
@@ -453,9 +455,13 @@ const download_documents = async (req, res) => {
     
     try {
 
-        let request_data = await Request.findByIdAndUpdate(mongoose.Types.ObjectId(request_id), {status: 'pending'}, {new: true});
+        let request_data = await Request.findById(mongoose.Types.ObjectId(request_id));
         
         if(request_data){
+
+            if(request_data.state === 'new'){
+                await Request.findByIdAndUpdate(mongoose.Types.ObjectId(request_id), {state: 'pending'});
+            }
 
             let fileNames = request_data.files;
             console.log(fileNames);
@@ -502,10 +508,10 @@ const download_documents = async (req, res) => {
 //reject request
 const reject_request = async (req, res) => {
 
-    let requestID = req.params.requestID;
+    let requestID = req.body.requestID;
     let reason = req.body.reason;
         
-    Request.findOneAndUpdate({_id: mongoose.Types.ObjectId(requestID)}, {status: 'rejected'}, {new: true}, async (err, request) => {
+    Request.findOneAndUpdate({_id: mongoose.Types.ObjectId(requestID)}, {state: 'rejected'}, {new: true}, async (err, request) => {
 
         if(err){
 
@@ -515,12 +521,27 @@ const reject_request = async (req, res) => {
             })
         }
         else{
-            
-            let notification_data = {
-                type: request.type,
-                message: `Your request for ${request.type} has rejected - ${reason}`,
-                receiverID: request.ownerID,
-                requestID: request._id,
+
+            let notification_data;
+
+            if(request.type === 'Vehicle Registration'){
+                notification_data = {
+                    type: request.type,
+                    state: 'rejected',
+                    message: `Your request for ${request.type} has rejected - ${reason}`,
+                    receiverID: request.ownerID,
+                    requestID: request._id,
+                }
+            }
+            else{
+                notification_data = {
+                    type: request.type,
+                    regNo: request.regNo,
+                    state: 'rejected',
+                    message: `Your request for ${request.type} of ${request.regNo} has rejected - ${reason}`,
+                    receiverID: request.ownerID,
+                    requestID: request._id,
+                }
             }
 
             let notification = new Notification(notification_data);
@@ -531,13 +552,14 @@ const reject_request = async (req, res) => {
 
                     res.json({
                         status: 'error',
-                        error: err
+                        error: err.message
                     })
                 }
                 else{
 
                     res.json({
                         status: 'ok',
+                        message: `The request from ${request.ownerName} is rejected!`
                     });
                 }
             })
@@ -556,8 +578,3 @@ module.exports = {
     reject_request,
     download_documents,
 }
-
-//###optional
-// get one vehicle
-// get one request
-// get vehicles after any vehicle change

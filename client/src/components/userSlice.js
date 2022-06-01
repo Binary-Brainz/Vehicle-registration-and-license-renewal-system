@@ -16,7 +16,7 @@ const userSlice = createSlice({
       state.id = action.payload
     },
     gotNic: (state, action) => {
-      state.nic += action.payload
+      state.nic = action.payload
     }
   }
 })
