@@ -5,27 +5,42 @@ import { useState } from 'react';
 import VehicleComponent from '../Owner/VehicleComponent';
 import Form from 'react-bootstrap/Form';
 
-const UpdateVehicle = () => {
-  const onSubmit = (data) => {
-    console.log(data);
+async function updateVehicle(data) {
+
+    const token = sessionStorage.getItem('token');
+
+    return fetch('http://localhost:5000/officer/updateVehicle', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: token,
+        },
+        body: JSON.stringify(data)
+    })
+        .then(data => data.json())
+}
+
+const UpdateVehicle = (props) => {
+
+  const onSubmit = async (data) => {
+
+    data['regNo'] = vehicle.regNo;
+    data['requestID'] = props.reqId;
+    
     setVehicle(data);
+
+    let response = await updateVehicle(data);
+    if(response.status === "ok"){
+        console.log(response)
+    }
+    else{
+        console.log(response.error);
+    }
   }
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const [vehicle, setVehicle] = useState(
-    {
-      ownerName: "Zafra",
-      ownerNIC: "19997654321",
-      registeredDate: "2022-01-31",
-      type: "1",
-      regNo: "CAZ-9876",
-      model: "Toyota Axio",
-      color: "#ffffff",
-      weight: 4000,
-      doors: 4
-    }
-  );
+  const [vehicle, setVehicle] = useState(props.vehicle);
 
   return (
     <div>

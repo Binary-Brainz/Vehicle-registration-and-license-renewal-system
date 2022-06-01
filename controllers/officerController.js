@@ -85,6 +85,7 @@ const get_dashboard = async (req, res) => {
             } 
 
             let requests = await Request.find({officerID: id, state: { $in: state_check}});
+            let vehicles = await Vehicle.find();
 
             let return_requests = [];
 
@@ -105,6 +106,17 @@ const get_dashboard = async (req, res) => {
                         sample_request[key] = requests[i]._doc[key];
                     }
                 }
+
+                if(requests[i]._doc.regNo){
+
+                    for(let j = 0; j < vehicles.length; j++){
+
+                        if(vehicles[j].regNo === requests[i]._doc.regNo){
+                            sample_request['vehicle'] = vehicles[j];
+                        }
+                    }
+                }
+
                 return_requests.push(sample_request);
             }
 
@@ -353,7 +365,7 @@ const update_vehicle = async (req, res) => {
 
         if(Object.keys(new_data).length > 0){
         
-            Vehicle.findOneAndUpdate({regNo: regNo}, data, {new: true}, async (err, updated_vehicle) => {
+            Vehicle.findOneAndUpdate({regNo: regNo}, new_data, {new: true}, async (err, updated_vehicle) => {
     
                 if (err){
                     res.json({

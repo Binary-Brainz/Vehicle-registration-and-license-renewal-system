@@ -23,10 +23,10 @@ router.post('/editProfile', auth.requireAuth, officerController.edit_officer);
 router.post('/addVehicle', auth.requireAuth, officerController.add_vehicle);
 
 //update vehicle details
-router.post('/updateVehicle/:id', auth.requireAuth, officerController.update_vehicle);
+router.post('/updateVehicle', auth.requireAuth, officerController.update_vehicle);
 
 //renew liscence
-router.post('/renewLicense/:id', auth.requireAuth, officerController.update_vehicle);
+router.post('/renewLicense', auth.requireAuth, officerController.update_vehicle);
 
 //reject request
 router.post('/reject', officerController.reject_request);

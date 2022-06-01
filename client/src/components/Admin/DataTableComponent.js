@@ -28,6 +28,7 @@ const DataTable = (props) => {
     const [reqId, setReqId] = useState('');
     const [ownerID, setOwnerId] = useState('');
     const [requests, setRequests] = useState([]);
+    const [vehicle, setVehicle] = useState({});
 
     const [openRegistration, setOpenRegistration] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
@@ -77,12 +78,13 @@ const DataTable = (props) => {
     const dialogFuncMap = {
         'displayResponsive': setDisplayResponsive
     }
-    const onClick = (type, name, regNo, reqId, ownerID) => {
+    const onClick = (type, name, regNo, reqId, ownerID, vehicle) => {
         dialogFuncMap[`${type}`](true);
         setname(name);
         setRegNo(regNo);
         setReqId(reqId);
         setOwnerId(ownerID);
+        setVehicle(vehicle);
     }
 
     const onHide = (name) => {
@@ -100,7 +102,7 @@ const DataTable = (props) => {
 
                     </div>
                     <div className="product-list-action">
-                        <Button label="Show" icon="pi pi-external-link" onClick={() => onClick('displayResponsive', request.ownerName, request.regNo, request._id, request.ownerID)} className="p-button-info p-button-sm p-button-rounded" />
+                        <Button label="Show" icon="pi pi-external-link" onClick={() => onClick('displayResponsive', request.ownerName, request.regNo, request._id, request.ownerID, request.vehicle)} className="p-button-info p-button-sm p-button-rounded" />
                         <div className="product-badge">{request.createdAt}</div>
                     </div>
                 </div>
@@ -185,7 +187,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <UpdateVehicle ownerID={ownerID} reqId={reqId} regNo={regNo}/>
+                                    <UpdateVehicle ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle}/>
                                 </Modal.Body>
                             </div>
                         </Collapse>
