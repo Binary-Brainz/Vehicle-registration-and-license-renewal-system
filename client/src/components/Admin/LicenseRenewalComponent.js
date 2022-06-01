@@ -3,7 +3,23 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 
+async function renewLicense(data) {
+
+    const token = sessionStorage.getItem('token');
+
+    return fetch('http://localhost:5000/officer/renewLicense', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        token: token,
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
+
 const LicenseRenewalOfficer = () => {
+
     const onSubmit = (data) => {
         console.log(data);
     }

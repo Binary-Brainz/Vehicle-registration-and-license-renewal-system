@@ -336,7 +336,7 @@ const add_vehicle = async (req, res) => {
 const update_vehicle = async (req, res) => {
 
     let data = req.body;
-    let vehicleID = req.params.id;
+    let regNo = req.body.regNo;
 
     let requestID = data.requestID;
     delete data.requestID
@@ -353,7 +353,7 @@ const update_vehicle = async (req, res) => {
 
         if(Object.keys(new_data).length > 0){
         
-            Vehicle.findOneAndUpdate({_id: mongoose.Types.ObjectId(vehicleID)}, data, {new: true}, async (err, updated_vehicle) => {
+            Vehicle.findOneAndUpdate({regNo: regNo}, data, {new: true}, async (err, updated_vehicle) => {
     
                 if (err){
                     res.json({
