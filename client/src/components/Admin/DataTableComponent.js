@@ -127,7 +127,7 @@ const DataTable = (props) => {
             case "Update Vehicle":
                 setOpenUpdate(!openUpdate);
                 break;
-            case "Renew License":
+            case "License Renewal":
                 setOpenRenewal(!openRenewal);
                 break;
         }
