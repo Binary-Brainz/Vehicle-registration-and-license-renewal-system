@@ -17,10 +17,18 @@ const LicenseRenewalOfficer = () => {
         const yyyy = today.getFullYear();
         return yyyy + "-" + mm + "-" + dd;
     };
+    const disablePastDate = () => {
+        const today = new Date();
+        const dd = String(today.getDate() + 1).padStart(2, "0");
+        const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+        const yyyy = today.getFullYear();
+        return yyyy + "-" + mm + "-" + dd;
+    };
+
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group>
+            {/* <Form.Group>
                 <Form.Label htmlFor="ownerName">Owner Name</Form.Label>
                 <Form.Control
                     type="text"
@@ -32,8 +40,8 @@ const LicenseRenewalOfficer = () => {
                     })}
                 />
             </Form.Group>
-            {errors.ownerName && errors.ownerName.type === "required" && <p className='errorMsg'>Owner Name is required!</p>}
-            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='errorMsg'>Please enter a valid name!</p>}
+            {errors.ownerName && errors.ownerName.type === "required" && <p className='text-danger'>Owner Name is required!</p>}
+            {errors.ownerName && errors.ownerName.type === "pattern" && <p className='text-danger'>Please enter a valid name!</p>}
 
 
             <Form.Group>
@@ -49,9 +57,9 @@ const LicenseRenewalOfficer = () => {
                     })}
                 />
             </Form.Group>
-            {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='errorMsg'>Owner's NIC is required!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "minLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
-            {errors.ownerNIC && errors.ownerNIC.type === "maxLength" && <p className='errorMsg'>Owner's NIC invalid!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='text-danger'>Owner's NIC is required!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "minLength" && <p className='text-danger'>Owner's NIC invalid!</p>}
+            {errors.ownerNIC && errors.ownerNIC.type === "maxLength" && <p className='text-danger'>Owner's NIC invalid!</p>} */}
 
             <div className="row">
                 <div className="col-sm">
@@ -66,7 +74,7 @@ const LicenseRenewalOfficer = () => {
                             })}
                         />
                     </Form.Group>
-                    {errors.regNo && <p className='errorMsg'>Vehicle Registration Number is required!</p>}
+                    {errors.regNo && <p className='text-danger'>Vehicle Registration Number is required!</p>}
                 </div>
 
                 <div className="col-sm">
@@ -81,7 +89,7 @@ const LicenseRenewalOfficer = () => {
                             })}
                         />
                     </Form.Group>
-                    {errors.weight && <p className='errorMsg'>Vehicle Weight is required!</p>}
+                    {errors.weight && <p className='text-danger'>Vehicle Weight is required!</p>}
 
                 </div>
             </div>
@@ -99,7 +107,7 @@ const LicenseRenewalOfficer = () => {
                             })}
                         />
                     </Form.Group>
-                    {errors.paidAmount && <p className='errorMsg'>Amount Paid is required!</p>}
+                    {errors.paidAmount && <p className='text-danger'>Amount Paid is required!</p>}
                 </div>
 
                 <div className="col-sm">
@@ -114,7 +122,7 @@ const LicenseRenewalOfficer = () => {
                             })}
                         />
                     </Form.Group>
-                    {errors.nextFee && <p className='errorMsg'>Fee for next year is required!</p>}
+                    {errors.nextFee && <p className='text-danger'>Fee for next year is required!</p>}
 
                 </div>
             </div>
@@ -128,18 +136,18 @@ const LicenseRenewalOfficer = () => {
                         })}
                         />
                     </Form.Group>
-                    {errors.renewalDate && <p className='errorMsg'>Please enter a valid renewal date!</p>}
+                    {errors.renewalDate && <p className='text-danger'>Please enter a valid renewal date!</p>}
                 </div>
 
                 <div className="col-sm">
                     <Form.Group>
                         <Form.Label>Expiration date</Form.Label>
-                        <Form.Control type="date" name='expirationDate' max={disableFutureDate()} {...register("expirationDate", {
+                        <Form.Control type="date" name='expirationDate' min={disablePastDate()} {...register("expirationDate", {
                             required: true
                         })}
                         />
                     </Form.Group>
-                    {errors.expirationDate && <p className='errorMsg'>Please enter a valid expiration date!</p>}
+                    {errors.expirationDate && <p className='text-danger'>Please enter a valid expiration date!</p>}
                 </div>
             </div>
             <br></br>

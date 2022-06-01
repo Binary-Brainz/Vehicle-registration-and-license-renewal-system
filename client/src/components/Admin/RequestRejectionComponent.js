@@ -54,7 +54,7 @@ const RequestRejection = (props) => {
                     })}>
                 </textarea>
             </Form.Group>
-            {errors.reason && <p className='errorMsg'>Reason is required!</p>}
+            {errors.reason && <p className='text-danger'>Reason is required!</p>}
             <br></br>
             <Button variant="primary" type="submit">
                 Submit
