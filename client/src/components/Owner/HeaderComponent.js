@@ -13,6 +13,13 @@ const axios = require('axios').default;
 
 function Header() {
 
+    const token = sessionStorage.getItem('token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
+
     const delay = ms => new Promise(res => setTimeout(res, ms));
     const dispatch = useDispatch();
     const toast = useRef(null);
@@ -43,8 +50,6 @@ function Header() {
 
     useEffect(() => {
 
-        const token = sessionStorage.getItem('token');
-
         axios.get(`http://localhost:5000/owner/unreadNotificationCount/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -58,6 +63,10 @@ function Header() {
 
                 if(status === 'ok'){
                     setNotificationCount(notificationCount)
+                }
+                else if(status === 'auth-error'){
+                    sessionStorage.clear();
+                    document.location = '/';
                 }
                 else{
                     console.log(response.error);

@@ -13,11 +13,11 @@ router.post('/register', ownerController.register_post);
 router.post('/login', ownerController.login_post);
 
 //get owner ralated data
-router.get('/dashboard/:id', auth.requireAuth, ownerController.get_dashboard);
-router.get('/expiredVehicles/:id', auth.requireAuth, ownerController.expired_vehicles);
+router.get('/dashboard/:id', auth.requireRouteAuth, ownerController.get_dashboard);
+router.get('/expiredVehicles/:id', auth.requireRouteAuth, ownerController.expired_vehicles);
 router.get('/vehicles', auth.requireAuth, ownerController.get_owner_vehicles);
-router.get('/unreadNotificationCount/:id', auth.requireAuth, ownerController.unread_notification_count);
-router.get('/reservedDates/:id', auth.requireAuth, ownerController.get_owner_reservedDates);
+router.get('/unreadNotificationCount/:id', auth.requireRouteAuth, ownerController.unread_notification_count);
+router.get('/reservedDates/:id', auth.requireRouteAuth, ownerController.get_owner_reservedDates);
 router.get('/notifications/:id', auth.requireAuth, ownerController.get_owner_notifications);
 router.get('/requests', auth.requireAuth, ownerController.get_owner_requests);
 

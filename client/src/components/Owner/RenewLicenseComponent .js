@@ -8,8 +8,14 @@ import { Toast } from 'primereact/toast';
 
 const axios = require('axios').default;
 
-
 function RenewLicense(props) {
+
+    const token = sessionStorage.getItem('token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
@@ -23,8 +29,6 @@ function RenewLicense(props) {
     const toast = useRef(null);
 
     useEffect(() => {
-
-        const token = sessionStorage.getItem('token');
 
         axios.get(`http://localhost:5000/owner/expiredVehicles/${user_id}`, {
             headers: {
@@ -41,6 +45,10 @@ function RenewLicense(props) {
                 if (status === 'ok') {
                     setOwnVehicles(vehicles);
                     setUser(user_data);
+                }
+                else if(status === 'auth-error'){
+                    sessionStorage.clear();
+                    document.location = '/';
                 }
                 else {
                     console.log(response.error);

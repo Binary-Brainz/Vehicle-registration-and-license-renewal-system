@@ -254,7 +254,7 @@ const get_owner_reservedDates = async (req, res) => {
     try{
 
         let today = new Date();
-        let workdays = await Workday.find({ owners: { $all: [id] } });
+        let workdays = await Workday.find({ owners: { $all: [id] } }).sort({day: 1}).exec();
         
         let ownerReservedDates = []
         for(let i = 0; i < workdays.length; i++){
@@ -284,7 +284,7 @@ const get_owner_notifications = async (req, res) => {
 
     try{
 
-        let notifications = await Notification.find({receiverID: id});
+        let notifications = await Notification.find({receiverID: id}).sort({createdAt: -1}).exec();
 
         let return_notifications = [];
 

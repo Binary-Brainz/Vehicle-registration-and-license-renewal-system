@@ -8,6 +8,13 @@ const axios = require('axios').default;
 
 const OwnVehicles = () => {
 
+    const token = sessionStorage.getItem('token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
+
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
     const user_id = storageUserData.id;
@@ -19,8 +26,6 @@ const OwnVehicles = () => {
     const [ownVehicles, setOwnVehicles] = useState([]);
 
     useEffect(() => {
-
-        const token = sessionStorage.getItem('token');
 
         axios.get(`http://localhost:5000/owner/dashboard/${user_id}`, {
             headers: {
@@ -37,6 +42,10 @@ const OwnVehicles = () => {
                 if(status === 'ok'){
                     setOwnVehicles(vehicles);
                     setUser(user_data);
+                }
+                else if(status === 'auth-error'){
+                    sessionStorage.clear();
+                    document.location = '/';
                 }
                 else{
                     console.log(response.error);

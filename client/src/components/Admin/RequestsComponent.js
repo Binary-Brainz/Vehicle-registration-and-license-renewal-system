@@ -49,6 +49,13 @@ function RenderCard(props) {
 
 export default function Requests() {
 
+    const token = sessionStorage.getItem('token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
+
     const userData = JSON.parse(sessionStorage.getItem("userData"));
     const type = userData.officerType;
 
