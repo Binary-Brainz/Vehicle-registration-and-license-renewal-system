@@ -17,6 +17,14 @@ const LicenseRenewalOfficer = () => {
         const yyyy = today.getFullYear();
         return yyyy + "-" + mm + "-" + dd;
     };
+    const disablePastDate = () => {
+        const today = new Date();
+        const dd = String(today.getDate() + 1).padStart(2, "0");
+        const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+        const yyyy = today.getFullYear();
+        return yyyy + "-" + mm + "-" + dd;
+    };
+
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -134,7 +142,7 @@ const LicenseRenewalOfficer = () => {
                 <div className="col-sm">
                     <Form.Group>
                         <Form.Label>Expiration date</Form.Label>
-                        <Form.Control type="date" name='expirationDate' max={disableFutureDate()} {...register("expirationDate", {
+                        <Form.Control type="date" name='expirationDate' min={disablePastDate()} {...register("expirationDate", {
                             required: true
                         })}
                         />
