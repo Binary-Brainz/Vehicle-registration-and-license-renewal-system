@@ -10,7 +10,7 @@ async function addVehicle(data) {
 
     const token = sessionStorage.getItem('token');
 
-    return fetch('http://localhost:5000/officer/addVehicle', {
+    return fetch('/officer/addVehicle', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

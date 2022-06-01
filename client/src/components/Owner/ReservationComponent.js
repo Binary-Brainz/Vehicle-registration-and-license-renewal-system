@@ -11,7 +11,7 @@ async function reserveDate(data) {
 
     const token = sessionStorage.getItem('token');
 
-    return fetch('http://localhost:5000/owner/reserve', {
+    return fetch('/owner/reserve', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

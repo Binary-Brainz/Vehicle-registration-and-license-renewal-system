@@ -40,7 +40,7 @@ const NotificationTable = (props) => {
             
                 const token = sessionStorage.getItem('token');
     
-                let response = await axios.get(`http://localhost:5000/owner/notifications/${user_id}`, {
+                let response = await axios.get(`/owner/notifications/${user_id}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         token: token,
@@ -85,7 +85,7 @@ const NotificationTable = (props) => {
 
     const renderListItem = (notification) => {
 
-        let file_url = "http://localhost:5000/owner/downloadFile/" + notification._id;
+        let file_url = "/owner/downloadFile/" + notification._id;
 
         if (displayResponsive && name === notification._id) {
             return (

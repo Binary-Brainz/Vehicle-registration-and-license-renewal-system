@@ -7,7 +7,7 @@ async function renewLicense(data) {
 
     const token = sessionStorage.getItem('token');
 
-    return fetch('http://localhost:5000/officer/renewLicense', {
+    return fetch('/officer/renewLicense', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

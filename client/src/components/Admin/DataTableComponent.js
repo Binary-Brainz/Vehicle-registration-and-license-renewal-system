@@ -47,7 +47,7 @@ const DataTable = (props) => {
 
                 const token = sessionStorage.getItem('token');
 
-                let response = await axios.get(`http://localhost:5000/officer/dashboard/${user_id}`, {
+                let response = await axios.get(`/officer/dashboard/${user_id}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         token: token,
@@ -155,7 +155,7 @@ const DataTable = (props) => {
                         <Card.Title>{regNo}</Card.Title>
                         <div className='col-12 col-md-3 text-center align-self-center'>
                             Attached File<br />
-                            <Card.Link href={`http://localhost:5000/officer/downloadDocumets/${reqId}`} className='product-name' ><span className='fa fa-download'></span></Card.Link>
+                            <Card.Link href={`/officer/downloadDocumets/${reqId}`} className='product-name' ><span className='fa fa-download'></span></Card.Link>
                         </div>
 
                         <br></br>

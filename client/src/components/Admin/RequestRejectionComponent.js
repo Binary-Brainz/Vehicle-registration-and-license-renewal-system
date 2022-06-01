@@ -7,7 +7,7 @@ async function rejectReqest(data) {
 
     const token = sessionStorage.getItem('token');
 
-    return fetch('http://localhost:5000/officer/reject', {
+    return fetch('/officer/reject', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

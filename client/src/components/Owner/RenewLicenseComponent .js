@@ -26,7 +26,7 @@ function RenewLicense(props) {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`http://localhost:5000/owner/expiredVehicles/${user_id}`, {
+        axios.get(`/owner/expiredVehicles/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

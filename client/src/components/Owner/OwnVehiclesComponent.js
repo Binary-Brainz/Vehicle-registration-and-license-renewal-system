@@ -22,7 +22,7 @@ const OwnVehicles = () => {
 
         const token = sessionStorage.getItem('token');
 
-        axios.get(`http://localhost:5000/owner/dashboard/${user_id}`, {
+        axios.get(`/owner/dashboard/${user_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 token: token,

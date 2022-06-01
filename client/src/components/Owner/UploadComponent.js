@@ -29,7 +29,7 @@ const UploadComponent = (props) => {
                 formData.append("documents", data.file[i]);
         }
 
-        let response = await fetch("http://localhost:5000/owner/request", {
+        let response = await fetch("/owner/request", {
             method: 'POST',
             body: formData,
         })
