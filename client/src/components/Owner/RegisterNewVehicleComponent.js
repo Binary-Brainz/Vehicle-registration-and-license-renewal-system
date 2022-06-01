@@ -60,7 +60,7 @@ const RegisterNewVehicle = () => {
             <div className="row ">
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ padding: "50px" }}>
                     <ReactCardFlip isFlipped={dateFlipped} flipDirection="vertical">
-                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
+                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }} className="shadow-lg" >
                             <Card.Img variant="top" src="/assets/images/date.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Reserve a Date</Card.Title>
@@ -72,19 +72,19 @@ const RegisterNewVehicle = () => {
                                 <Button onClick={flipDate}>Click to Reserve a Date</Button>
                             </Card.Body>
                         </Card>
-                        <Card body bg="dark" style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
-                            <Card.Header>
-                                
-                                    <div className='row '>
-                                        <div className="col-10 align-self-center">
-                                            <Card.Title style={{ color: "white" }}>Select a Date</Card.Title>
-                                        </div>
-                                        <div className='col text-end p-3'>
-                                            <CloseButton variant="white" onClick={flipDate} />
-                                        </div>
-                                    </div>
-                                
-                            </Card.Header>
+                        <Card body border="info" className="shadow-lg" style={{ "paddingLeft": "0px", "paddingRight": "0px", backgroundColor: "#d2ebeb"}}>
+
+
+                            <div className='row '>
+                                <div className="col-10 align-self-center">
+                                    <Card.Title style={{  }}>Select a Date</Card.Title>
+                                </div>
+                                <div className='col text-end p-3'>
+                                    <CloseButton  onClick={flipDate} />
+                                </div>
+                            </div>
+
+
                             <Card.Body className="text-center">
                                 <DateReservationComponent />
                             </Card.Body>
@@ -93,7 +93,7 @@ const RegisterNewVehicle = () => {
                 </div>
                 <div className="col-12 col-md-6 d-flex justify-content-center" style={{ padding: "50px" }}>
                     <ReactCardFlip isFlipped={subFlipped} flipDirection="vertical">
-                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }}>
+                        <Card style={{ "paddingLeft": "0px", "paddingRight": "0px" }} className="shadow-lg" >
                             <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
                             <Card.Body>
                                 <Card.Title>Submit Vehicle Details Form</Card.Title>
@@ -105,13 +105,16 @@ const RegisterNewVehicle = () => {
                                 <Button onClick={flipSub}>Click to Submit Form</Button>
                             </Card.Body>
                         </Card>
-                        <Card>
-                            <Card.Img variant="top" src="/assets/images/fileSub.gif" height="350" />
+                        <Card className="shadow-lg" >
+                            <Card.Img variant="top" src="/assets/images/upload.png" height="350" />
+                            <Card.ImgOverlay className="text-end">
+                                <CloseButton  onClick={flipSub} />
+                            </Card.ImgOverlay>
                             <Card.Body>
                                 <Card.Title>Upload Documents to Register your new Vehicle</Card.Title>
-                                <UploadComponent type={'Vehicle Registration'}/>
+                                <UploadComponent type={'Vehicle Registration'} />
                                 <br></br>
-                                <Button onClick={flipSub}>Click to flip</Button>
+                                
                             </Card.Body>
                         </Card>
                     </ReactCardFlip>

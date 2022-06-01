@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import Button from 'react-bootstrap/Button';
+import { Button } from 'primereact/button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux';
@@ -46,29 +46,11 @@ const DateReservationComponent = () => {
         
     }
 
-    const disablePastDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const disableFutureDate = () => {
-        const today = new Date();
-        const dd = String(today.getDate() + 1).padStart(2, "0");
-        const mm = String(today.getMonth() + 3).padStart(2, "0"); //January is 0!
-        const yyyy = today.getFullYear();
-        return yyyy + "-" + mm + "-" + dd;
-    };
-
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
     return (
         <div className=''>
             <Toast ref={toast} />
             <Calendar value={date} onChange={(e) => setDate(e.value)} inline showWeek />
-            <br/><br/><Button variant="primary" onClick={()=>onSubmit(date)}>Reserve Selected Date</Button>
+            <br/><br/><Button label="Reserve Selected Date" onClick={()=>onSubmit(date)} className="p-button-rounded p-button-primary" />
         </div>
 
     )
