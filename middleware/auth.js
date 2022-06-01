@@ -9,7 +9,7 @@ let requireAuth = (req, res, next) => {
     catch (err) {
         res.json({
             status: 'error',
-            error: "unidentified token!"
+            error: "Your login session has expired, please re-login to proceed!"
         });
     }
 
@@ -20,7 +20,7 @@ let requireAuth = (req, res, next) => {
                 console.log(err.message);
                 res.json({
                     status: 'error',
-                    error: "token verification failed!"
+                    error: "Your login session has expired, please re-login to proceed!"
                 });
             }
             else{
@@ -32,7 +32,7 @@ let requireAuth = (req, res, next) => {
         console.log('not token');
         res.json({
             status: 'error',
-            error: "unidentified token!"
+            error: "Your login session has expired, please re-login to proceed!"
         });
     }
 
