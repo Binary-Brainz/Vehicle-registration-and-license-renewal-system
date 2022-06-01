@@ -32,9 +32,9 @@ function Header() {
         dispatch(vehRegDateResed());  
     }
     
-    const user_id = (stored_id !== '')? stored_id : userData.id;
-    const nic = (stored_nic !== '')? stored_nic : userData.nic;
-    const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
+    const user_id = userData.id;
+    const nic = userData.nic;
+    const fullName = userData.fullName;
 
     const [notificationOpen, setNotificationOpen] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
