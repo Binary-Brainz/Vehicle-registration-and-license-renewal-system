@@ -251,14 +251,22 @@ const edit_officer = async (req, res) => {
 const add_vehicle = async (req, res) => {
 
     let data = req.body;
-    let ownerNIC = data.ownerNIC;
+
+    let ownerID = data.ownerID;
+    delete data.ownerID
 
     let requestID = data.requestID;
     delete data.requestID
 
-    const owner = await Owner.findOne({nic: ownerNIC})
+    const owner = await Owner.findById(mongoose.Types.ObjectId(ownerID));
 
     if(owner !== null){
+
+        data['ownerNIC'] = owner.nic;
+
+        let expireDate = new Date(data.registeredDate)
+        expireDate.setFullYear(expireDate.getFullYear() + 1);
+        data['expireDate'] = expireDate;
 
         const vehicle = new Vehicle(data);
 
@@ -275,7 +283,7 @@ const add_vehicle = async (req, res) => {
 
                 try {
 
-                    let request = await Request.findByIdAndUpdate(requestID, {state: 'approved'});
+                    let request = await Request.findByIdAndUpdate(requestID, {state: 'approved', regNo: data.regNo});
                 
                     let doc_name = pdfGenerator.makePdf(data);
                     let files = [doc_name];

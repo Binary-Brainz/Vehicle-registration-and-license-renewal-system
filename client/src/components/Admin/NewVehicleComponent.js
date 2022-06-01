@@ -22,13 +22,20 @@ async function addVehicle(data) {
 
 const NewVehicle = (props) => {
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+
         data['ownerID'] = props.ownerID;
-        console.log("data");
-        // alert(
-        //     data
-        // );
+        data['requestID'] = props.reqId;
+
         setVehicle(data);
+
+        let response = await addVehicle(data);
+        if(response.status === "ok"){
+            console.log(response)
+        }
+        else{
+            console.log(response.error);
+        }
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm();

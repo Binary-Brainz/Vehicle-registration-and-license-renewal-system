@@ -176,14 +176,14 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
 
                 <div className="col-sm">
                     <Form.Group>
-                        <Form.Label htmlFor="doors">Number of Doors</Form.Label>
+                        <Form.Label htmlFor="noOfDoors">Number of Doors</Form.Label>
                         <Form.Control
                             type="number"
-                            id="doors"
-                            name="doors"
+                            id="noOfDoors"
+                            name="noOfDoors"
                             defaultValue={vehicle.noOfDoors}
                             disabled={disabled}
-                            {...register("doors", {
+                            {...register("noOfDoors", {
                                 required: true
                             })}
                         />

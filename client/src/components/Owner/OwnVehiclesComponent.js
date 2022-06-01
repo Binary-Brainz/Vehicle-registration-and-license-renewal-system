@@ -10,7 +10,7 @@ const OwnVehicles = () => {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
-    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
+    const user_id = storageUserData.id;
 
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
