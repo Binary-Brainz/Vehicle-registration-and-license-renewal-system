@@ -199,7 +199,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <LicenseRenewalOfficer ownerID={ownerID} reqId={reqId} regNo={regNo}/>
+                                    <LicenseRenewalOfficer ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle}/>
                                 </Modal.Body>
                             </div>
                         </Collapse>

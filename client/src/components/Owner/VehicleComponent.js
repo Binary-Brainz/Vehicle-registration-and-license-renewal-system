@@ -183,7 +183,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             })}
                         />
                     </Form.Group>
-                    {errors.doors && <p className='text-danger'>Number of door is required!</p>}
+                    {errors.noOfDoors && <p className='text-danger'>Number of door is required!</p>}
                 </div>
                 <div className="col-sm">
                     {!update && <Form.Group>
