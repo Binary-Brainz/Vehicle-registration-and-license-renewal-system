@@ -34,7 +34,6 @@ const ViewVehicleComponent = ({ vehicle }) => {
               id="ownerID"
               name="ownerID"
               value={user_id}
-            // where is this ID coming from?
             />
           </Form.Group>
           <VehicleComponent vehicle={vehicle} register={register} errors={errors} disabled={1} />
