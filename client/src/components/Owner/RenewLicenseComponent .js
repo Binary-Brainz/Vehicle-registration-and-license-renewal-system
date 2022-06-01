@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Card, Modal } from 'react-bootstrap';
 import { Form, Input } from 'reactstrap';
 import RenewalComponent from './RenewalComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import { Toast } from 'primereact/toast';
 
 const axios = require('axios').default;
 
@@ -12,13 +13,14 @@ function RenewLicense(props) {
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
-    const user_id = (stored_id !== '')? stored_id : storageUserData.id;
+    const user_id = (stored_id !== '') ? stored_id : storageUserData.id;
 
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle.jpg");
     const [ownVehicles, setOwnVehicles] = useState([]);
+    const toast = useRef(null);
 
     useEffect(() => {
 
@@ -36,12 +38,14 @@ function RenewLicense(props) {
                 let vehicles = response.data.vehicles;
                 let user_data = response.data.user;
 
-                if(status === 'ok'){
+                if (status === 'ok') {
                     setOwnVehicles(vehicles);
                     setUser(user_data);
                 }
-                else{
+                else {
                     console.log(response.error);
+                    toast.current.show({ severity: 'error', summary: `${response.error}`, life: 5000 });
+
                 }
             })
             .catch(err => {
@@ -55,50 +59,52 @@ function RenewLicense(props) {
 
     const viewDetails = (Id) => {
         toggleModal();
-        if(isModalOpen === false){
+        if (isModalOpen === false) {
             setId(Id);
-        };    
+        };
     }
 
     return (
-        <div className='container'>
-            <div className='row'>
+        <div>
+            <Toast ref={toast} position="top-center" />
+            <div className='container'>
+                <div className='row'>
 
-                {ownVehicles.map((vehicle) => (
+                    {ownVehicles.map((vehicle) => (
 
-                    <Card key={vehicle._id} bg="light" border="light" className='m-3 shadow' style={{ width: '18rem', "paddingLeft": "0px", "paddingRight": "0px" }}>
-                        <Card.Img variant="top" src={(vehicle.image)?vehicle.image: defaultVehicle} />
-                        <Card.Body>
-                            <Card.Title>{vehicle.regNo}</Card.Title>
-                            <Card.Subtitle>{vehicle.type} ({vehicle.model})</Card.Subtitle>
-                            <Card.Text>Manufactured Year : {vehicle.manufacturedYear}</Card.Text>
-                            <Button variant="outline-secondary" onClick={()=>viewDetails(vehicle._id)}>Vehicle Details</Button>
-                            
-                        </Card.Body>
-                    
-                    </Card>
+                        <Card key={vehicle._id} bg="light" border="light" className='m-3 shadow' style={{ width: '18rem', "paddingLeft": "0px", "paddingRight": "0px" }}>
+                            <Card.Img variant="top" src={(vehicle.image) ? vehicle.image : defaultVehicle} />
+                            <Card.Body>
+                                <Card.Title>{vehicle.regNo}</Card.Title>
+                                <Card.Subtitle>{vehicle.type} ({vehicle.model})</Card.Subtitle>
+                                <Card.Text>Manufactured Year : {vehicle.manufacturedYear}</Card.Text>
+                                <Button variant="outline-secondary" onClick={() => viewDetails(vehicle._id)}>Vehicle Details</Button>
 
-                ))}
+                            </Card.Body>
 
-            </div>
-            <Modal show={isModalOpen} onHide={toggleModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {ownVehicles.filter(vehicle => vehicle._id === id).map(vehicle => (
-                        <RenewalComponent regNo={vehicle.regNo}/>
+                        </Card>
+
                     ))}
-                    
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={toggleModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+
+                </div>
+                <Modal show={isModalOpen} onHide={toggleModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {ownVehicles.filter(vehicle => vehicle._id === id).map(vehicle => (
+                            <RenewalComponent regNo={vehicle.regNo} />
+                        ))}
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={toggleModal}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
         </div>
-        
     )
 }
 

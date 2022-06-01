@@ -1,26 +1,29 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import VehicleComponent from '../Owner/VehicleComponent';
 import { Button } from 'react-bootstrap';
 import { useForm } from "react-hook-form";
 import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
+import { Toast } from 'primereact/toast';
 
 async function addVehicle(data) {
 
     const token = sessionStorage.getItem('token');
 
     return fetch('http://localhost:5000/officer/addVehicle', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        token: token,
-      },
-      body: JSON.stringify(data)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: token,
+        },
+        body: JSON.stringify(data)
     })
-      .then(data => data.json())
+        .then(data => data.json())
 }
 
 const NewVehicle = (props) => {
+
+    const toast = useRef(null);
 
     const onSubmit = async (data) => {
 
@@ -30,11 +33,13 @@ const NewVehicle = (props) => {
         setVehicle(data);
 
         let response = await addVehicle(data);
-        if(response.status === "ok"){
+        if (response.status === "ok") {
             console.log(response)
+            toast.current.show({ severity: 'success', summary: "Vehicle Successfully Registered!", life: 5000 });
         }
-        else{
+        else {
             console.log(response.error);
+            toast.current.show({ severity: 'error', summary: `${response.error}`, life: 5000 });
         }
     }
 
@@ -44,15 +49,15 @@ const NewVehicle = (props) => {
 
     return (
         <div>
-            
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                    <VehicleComponent vehicle register={register} errors={errors} disabled={0}/>
-                    <br></br>
-                    <Button variant="primary" type="submit" value="submit">
+            <Toast ref={toast} position="top-center" />
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <VehicleComponent vehicle register={register} errors={errors} disabled={0} />
+                <br></br>
+                <Button variant="primary" type="submit" value="submit">
                     Register Vehicle
                 </Button>
-                </Form>
-            
+            </Form>
+
         </div>
     );
 }

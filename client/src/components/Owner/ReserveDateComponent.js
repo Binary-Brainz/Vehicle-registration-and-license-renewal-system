@@ -1,27 +1,29 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import { Toast } from 'primereact/toast';
 
 async function reserveDate(data) {
 
     const token = sessionStorage.getItem('token');
 
     return fetch('http://localhost:5000/owner/reserve', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        token: token,
-      },
-      body: JSON.stringify(data)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: token,
+        },
+        body: JSON.stringify(data)
     })
-      .then(data => data.json())
+        .then(data => data.json())
 }
 
 const ReserveDate = () => {
+    const toast = useRef(null);
 
     const id = useSelector(state => state.user.id);
 
@@ -32,13 +34,15 @@ const ReserveDate = () => {
         body_data['id'] = id;
 
         let response = await reserveDate(body_data);
-        
+
         let status = response.status;
-        if(status === 'ok'){
+        if (status === 'ok') {
             //set store status
+            toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
         }
-        else{
+        else {
             console.log(response.error);
+            toast.current.show({ severity: 'info', summary: `${response.error}`, detail: "Try another Date!", life: 5000 });
         }
     }
 
@@ -61,20 +65,23 @@ const ReserveDate = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     return (
-        <Form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group>
-                <Form.Label>Register a date</Form.Label>
-                <Form.Control type="date" name='reservation' min={disablePastDate()} max={disableFutureDate()} {...register("reservation", {
-                    required: true
-                })}
-                />
-            </Form.Group>
-            {errors.date && <p className='errorMsg'>Please Reserve a valid Date!</p>}
-            <br></br>
-            <Button variant="primary" type="submit">
-                Reserve Date
-            </Button>
-        </Form>
+        <div>
+            <Toast ref={toast} position="top-center" />
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <Form.Group>
+                    <Form.Label>Register a date</Form.Label>
+                    <Form.Control type="date" name='reservation' min={disablePastDate()} max={disableFutureDate()} {...register("reservation", {
+                        required: true
+                    })}
+                    />
+                </Form.Group>
+                {errors.date && <p className='errorMsg'>Please Reserve a valid Date!</p>}
+                <br></br>
+                <Button variant="primary" type="submit">
+                    Reserve Date
+                </Button>
+            </Form>
+        </div>
 
     )
 }
