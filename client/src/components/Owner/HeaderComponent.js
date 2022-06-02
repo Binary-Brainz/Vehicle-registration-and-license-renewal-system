@@ -26,7 +26,7 @@ const axios = require('axios').default;
 
 async function editUser(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     return fetch('http://localhost:5000/owner/editProfile', {
       method: 'POST',
@@ -41,7 +41,7 @@ async function editUser(data) {
 
 function Header(props) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     if(!token){
         sessionStorage.clear();
@@ -67,6 +67,7 @@ function Header(props) {
     }
 
     const handleChange = (event) => {
+        console.log(event.target.value);
         setValue(event.target.value );
     }
 

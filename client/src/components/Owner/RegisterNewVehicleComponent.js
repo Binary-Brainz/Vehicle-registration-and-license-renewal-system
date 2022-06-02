@@ -13,7 +13,7 @@ const axios = require('axios').default;
 
 const RegisterNewVehicle = () => {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     if(!token){
         sessionStorage.clear();

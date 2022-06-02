@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 
 async function updateVehicle(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     return fetch('http://localhost:5000/officer/updateVehicle', {
         method: 'POST',

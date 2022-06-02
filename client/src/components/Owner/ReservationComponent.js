@@ -10,7 +10,7 @@ import { useHref, useNavigate } from 'react-router-dom';
 
 async function reserveDate(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     return fetch('http://localhost:5000/owner/reserve', {
       method: 'POST',

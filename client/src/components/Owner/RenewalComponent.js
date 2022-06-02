@@ -43,9 +43,11 @@ const RenewalComponent = (props) => {
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
-            <h5>You have to pay Rs....</h5>
+
+            <h5>You have to pay Rs. {props.nextYearFee}.00</h5>
             <p>Pay the above-mentioned fee to one of the following bank accounts and get a payment receipt.
             <br/><br/>Bank of Ceylon - 2298567<br/>People's Bank - 3986567<br/>Hatton National Bank - 498567</p>
+
 
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>Upload Payment Receipt</Form.Label>
