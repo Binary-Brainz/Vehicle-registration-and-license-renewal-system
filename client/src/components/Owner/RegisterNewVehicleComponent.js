@@ -13,6 +13,13 @@ const axios = require('axios').default;
 
 const RegisterNewVehicle = () => {
 
+    const token = sessionStorage.getItem('token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
+
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
     const user_id = (stored_id !== '') ? stored_id : storageUserData.id;
@@ -23,8 +30,6 @@ const RegisterNewVehicle = () => {
     const [ownerReservedDates, setOwnerReservedDates] = useState([]);
 
     useEffect(() => {
-
-        const token = sessionStorage.getItem('token');
 
         axios.get(`http://localhost:5000/owner/reservedDates/${user_id}`, {
             headers: {
@@ -38,6 +43,10 @@ const RegisterNewVehicle = () => {
                 let ownerReservedDates = response.data.ownerReservedDates;
                 if (status === 'ok') {
                     setOwnerReservedDates(ownerReservedDates)
+                }
+                else if(status === 'auth-error'){
+                    sessionStorage.clear();
+                    document.location = '/';
                 }
                 else {
                     console.log(response.error);

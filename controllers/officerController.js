@@ -84,7 +84,7 @@ const get_dashboard = async (req, res) => {
                 state_check = [state]
             } 
 
-            let requests = await Request.find({officerID: id, state: { $in: state_check}});
+            let requests = await Request.find({officerID: id, state: { $in: state_check}}).sort({createdAt: -1}).exec();
             let vehicles = await Vehicle.find();
 
             let return_requests = [];

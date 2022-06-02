@@ -6,8 +6,14 @@ import { gotId, gotNic } from '../userSlice';
 
 const axios = require('axios').default;
 
-
 function Header (props) {
+
+    const token = sessionStorage.getItem('token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
 
     const userData = JSON.parse(sessionStorage.getItem("userData"));
 
@@ -20,10 +26,20 @@ function Header (props) {
     const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
+    }
+
+    const handleClose = () => setShowConfirm(false);
+    const handleShow = () => setShowConfirm(true);
+
+    const confirmLogout = () => {
+        sessionStorage.clear();
+        setShowConfirm(false);
+        document.location = '/';
     }
 
     return (
@@ -43,7 +59,7 @@ function Header (props) {
 
                             <NavDropdown  title={<><span className="fa fa-user fa-lg"></span> {fullName} </>} id="collasible-nav-dropdown">
                                 <NavDropdown.Header >{nic}</NavDropdown.Header>
-                                <NavDropdown.Item href="#"><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
+                                <NavDropdown.Item href="#" onClick={() => handleShow()}><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
@@ -73,6 +89,20 @@ function Header (props) {
                     </Button>
                     <Button variant="primary" onClick={toggleModal}>
                         Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showConfirm} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Sure you want to logout?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                    </Button>
+                    <Button variant="primary" onClick={confirmLogout}>
+                    Confirm
                     </Button>
                 </Modal.Footer>
             </Modal>

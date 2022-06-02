@@ -20,14 +20,27 @@ async function renewLicense(data) {
 
 const LicenseRenewalOfficer = (props) => {
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+
         data.renewalDate = new Date(data.renewalDate);
+
         var year = data.renewalDate.getFullYear();
         var month = (data.renewalDate.getMonth() + 1);
         var day = data.renewalDate.getDate();
-        var expirationDate = new Date(year + 1, month, day);
-        data['expirationDate'] = expirationDate;
-        console.log(data);
+        var expireDate = new Date(year + 1, month, day);
+
+        data['expireDate'] = expireDate;
+        data['isExpired'] = false;
+        data['requestID'] = props.reqId;
+
+
+        let response = await renewLicense(data);
+        if(response.status === "ok"){
+            console.log(response)
+        }
+        else{
+            console.log(response.error);
+        }
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -99,12 +112,13 @@ const LicenseRenewalOfficer = (props) => {
             {errors.regNo && <p className='text-danger'>Vehicle Registration Number is required!</p>}
 
             <div className="row">
-                <div className="col-sm">
+                {/* <div className="col-sm">
                     <Form.Group>
                         <Form.Label htmlFor="weight">Vehicle Weight</Form.Label>
                         <Form.Control
                             type="number"
                             id="weight"
+                            defaultValue={props.vehicle.weight}
                             name="weight"
                             {...register("weight", {
                                 required: true
@@ -112,7 +126,7 @@ const LicenseRenewalOfficer = (props) => {
                         />
                     </Form.Group>
                     {errors.weight && <p className='text-danger'>Vehicle Weight is required!</p>}
-                </div>
+                </div> */}
                 <div className="col-sm">
                     <Form.Group>
                         <Form.Label>Renewal date</Form.Label>
@@ -146,17 +160,17 @@ const LicenseRenewalOfficer = (props) => {
 
                 <div className="col-sm">
                     <Form.Group>
-                        <Form.Label htmlFor="nextFee">Fee for next year</Form.Label>
+                        <Form.Label htmlFor="nextYearFee">Fee for next year</Form.Label>
                         <Form.Control
                             type="number"
-                            id="nextFee"
-                            name="nextFee"
-                            {...register("nextFee", {
+                            id="nextYearFee"
+                            name="nextYearFee"
+                            {...register("nextYearFee", {
                                 required: true
                             })}
                         />
                     </Form.Group>
-                    {errors.nextFee && <p className='text-danger'>Fee for next year is required!</p>}
+                    {errors.nextYearFee && <p className='text-danger'>Fee for next year is required!</p>}
 
                 </div>
             </div>
