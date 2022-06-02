@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
 import { Toast } from 'primereact/toast';
+import { useNavigate } from 'react-router-dom';
 
 async function reserveDate(data) {
 
@@ -26,6 +27,7 @@ const ReserveDate = () => {
     const toast = useRef(null);
 
     const id = useSelector(state => state.user.id);
+    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
 
@@ -39,6 +41,7 @@ const ReserveDate = () => {
         if (status === 'ok') {
             //set store status
             toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
+            navigate("/ownerDashboard/ownvehicles");
         }
         else {
             console.log(response.error);

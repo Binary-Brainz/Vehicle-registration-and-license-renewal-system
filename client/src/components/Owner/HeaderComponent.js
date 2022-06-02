@@ -6,7 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { useRef } from "react";
-import { vehRegDateResed } from "../statusSlice";
+import { isVehRegDocDone, vehRegDateResed } from "../statusSlice";
+import { useNavigate } from "react-router-dom";
 
 
 const axios = require('axios').default;
@@ -16,6 +17,7 @@ function Header() {
     const delay = ms => new Promise(res => setTimeout(res, ms));
     const dispatch = useDispatch();
     const toast = useRef(null);
+    const navigate = useNavigate();
 
     const userData = JSON.parse(sessionStorage.getItem("userData"));
 
@@ -23,14 +25,24 @@ function Header() {
     const stored_id = useSelector(state => state.user.id);
     const stored_nic = useSelector(state => state.user.nic);
 
+    //Notices------------------------------------
     const isVehRegDate = useSelector(state =>state.status.vehRegDateRes);
-    
+    const isVehRegDoc = useSelector(state =>state.status.vehRegDocDone);
     
     if (isVehRegDate) { 
-        toast.current.show({severity: 'success', summary: "Date successfully Reserved!" , life: 5000});
+        toast.current.show({severity: 'success', summary: "Date Successfully Reserved!" , life: 5000});
         delay(5000);
-        dispatch(vehRegDateResed());  
+        dispatch(vehRegDateResed());
+        navigate("/ownerDashboard/ownvehicles")
+         
+    }else if(isVehRegDoc){
+        toast.current.show({severity: 'success', summary: "File Successfully Uploaded" , life: 5000});
+        delay(5000);
+        dispatch(isVehRegDocDone());
+        navigate("/ownerDashboard/ownvehicles")
     }
+
+    //----------------------------------------------
     
     const user_id = userData.id;
     const nic = userData.nic;
