@@ -19,12 +19,27 @@ const minLength = (len) => (val) => !(val) || (val.length >= len);
 const isNumber = (val) => !(val) || !isNaN(Number(val));
 const validEmail = (val) => !(val) || /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val);
 const validPass = (val) => !(val) || /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*!@$%^&]).{8,32}$/i.test(val);
-const validRePass = (val1) => (val2) => !(val2) || val1 === val2;
+const validRePass = (val1) => (val2) => (!(val1) && !(val2)) || ((val1) && val1 === val2);
 const validNic = (val) => !(val) || (/^[VX0-9]{10}$/i.test(val)) || (/^[0-9]{12}$/i.test(val));
 
 const axios = require('axios').default;
 
-function Header() {
+async function editUser(data) {
+
+    const token = sessionStorage.getItem('token');
+
+    return fetch('http://localhost:5000/owner/editProfile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        token: token,
+      },
+      body: JSON.stringify(data)
+    })
+      .then(data => data.json())
+}
+
+function Header(props) {
 
     const token = sessionStorage.getItem('token');
 
@@ -57,21 +72,33 @@ function Header() {
 
     const handleEdit = async (values) => {
 
+        let submit_data = {};
+        for(let key in values){
+            if(key !== 'rePassword'){
+                submit_data[key] = values[key];
+            }
+        }
+        submit_data['nic'] = nic;
 
-        // const response = await editUser(values);
+        const response = await editUser(submit_data);
 
-        // if(response.status === 'error'){
-            
-        //     toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid edit!", life: 5000});
-        // }
-        // else{
-        //     toggleEditModal();
+        if(response.status === 'error'){
+            toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid edit!", life: 5000});
+        }
+        else{
+            toggleEditModal();
 
-        //     sessionStorage.setItem('token', JSON.stringify(response.token));
-        //     props.setAuthState(response);
-
-        //     navigate('/ownerDashboard', { replace: true });
-        // }
+            if(response.password_changed){
+                sessionStorage.clear();
+                toast.current.show({severity:'info', summary: `${response.msg}`, detail: "Update Success!", life: 5000});
+                document.location = '/';
+            }
+            else{
+                sessionStorage.setItem('userData', JSON.stringify(response.data));
+                toast.current.show({severity:'info', summary: `${response.msg}`, detail: "Update Success!", life: 5000});
+                navigate('/ownerDashboard', { replace: true });
+            }
+        }
     }
     //-----------------------------------------------------
 
