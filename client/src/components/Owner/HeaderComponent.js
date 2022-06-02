@@ -7,6 +7,7 @@ import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { useRef } from "react";
 import { vehRegDateResed } from "../statusSlice";
+import Button from 'react-bootstrap/Button';
 
 
 const axios = require('axios').default;
@@ -45,6 +46,7 @@ function Header() {
 
     const [notificationOpen, setNotificationOpen] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const toggleNotif = () => setNotificationOpen(!notificationOpen);
 
@@ -90,7 +92,15 @@ function Header() {
     const onHide = (name) => {
         dialogFuncMap[`${name}`](false);
     }
-    
+
+    const handleClose = () => setShowConfirm(false);
+    const handleShow = () => setShowConfirm(true);
+
+    const confirmLogout = () => {
+        sessionStorage.clear();
+        setShowConfirm(false);
+        document.location = '/';
+    }
 
     return (
         <div>
@@ -115,7 +125,7 @@ function Header() {
                                 <NavDropdown.Header >{nic}</NavDropdown.Header>
                                 <NavDropdown.Item href="#"><span className="fa fa-cogs fa-lg"></span> Account Settings</NavDropdown.Item>
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item href="#"><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
+                                <NavDropdown.Item href="#" onClick={() => handleShow()}><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
@@ -141,7 +151,21 @@ function Header() {
                     
                 </Modal.Header>
                 
-            </Modal>      
+            </Modal>
+            <Modal show={showConfirm} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Sure you want to logout?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                    </Button>
+                    <Button variant="primary" onClick={confirmLogout}>
+                    Confirm
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
