@@ -41,7 +41,8 @@ const register_post = async (req, res) => {
                 token: token,
                 data: {
                     nic: nic,
-                    id: user._id
+                    id: user._id,
+                    fullName: fullName
                 }
             });
         }
@@ -342,51 +343,97 @@ const get_owner_requests = async (req, res) => {
 const edit_owner = async (req, res) => {
 
     let data = req.body;
-    let id = req.body.id;
-    delete data.id
 
-    let new_data = {};
+    let nic = req.body.nic;
+    delete data.nic
 
-    for(let key in data){
-        if(data[key] !== ''){
-            new_data[key] = data[key];
-        }
-    }
+    let oldPsw = data.oldPassword;
+    delete data.oldPassword;
 
     try {
 
-        if(Object.keys(new_data).length > 0){
-        
-            Owner.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {new: true}, async (err, new_owner) => {
-    
-                if (err){
-                    res.json({
-                        status: 'error',
-                        error: err
-                    });
-                }
-                else if(new_owner === null){
+        let old_owner = await Owner.findOne({nic: nic});
 
-                    res.json({
-                        status: 'error',
-                        error: 'Invalid User!'
-                    })
-                }
-                else{
-                    
-                    res.json({
-                        status: 'ok',
-                    });
-                }
-            });
-        }
-        else{
+        if(old_owner === null){
             res.json({
                 status: 'error',
-                error: 'Update fields cannot be empty!'
-            });
+                error: 'Invalid User!'
+            })
         }
-    }
+        else{
+
+            let password_check = await encHandler.checkEncryptedCredential(oldPsw, old_owner.password);
+
+            if(password_check){
+
+                let new_data = {};
+                let password_changed = false;
+
+                for(let key in data){
+
+                    if(key === 'password'){
+                        new_data[key] = await encHandler.encryptCredential(data[key]);
+                        password_changed = true;
+                    }
+                    else if(data[key] !== ''){
+                        new_data[key] = data[key];
+                    }
+                }
+
+                try {
+
+                    if(Object.keys(new_data).length > 0){
+                    
+                        Owner.findOneAndUpdate({nic: nic}, new_data, {new: true}, async (err, new_owner) => {
+                
+                            if (err){
+                                res.json({
+                                    status: 'error',
+                                    error: 'Email already exists!'
+                                });
+                            }
+                            else{
+                                
+                                let fullName = new_owner.firstName + " " + new_owner.lastName;
+                                let msg;
+                                if(password_changed){
+                                    msg = 'Please re-login using your new password.';
+                                }
+                                else{
+                                    msg = 'Profile information has changed successfully.';
+                                }
+                                res.json({
+                                    status: 'ok',
+                                    data: {
+                                        nic: nic,
+                                        id: new_owner._id,
+                                        fullName: fullName
+                                    },
+                                    msg: msg,
+                                    password_changed: password_changed
+                                });
+                            }
+                        });
+                    }
+                    else{
+                        res.json({
+                            status: 'error',
+                            error: 'Update fields cannot be empty!'
+                        });
+                    }
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }
+            else{
+                res.json({
+                    status: 'error',
+                    error: 'Incorrect password!'
+                })
+            }
+        }
+    } 
     catch (err) {
         console.log(err);
     }
