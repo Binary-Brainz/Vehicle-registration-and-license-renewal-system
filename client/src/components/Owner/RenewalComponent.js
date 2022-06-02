@@ -43,7 +43,7 @@ const RenewalComponent = (props) => {
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
-            <h5>You have to pay Rs....</h5>
+            <h5>You have to pay Rs. {props.nextYearFee}.00</h5>
             <p>Please submit your payment receipt and EcoTest Report below</p>
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>Upload Payment Receipt</Form.Label>
