@@ -69,7 +69,7 @@ function Header (props) {
                 <div className="container">
                     <div className="row row-header">
                         <div className="col-12 col-sm-8">
-                            <h1>Vehicle Registration and Licening System </h1>
+                            <h1>Vehicle Registration and Licensing System </h1>
                             <p>We strive to provide hassle-free vehicle registration and licensing services to your fingertips using cutting-edge technology.
                                 Keeping track of your automobiles has never been easier.
                             </p>
