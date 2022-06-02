@@ -160,7 +160,7 @@ function Header(props) {
     
     return (
         <React.Fragment>
-            <Toast ref={toast} position="top-center" position="top-right" />
+            <Toast ref={toast} position="top-right" />
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand href="/home"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licensing System</Navbar.Brand>
