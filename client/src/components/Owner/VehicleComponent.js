@@ -11,12 +11,12 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
     };
 
     const getDateString = () => {
-        const dd = String(vehicle.registeredDate.getDate()).padStart(2, "0");
-        const mm = String(vehicle.registeredDate.getMonth() + 1).padStart(2, "0"); //January is 0!
-        const yyyy = vehicle.registeredDate.getFullYear();
+        var regDate = new Date(vehicle.registeredDate);
+        const dd = String(regDate.getDate()).padStart(2, "0");
+        const mm = String(regDate.getMonth() + 1).padStart(2, "0"); //January is 0!
+        const yyyy = regDate.getFullYear();
         return yyyy + "-" + mm + "-" + dd;
     };
-
     return (
         <div>
             {/* <Form.Group>
@@ -65,7 +65,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                                 id="registerDate"
                                 name="registerDate"
                                 max={disableFutureDate()}
-                                defaultValue={vehicle? vehicle.registeredDate : ''}
+                                defaultValue={vehicle? getDateString() : ''}
                                 disabled={disabled}
                                 {...register("registeredDate", {
                                     required: true,
