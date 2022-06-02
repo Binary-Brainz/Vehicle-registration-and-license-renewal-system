@@ -24,7 +24,7 @@ function RenewLicense(props) {
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle.jpg");
+    const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle.gif");
     const [ownVehicles, setOwnVehicles] = useState([]);
     const toast = useRef(null);
 
@@ -105,11 +105,6 @@ function RenewLicense(props) {
                         ))}
 
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={toggleModal}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
                 </Modal>
             </div>
         </div>

@@ -22,7 +22,7 @@ const OwnVehicles = () => {
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle.jpg");
+    const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle2.gif");
     const [ownVehicles, setOwnVehicles] = useState([]);
 
     useEffect(() => {
