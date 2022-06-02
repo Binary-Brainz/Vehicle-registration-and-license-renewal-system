@@ -26,7 +26,7 @@ const axios = require('axios').default;
 
 async function editUser(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     return fetch('http://localhost:5000/owner/editProfile', {
       method: 'POST',
@@ -41,7 +41,7 @@ async function editUser(data) {
 
 function Header(props) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     if(!token){
         sessionStorage.clear();
@@ -218,7 +218,9 @@ function Header(props) {
                     <div className="row row-header">
                         <div className="col-12 col-sm-6">
                             <h1>Vehicle Registration and Licening</h1>
-                            <p>We take inspiration from the World's best cuisines, and create a unique fusion experience. Our lipsmacking creations will tickle your culinary senses!</p>
+                            <p>We strive to provide hassle-free vehicle registration and licensing services to your fingertips using cutting-edge technology.
+                               Keeping track of your automobiles has never been easier.
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -38,7 +38,7 @@ const NotificationTable = (props) => {
 
             try {
             
-                const token = sessionStorage.getItem('token');
+                const token = sessionStorage.getItem('owner_token');
     
                 let response = await axios.get(`http://localhost:5000/owner/notifications/${user_id}`, {
                     headers: {

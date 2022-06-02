@@ -40,6 +40,7 @@ const register_post = async (req, res) => {
             res.json({
                 status: 'ok',
                 token: token,
+                userType: 'owner',
                 data: {
                     nic: nic,
                     id: user._id,
@@ -72,6 +73,7 @@ const login_post = async (req, res) => {
                 return_data = {
                     status: 'ok',
                     token: token,
+                    userType: 'owner',
                     data: {
                         nic: nic,
                         id: user._id,

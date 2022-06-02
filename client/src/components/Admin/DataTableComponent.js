@@ -46,7 +46,7 @@ const DataTable = (props) => {
 
             try {
 
-                const token = sessionStorage.getItem('token');
+                const token = sessionStorage.getItem('officer_token');
 
                 let response = await axios.get(`http://localhost:5000/officer/dashboard/${user_id}`, {
                     headers: {

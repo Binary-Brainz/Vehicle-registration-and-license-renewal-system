@@ -10,7 +10,7 @@ const axios = require('axios').default;
 
 function RenewLicense(props) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     if(!token){
         sessionStorage.clear();
@@ -97,11 +97,11 @@ function RenewLicense(props) {
                 </div>
                 <Modal show={isModalOpen} onHide={toggleModal}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
+                        <Modal.Title>Renew License for Vehicle</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         {ownVehicles.filter(vehicle => vehicle._id === id).map(vehicle => (
-                            <RenewalComponent regNo={vehicle.regNo} />
+                            <RenewalComponent regNo={vehicle.regNo} nextYearFee={vehicle.nextYearFee}/>
                         ))}
 
                     </Modal.Body>
