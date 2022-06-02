@@ -1,9 +1,9 @@
 import { Button } from 'primereact/button';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { InputText } from 'primereact/inputtext';
 
-//##add token check to server request
+const axios = require('axios').default;
 
 const ViewVehicles = () => {
 
@@ -13,6 +13,36 @@ const ViewVehicles = () => {
         sessionStorage.clear();
         document.location = '/';
     }
+
+    const [vehicles, setVehicles] = useState([]);
+
+    useEffect(() => {
+
+        axios.get(`http://localhost:5000/officer/allVehicles`, {
+            headers: {
+                'Content-Type': 'application/json',
+                token: token,
+            }
+        })
+            .then(response => {
+
+                let status = response.data.status;
+
+                if(status === 'ok'){
+                    setVehicles(response.data.result);
+                }
+                else if(status === 'auth-error'){
+                    sessionStorage.clear();
+                    document.location = '/';
+                }
+                else{
+                    console.log(response);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, []);
 
     return (
 
