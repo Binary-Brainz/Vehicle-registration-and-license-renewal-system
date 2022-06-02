@@ -1,38 +1,63 @@
-.App {
-  text-align: center;
+.navbar-dark{
+    background-color: #a5c9de;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1.header1 {
+    color: #032256;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+
+.headr {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.footer{
+    background-color: #afc7d5;
+    margin:0px auto;
+    padding: 20px 0px 20px 0px;
   }
+
+  .row-content {
+    margin: 0px auto;
+    padding: 0px 0px;
+    border-bottom: 1px ridge;
+    min-height: 400px; }
+
+.form-group{
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.container-fluid .jumbotron, .container .jumbotron {
+    border-radius: 6px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
-  to {
-    transform: rotate(360deg);
+  
+  @media screen and (min-width: 768px)
+  {
+  .container-fluid .jumbotron, .container .jumbotron {
+      padding-left: 60px;
+      padding-right: 60px;
   }
-}
+  }
+  
+  @media screen and (min-width: 768px)
+  {
+  .jumbotron {
+      padding-bottom: 48px;
+      padding-top: 48px;
+  }
+  }
+  
+  .jumbotron {
+    background-color: #eee;
+    padding-left: 60px;
+    padding-right: 60px;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+  }

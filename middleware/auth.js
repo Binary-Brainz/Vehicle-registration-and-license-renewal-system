@@ -2,7 +2,16 @@ const jwt = require('jsonwebtoken');
 
 let requireAuth = (req, res, next) => {
 
-    const token = req.headers['token'].replace(/['"]+/g, '');
+    let token;
+    try {
+        token = req.headers['token'].replace(/['"]+/g, '');
+    }
+    catch (err) {
+        res.json({
+            status: 'error',
+            error: "Your login session has expired, please re-login to proceed!"
+        });
+    }
 
     //check whether jwt exists and it is verified
     if(token){
@@ -11,7 +20,7 @@ let requireAuth = (req, res, next) => {
                 console.log(err.message);
                 res.json({
                     status: 'error',
-                    error: "token verification failed!"
+                    error: "Your login session has expired, please re-login to proceed!"
                 });
             }
             else{
@@ -23,7 +32,45 @@ let requireAuth = (req, res, next) => {
         console.log('not token');
         res.json({
             status: 'error',
-            error: "unidentified token!"
+            error: "Your login session has expired, please re-login to proceed!"
+        });
+    }
+
+};
+
+let requireRouteAuth = (req, res, next) => {
+
+    let token;
+    try {
+        token = req.headers['token'].replace(/['"]+/g, '');
+    }
+    catch (err) {
+        res.json({
+            status: 'auth-error',
+            error: "Your login session has expired, please re-login to proceed!"
+        });
+    }
+
+    //check whether jwt exists and it is verified
+    if(token){
+        jwt.verify(token, process.env.JWT_ENV, (err, decodedToken) => {
+            if(err){
+                console.log(err.message);
+                res.json({
+                    status: 'auth-error',
+                    error: "Your login session has expired, please re-login to proceed!"
+                });
+            }
+            else{
+                next();
+            }
+        });
+    }
+    else{
+        console.log('not token');
+        res.json({
+            status: 'auth-error',
+            error: "Your login session has expired, please re-login to proceed!"
         });
     }
 
@@ -38,5 +85,6 @@ const createToken = () => {
 
 module.exports = {
     requireAuth,
+    requireRouteAuth,
     createToken,
 };
