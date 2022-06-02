@@ -35,6 +35,7 @@ const register_post = async (req, res) => {
 
             let user = await Owner.findOne({nic});
             let token = auth.createToken();
+            let fullName = user.firstName + " " + user.lastName;
 
             res.json({
                 status: 'ok',
