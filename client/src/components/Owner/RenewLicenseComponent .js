@@ -10,7 +10,7 @@ const axios = require('axios').default;
 
 function RenewLicense(props) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     if(!token){
         sessionStorage.clear();

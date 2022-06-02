@@ -36,6 +36,7 @@ const login_post = async (req, res) => {
                 res.json({
                     status: 'ok',
                     token: token,
+                    userType: 'officer',
                     data: {
                         nic: nic,
                         id: user._id,

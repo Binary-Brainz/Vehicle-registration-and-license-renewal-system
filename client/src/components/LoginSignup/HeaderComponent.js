@@ -80,6 +80,7 @@ function Header(props) {
 
     const handleSignup = async (values) => {
 
+        sessionStorage.clear();
 
         const response = await signUpUser(values);
 
@@ -88,10 +89,13 @@ function Header(props) {
             toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid signup!", life: 5000});
         }
         else{
+
             toggleSignupModal();
             
+            sessionStorage.setItem('userType', JSON.stringify(response.userType));
             sessionStorage.setItem('userData', JSON.stringify(response.data));
-            sessionStorage.setItem('token', JSON.stringify(response.token));
+            sessionStorage.setItem('owner_token', JSON.stringify(response.token));
+
             props.setAuthState(response);
 
             navigate('/ownerDashboard', { replace: true });
@@ -104,6 +108,8 @@ function Header(props) {
         let response;
         let type;
         let nic_arr = event.nic.split("-");
+
+        sessionStorage.clear();
         
         if(nic_arr.length === 1){
 
@@ -129,16 +135,20 @@ function Header(props) {
             toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid login details!", life: 5000});
         }
         else{
+            
             toggleLoginModal();
 
+            sessionStorage.setItem('userType', JSON.stringify(response.userType));
             sessionStorage.setItem('userData', JSON.stringify(response.data));
-            sessionStorage.setItem('token', JSON.stringify(response.token));
+
             props.setAuthState(response);
 
             if(type === 'owner'){
+                sessionStorage.setItem('owner_token', JSON.stringify(response.token));
                 navigate('/ownerDashboard', { replace: true });
             }
             else{
+                sessionStorage.setItem('officer_token', JSON.stringify(response.token));
                 navigate('/adminDashboard', { replace: true });
             }
         }

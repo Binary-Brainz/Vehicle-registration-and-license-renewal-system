@@ -8,7 +8,7 @@ const axios = require('axios').default;
 
 function Header (props) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     if(!token){
         sessionStorage.clear();

@@ -7,7 +7,7 @@ const axios = require('axios').default;
 
 const ViewVehicles = () => {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     if (!token) {
         sessionStorage.clear();
