@@ -66,6 +66,10 @@ function Header(props) {
     const [value, setValue] = useState('');
     const toast = useRef(null);
 
+    // if(loginError){
+    //     toast.current.show({severity:'error', summary: "Invalid login details!", life: 5000});
+    // }
+
     const handleChange = (event) => {
         setValue(event.target.value );
     }
@@ -156,10 +160,10 @@ function Header(props) {
     
     return (
         <React.Fragment>
-            <Toast ref={toast} position="top-center"/>
+            <Toast ref={toast} position="top-center" position="top-right" />
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
-                    <Navbar.Brand href="/home"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licening System</Navbar.Brand>
+                    <Navbar.Brand href="/home"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licensing System</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="ms-auto">
