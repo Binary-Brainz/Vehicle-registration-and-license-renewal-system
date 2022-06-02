@@ -76,8 +76,9 @@ const RegisterNewVehicle = () => {
                                 <Card.Title>Reserve a Date</Card.Title>
                                 {(ownerReservedDates) ? <Card.Subtitle>Reserved Dates<br/> {ownerReservedDates.map((dt) => <span><Badge bg="warning" text="dark">{dt}</Badge> </span> )}</Card.Subtitle> : <Card.Subtitle>Reserved Date<br/> <Badge bg="secondary">No Reservation</Badge> </Card.Subtitle>}
                                 <Card.Text>
-                                    This is a longer card with supporting text below as a natural
-                                    lead-in to additional content. This content is a little bit longer.
+                                 Book an appointment on a date convenient to you and get a fully detailed 
+                                 report of your vehicle prepared by our professionals. After reserving, the 
+                                 date will be displayed on top.
                                 </Card.Text>
                                 <Button label="Click to Reserve a Date" className="p-button-sm p-button-rounded" onClick={flipDate}></Button>
                             </Card.Body>
@@ -109,8 +110,9 @@ const RegisterNewVehicle = () => {
                                 <Card.Title>Submit Vehicle Details Form</Card.Title>
                                 
                                 <Card.Text>
-                                    This is a longer card with supporting text below as a natural
-                                    lead-in to additional content. This content is a little bit longer.
+                                Submit all the documents related to registration, license renewal, and 
+                                change of attributes of your vehicle here. Once submitted, your 
+                                submission will be displayed on top.
                                 </Card.Text>
                                 <Button label="Click to Submit Form" className="p-button-sm p-button-rounded" onClick={flipSub}></Button>
                             </Card.Body>

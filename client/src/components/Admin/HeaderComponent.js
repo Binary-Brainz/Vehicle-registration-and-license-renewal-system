@@ -70,7 +70,9 @@ function Header (props) {
                     <div className="row row-header">
                         <div className="col-12 col-sm-8">
                             <h1>Vehicle Registration and Licening System </h1>
-                            <p>We take inspiration from the World's best cuisines, and create a unique fusion experience. Our lipsmacking creations will tickle your culinary senses!</p>
+                            <p>We strive to provide hassle-free vehicle registration and licensing services to your fingertips using cutting-edge technology.
+                                Keeping track of your automobiles has never been easier.
+                            </p>
                         </div>
                     </div>
                 </div>
