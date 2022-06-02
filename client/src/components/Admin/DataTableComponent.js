@@ -153,7 +153,7 @@ const DataTable = (props) => {
             <Dialog header={name} visible={displayResponsive} onHide={() => onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} >
                 <Card>
                     <Card.Body>         
-                        <Card.Title>Vehicle No : <Badge value={regNo} severity="success" className="m-2 fs-5"></Badge></Card.Title>
+                        {(regNo) && <Card.Title>Vehicle No : <Badge value={regNo} severity="success" className="m-2 fs-5"></Badge></Card.Title>}
                         <Card className='text-center text-lg bg-light fs-4'>
                             Attached File<br />
                             <Card.Link href={`http://localhost:5000/officer/downloadDocumets/${reqId}`} className='product-name' ><span className='fa fa-download'></span></Card.Link>
