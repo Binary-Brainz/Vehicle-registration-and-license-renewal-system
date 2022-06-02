@@ -67,6 +67,7 @@ function Header(props) {
     }
 
     const handleChange = (event) => {
+        console.log(event.target.value);
         setValue(event.target.value );
     }
 
