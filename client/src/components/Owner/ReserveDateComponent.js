@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
+import { vehRegDateResed } from '../statusSlice';
 
 async function reserveDate(data) {
 
@@ -25,6 +26,7 @@ async function reserveDate(data) {
 
 const ReserveDate = () => {
     const toast = useRef(null);
+    const dispatch = useDispatch();
 
     const id = useSelector(state => state.user.id);
     const navigate = useNavigate();
@@ -40,7 +42,8 @@ const ReserveDate = () => {
         let status = response.status;
         if (status === 'ok') {
             //set store status
-            toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
+            dispatch(vehRegDateResed());
+            //toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
             navigate("/ownerDashboard/ownvehicles");
         }
         else {

@@ -10,8 +10,17 @@ import { useRef } from "react";
 import { isVehRegDocDone, vehRegDateResed } from "../statusSlice";
 import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
+import { Control, Errors, LocalForm } from 'react-redux-form';
+import { ModalHeader, ModalBody, Label, Col, Row } from 'reactstrap';
 
-
+const required = (val) => val && val.length;
+const maxLength = (len) => (val) => !(val) || (val.length <= len);
+const minLength = (len) => (val) => !(val) || (val.length >= len);
+const isNumber = (val) => !(val) || !isNaN(Number(val));
+const validEmail = (val) => !(val) || /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val);
+const validPass = (val) => !(val) || /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*!@$%^&]).{8,32}$/i.test(val);
+const validRePass = (val1) => (val2) => !(val2) || val1 === val2;
+const validNic = (val) => !(val) || (/^[VX0-9]{10}$/i.test(val)) || (/^[0-9]{12}$/i.test(val));
 
 const axios = require('axios').default;
 
@@ -35,6 +44,37 @@ function Header() {
     const stored_id = useSelector(state => state.user.id);
     const stored_nic = useSelector(state => state.user.nic);
 
+    //Edit Profile--------------------------------------
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [value, setValue] = useState("");
+    const toggleEditModal = () => {
+        setIsEditModalOpen(!isEditModalOpen);
+    }
+
+    const handleChange = (event) => {
+        setValue(event.target.value );
+    }
+
+    const handleEdit = async (values) => {
+
+
+        // const response = await editUser(values);
+
+        // if(response.status === 'error'){
+            
+        //     toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid edit!", life: 5000});
+        // }
+        // else{
+        //     toggleEditModal();
+
+        //     sessionStorage.setItem('token', JSON.stringify(response.token));
+        //     props.setAuthState(response);
+
+        //     navigate('/ownerDashboard', { replace: true });
+        // }
+    }
+    //-----------------------------------------------------
+
     //Notices------------------------------------
     const isVehRegDate = useSelector(state =>state.status.vehRegDateRes);
     const isVehRegDoc = useSelector(state =>state.status.vehRegDocDone);
@@ -43,7 +83,7 @@ function Header() {
         toast.current.show({severity: 'success', summary: "Date Successfully Reserved!" , life: 5000});
         delay(5000);
         dispatch(vehRegDateResed());
-        navigate("/ownerDashboard/ownvehicles")
+        navigate("/ownerDashboard")
          
     }else if(isVehRegDoc){
         toast.current.show({severity: 'success', summary: "File Successfully Uploaded" , life: 5000});
@@ -137,7 +177,7 @@ function Header() {
 
                             <NavDropdown  title={<><span className="fa fa-user fa-lg"></span> {fullName} </>} id="collasible-nav-dropdown">
                                 <NavDropdown.Header >{nic}</NavDropdown.Header>
-                                <NavDropdown.Item href="#"><span className="fa fa-cogs fa-lg"></span> Account Settings</NavDropdown.Item>
+                                <NavDropdown.Item href="#" onClick={toggleEditModal}><span className="fa fa-cogs fa-lg"></span> Account Settings</NavDropdown.Item>
                                 <NavDropdown.Divider />
                                 <NavDropdown.Item href="#" onClick={() => handleShow()}><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
                             </NavDropdown>
@@ -179,6 +219,234 @@ function Header() {
                     Confirm
                     </Button>
                 </Modal.Footer>
+            </Modal>
+            <Modal show={isEditModalOpen} onHide={toggleEditModal}>
+                <ModalHeader toggle={toggleEditModal}>Edit Profile</ModalHeader>
+                <ModalBody>
+                    <LocalForm onSubmit={(values) => handleEdit(values)} >
+                        <Row className="form-group">
+                            <Label htmlFor="firstName" md={4}>First Name</Label>
+                            <Col md={8}>
+                                <Control.text model=".firstName" id="firstName" name="firstName"
+                                    placeholder="First Name"
+                                    className="form-control"
+                                    validators={{
+                                         minLength: minLength(3), maxLength: maxLength(15)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".firstName"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="lastName" md={4}>Last Name</Label>
+                            <Col md={8}>
+                                <Control.text model=".lastName" id="lastName" name="lastName"
+                                    placeholder="Last Name"
+                                    className="form-control"
+                                    validators={{
+                                         minLength: minLength(3), maxLength: maxLength(15)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".lastName"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="contactNo" md={4}>Contact No.</Label>
+                            <Col md={8}>
+                                <Control.text model=".contactNo" id="contactNo" name="contactNo"
+                                    placeholder="Tel. Number"
+                                    className="form-control"
+                                    validators={{
+                                         minLength: minLength(3), maxLength: maxLength(15), isNumber
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".contactNo"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 numbers',
+                                        maxLength: 'Must be 15 numbers or less',
+                                        isNumber: 'Must be a number'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="email" md={4}>Email</Label>
+                            <Col md={8}>
+                                <Control.text model=".email" id="email" name="email"
+                                    placeholder="Email"
+                                    className="form-control"
+                                    validators={{
+                                         validEmail
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".email"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validEmail: 'Invalid Email Address'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="address" md={4}>Address</Label>
+                            <Col md={8}>
+                                <Control.text model=".address" id="address" name="address"
+                                    placeholder="Address"
+                                    className="form-control"
+                                    validators={{
+                                         minLength: minLength(3)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".address"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="nic" md={4}>NIC</Label>
+                            <Col md={8}>
+                                <Control.text model=".nic" id="nic" name="nic"
+                                    placeholder="NIC"
+                                    className="form-control"
+                                    validators={{
+                                         validNic
+                                    }}
+                                    disabled
+                                    value={stored_nic}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".nic"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validNic: 'Not a valid NIC'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="oldPassword" md={4}>Current Password</Label>
+                            <Col md={8}>
+                                <Control.password model=".oldPassword" id="oldPassword" name="oldPassword"
+                                    placeholder="Current Password"
+                                    className="form-control"
+                                    validators={{
+                                        required
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".oldPassword"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        
+                        <Row className="form-group">
+                            <Label htmlFor="password" md={4}>New Password</Label>
+                            <Col md={8}>
+                                <Control.password onChange={handleChange} model=".password" id="password" name="password"
+                                    placeholder="New Password"
+                                    className="form-control"
+                                    validators={{
+                                         validPass
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".password"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validPass: 'Password must contain At least one upper case English letter, At least one lower case English letter, At least one digit, At least one special character(#?!@$%^&*-), Minimum eight in length'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Label htmlFor="rePassword" md={4}>Re-Password</Label>
+                            <Col md={8}>
+                                <Control.password model=".rePassword" id="rePassword" name="rePassword"
+                                    placeholder="Re-Password"
+                                    className="form-control"
+                                    validators={{
+                                         validRePass: validRePass(value)
+                                    }}
+                                />
+                                <Errors
+                                    className="text-danger"
+                                    model=".rePassword"
+                                    show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        validRePass: 'Re-Password is not matching with Password'
+                                    }}
+                                    wrapper="ul"
+                                    component="li"
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="form-group">
+                            <Col md={{ size: 8, offset: 4 }}>
+                                <Button type="submit" color="primary">
+                                    Update Profile
+                                </Button>
+                            </Col>
+                        </Row>
+                    </LocalForm>
+                </ModalBody>
             </Modal>
         </div>
     );
