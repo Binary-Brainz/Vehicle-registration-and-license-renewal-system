@@ -153,19 +153,19 @@ const DataTable = (props) => {
                 <Card>
                     <Card.Body>
                         <Card.Title>{regNo}</Card.Title>
-                        <div className='col-12 col-md-3 text-center align-self-center'>
+                        <Card className='text-center text-lg bg-light fs-4'>
                             Attached File<br />
                             <Card.Link href={`http://localhost:5000/officer/downloadDocumets/${reqId}`} className='product-name' ><span className='fa fa-download'></span></Card.Link>
-                        </div>
+                        </Card>
 
                         <br></br>
                         <div >
-                            {(props.state==="pending") && <Button className="btn mr-1" onClick={renderCollapsible}>
-                                Approve
-                            </Button>}
-                            {(props.state==="pending") && <Button className='btn btn-primary margin-left float-right' onClick={renderRejection}>
-                                Reject
-                            </Button>}
+                            <span className="p-buttonset">
+                            {(props.state === "pending") && <Button label='Approve' icon="pi pi-check" className="p-button-sm p-button-raised p-button-success" onClick={renderCollapsible} />}
+                            {(props.state === "pending") && <Button label='Reject' icon="pi pi-times" className="p-button-sm p-button-raised p-button-danger" onClick={renderRejection} />}
+                            </span>
+                            
+                            
                         </div>
 
                         <Collapse in={openRegistration}>
@@ -175,7 +175,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <NewVehicle ownerID={ownerID} reqId={reqId}/>
+                                    <NewVehicle ownerID={ownerID} reqId={reqId} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -187,7 +187,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <UpdateVehicle ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle}/>
+                                    <UpdateVehicle ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -199,7 +199,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <LicenseRenewalOfficer ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle}/>
+                                    <LicenseRenewalOfficer ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -211,7 +211,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <RequestRejection reqId={reqId}/>
+                                    <RequestRejection reqId={reqId} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
