@@ -65,7 +65,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                                 id="registerDate"
                                 name="registerDate"
                                 max={disableFutureDate()}
-                                defaultValue={vehicle.registeredDate}
+                                defaultValue={vehicle? vehicle.registeredDate : ''}
                                 disabled={disabled}
                                 {...register("registeredDate", {
                                     required: true,
@@ -83,7 +83,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                                 type="text"
                                 id="manufacturedYear"
                                 name="manufacturedYear"
-                                defaultValue={vehicle.manufacturedYear}
+                                defaultValue={vehicle? vehicle.manufacturedYear : ''}
                                 disabled={update ? update : disabled}
                                 {...register("manufacturedYear", {
                                     required: true.valueOf,
@@ -100,7 +100,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                         <Form.Group>
                             <Form.Label>Vehicle Type</Form.Label>
                             <br></br>
-                            <Form.Select name="type" defaultValue={vehicle.type} {...register("type", { validate: defaultValue => defaultValue !== 'default' })} disabled={update ? update : disabled}>
+                            <Form.Select name="type" defaultValue={vehicle? vehicle.type : ''} {...register("type", { validate: defaultValue => defaultValue !== 'default' })} disabled={update ? update : disabled}>
                                 <option value={"default"} disabled={disabled} >Choose an Option</option>
                                 <option value="1">Car</option>
                                 <option value="2">Van</option>
@@ -116,7 +116,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             <Form.Control
                                 type="text"
                                 name="regNo"
-                                defaultValue={vehicle.regNo}
+                                defaultValue={vehicle? vehicle.regNo : ''}
                                 placeholder={vehicle.regNo}
                                 {...register("regNo", {
                                     required: true
@@ -139,7 +139,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             type="color"
                             id="color"
                             name="color"
-                            defaultValue={vehicle.color}
+                            defaultValue={vehicle? vehicle.color : '#000000'}
                             disabled={disabled}
                             {...register("color", {
                                 required: true
@@ -156,7 +156,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             type="number"
                             id="weight"
                             name="weight"
-                            defaultValue={vehicle.weight}
+                            defaultValue={vehicle? vehicle.weight : ''}
                             disabled={disabled}
                             {...register("weight", {
                                 required: true
@@ -176,7 +176,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             type="number"
                             id="noOfDoors"
                             name="noOfDoors"
-                            defaultValue={vehicle.noOfDoors}
+                            defaultValue={vehicle? vehicle.noOfDoors : ''}
                             disabled={disabled}
                             {...register("noOfDoors", {
                                 required: true
@@ -192,7 +192,7 @@ const VehicleComponent = ({ vehicle, register, errors, disabled, update }) => {
                             type="text"
                             id="model"
                             name="model"
-                            defaultValue={vehicle.model}
+                            defaultValue={vehicle? vehicle.model : ''}
                             disabled={update ? update : disabled}
                             {...register("model", {
                                 required: true
