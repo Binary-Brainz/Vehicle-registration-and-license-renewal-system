@@ -44,7 +44,7 @@ const ReserveDate = () => {
         if (status === 'ok') {
             //set store status
             dispatch(vehRegDateResed());
-            toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
+            //toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
             navigate("/ownerDashboard/ownvehicles");
         }
         else {
