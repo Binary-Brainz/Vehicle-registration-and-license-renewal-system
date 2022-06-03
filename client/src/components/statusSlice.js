@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   vehRegDateRes: false,
+  vehRegDocDone: false
 
 }
 
@@ -12,9 +13,11 @@ const ststusSlice = createSlice({
     vehRegDateResed: (state) => {
       state.vehRegDateRes = !state.vehRegDateRes
     },
-
+    isVehRegDocDone: (state) => {
+      state.vehRegDocDone = !state.vehRegDocDone
+    },
   }
 })
 
 export default ststusSlice.reducer
-export const { vehRegDateResed } = ststusSlice.actions
+export const { vehRegDateResed, isVehRegDocDone } = ststusSlice.actions

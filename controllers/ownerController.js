@@ -35,13 +35,16 @@ const register_post = async (req, res) => {
 
             let user = await Owner.findOne({nic});
             let token = auth.createToken();
+            let fullName = user.firstName + " " + user.lastName;
 
             res.json({
                 status: 'ok',
                 token: token,
+                userType: 'owner',
                 data: {
                     nic: nic,
-                    id: user._id
+                    id: user._id,
+                    fullName: fullName
                 }
             });
         }
@@ -70,6 +73,7 @@ const login_post = async (req, res) => {
                 return_data = {
                     status: 'ok',
                     token: token,
+                    userType: 'owner',
                     data: {
                         nic: nic,
                         id: user._id,
@@ -254,7 +258,7 @@ const get_owner_reservedDates = async (req, res) => {
     try{
 
         let today = new Date();
-        let workdays = await Workday.find({ owners: { $all: [id] } });
+        let workdays = await Workday.find({ owners: { $all: [id] } }).sort({day: 1}).exec();
         
         let ownerReservedDates = []
         for(let i = 0; i < workdays.length; i++){
@@ -284,7 +288,7 @@ const get_owner_notifications = async (req, res) => {
 
     try{
 
-        let notifications = await Notification.find({receiverID: id});
+        let notifications = await Notification.find({receiverID: id}).sort({createdAt: -1}).exec();
 
         let return_notifications = [];
 
@@ -342,51 +346,97 @@ const get_owner_requests = async (req, res) => {
 const edit_owner = async (req, res) => {
 
     let data = req.body;
-    let id = req.body.id;
-    delete data.id
 
-    let new_data = {};
+    let nic = req.body.nic;
+    delete data.nic
 
-    for(let key in data){
-        if(data[key] !== ''){
-            new_data[key] = data[key];
-        }
-    }
+    let oldPsw = data.oldPassword;
+    delete data.oldPassword;
 
     try {
 
-        if(Object.keys(new_data).length > 0){
-        
-            Owner.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, data, {new: true}, async (err, new_owner) => {
-    
-                if (err){
-                    res.json({
-                        status: 'error',
-                        error: err
-                    });
-                }
-                else if(new_owner === null){
+        let old_owner = await Owner.findOne({nic: nic});
 
-                    res.json({
-                        status: 'error',
-                        error: 'Invalid User!'
-                    })
-                }
-                else{
-                    
-                    res.json({
-                        status: 'ok',
-                    });
-                }
-            });
-        }
-        else{
+        if(old_owner === null){
             res.json({
                 status: 'error',
-                error: 'Update fields cannot be empty!'
-            });
+                error: 'Invalid User!'
+            })
         }
-    }
+        else{
+
+            let password_check = await encHandler.checkEncryptedCredential(oldPsw, old_owner.password);
+
+            if(password_check){
+
+                let new_data = {};
+                let password_changed = false;
+
+                for(let key in data){
+
+                    if(key === 'password'){
+                        new_data[key] = await encHandler.encryptCredential(data[key]);
+                        password_changed = true;
+                    }
+                    else if(data[key] !== ''){
+                        new_data[key] = data[key];
+                    }
+                }
+
+                try {
+
+                    if(Object.keys(new_data).length > 0){
+                    
+                        Owner.findOneAndUpdate({nic: nic}, new_data, {new: true}, async (err, new_owner) => {
+                
+                            if (err){
+                                res.json({
+                                    status: 'error',
+                                    error: 'Email already exists!'
+                                });
+                            }
+                            else{
+                                
+                                let fullName = new_owner.firstName + " " + new_owner.lastName;
+                                let msg;
+                                if(password_changed){
+                                    msg = 'Please re-login using your new password.';
+                                }
+                                else{
+                                    msg = 'Profile information has changed successfully.';
+                                }
+                                res.json({
+                                    status: 'ok',
+                                    data: {
+                                        nic: nic,
+                                        id: new_owner._id,
+                                        fullName: fullName
+                                    },
+                                    msg: msg,
+                                    password_changed: password_changed
+                                });
+                            }
+                        });
+                    }
+                    else{
+                        res.json({
+                            status: 'error',
+                            error: 'Update fields cannot be empty!'
+                        });
+                    }
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }
+            else{
+                res.json({
+                    status: 'error',
+                    error: 'Incorrect password!'
+                })
+            }
+        }
+    } 
     catch (err) {
         console.log(err);
     }
@@ -402,6 +452,11 @@ const send_request = async (req, res) => {
 
         let obj = await Officer.findOne({type: type}, '_id');
         let officerID = obj._id.toString();
+
+        data.files = [];
+        for(let i = 0; i < req.files.length; i++){
+            data.files.push(req.files[i].location);
+        }
 
         if(officerID){
 
@@ -436,42 +491,6 @@ const send_request = async (req, res) => {
             status: 'error',
             error: 'Required documents must be uploaded!'
         });
-    }
-}
-
-//download pdf
-const download_file = async (req, res) => {
-
-    let notificationID = req.params.notificationID;
-
-    try {
-        
-        let notification = await Notification.findById(mongoose.Types.ObjectId(notificationID));
-
-        if(notification !== null){
-
-            if(notification.files.length > 0){
-
-                let fileName = notification.files[0];
-
-                res.download('generated/' + fileName);
-            }
-            else{
-                res.json({
-                    status: 'error',
-                    error: 'No attachments!'
-                })
-            }
-        }
-        else{
-            res.json({
-                status: 'error',
-                error: 'Invalid notification id!'
-            })
-        }
-    } 
-    catch (err) {
-        
     }
 }
 
@@ -579,7 +598,6 @@ module.exports = {
     get_owner_requests,
     edit_owner,
     send_request,
-    download_file,
     reserve_post,
 }
 

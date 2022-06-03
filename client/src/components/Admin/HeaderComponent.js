@@ -6,8 +6,14 @@ import { gotId, gotNic } from '../userSlice';
 
 const axios = require('axios').default;
 
-
 function Header (props) {
+
+    const token = sessionStorage.getItem('officer_token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
 
     const userData = JSON.parse(sessionStorage.getItem("userData"));
 
@@ -20,10 +26,20 @@ function Header (props) {
     const fullName = (stored_fullName !== '')? stored_fullName : userData.fullName;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
+    }
+
+    const handleClose = () => setShowConfirm(false);
+    const handleShow = () => setShowConfirm(true);
+
+    const confirmLogout = () => {
+        sessionStorage.clear();
+        setShowConfirm(false);
+        document.location = '/';
     }
 
     return (
@@ -43,7 +59,7 @@ function Header (props) {
 
                             <NavDropdown  title={<><span className="fa fa-user fa-lg"></span> {fullName} </>} id="collasible-nav-dropdown">
                                 <NavDropdown.Header >{nic}</NavDropdown.Header>
-                                <NavDropdown.Item href="#"><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
+                                <NavDropdown.Item href="#" onClick={() => handleShow()}><span className="fa fa-sign-out fa-lg"></span> Logout</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
@@ -52,9 +68,11 @@ function Header (props) {
             <div className="jumbotron">
                 <div className="container">
                     <div className="row row-header">
-                        <div className="col-12 col-sm-8">
-                            <h1>Vehicle Registration and Licening System </h1>
-                            <p>We take inspiration from the World's best cuisines, and create a unique fusion experience. Our lipsmacking creations will tickle your culinary senses!</p>
+                    <div className="col-12 col-sm-8">
+                            <h1>Vehicle Registration and Licensing System</h1>
+                            <p className="fst-italic">"We strive to provide hassle-free vehicle registration and licensing services to your fingertips using cutting-edge technology.
+                               Keeping track of your automobiles has never been easier"
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -73,6 +91,20 @@ function Header (props) {
                     </Button>
                     <Button variant="primary" onClick={toggleModal}>
                         Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showConfirm} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Sure you want to logout?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                    </Button>
+                    <Button variant="primary" onClick={confirmLogout}>
+                    Confirm
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
+import { Toast } from 'primereact/toast';
 
 async function renewLicense(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     return fetch('/officer/renewLicense', {
         method: 'POST',
@@ -35,15 +36,18 @@ const LicenseRenewalOfficer = (props) => {
 
 
         let response = await renewLicense(data);
-        if(response.status === "ok"){
-            console.log(response)
+        if (response.status === "ok") {
+            console.log(response);
+            toast.current.show({ severity: 'success', summary: "License Renewed Successfully!", life: 5000 });
         }
-        else{
+        else {
             console.log(response.error);
+            toast.current.show({ severity: 'error', summary: `${response.error}`, life: 5000 });
         }
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const toast = useRef(null);
 
     const disableFutureDate = () => {
         const today = new Date();
@@ -62,8 +66,10 @@ const LicenseRenewalOfficer = (props) => {
 
 
     return (
-        <Form onSubmit={handleSubmit(onSubmit)}>
-            {/* <Form.Group>
+        <div>
+            <Toast ref={toast} />
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                {/* <Form.Group>
                 <Form.Label htmlFor="ownerName">Owner Name</Form.Label>
                 <Form.Control
                     type="text"
@@ -95,24 +101,24 @@ const LicenseRenewalOfficer = (props) => {
             {errors.ownerNIC && errors.ownerNIC.type === "required" && <p className='text-danger'>Owner's NIC is required!</p>}
             {errors.ownerNIC && errors.ownerNIC.type === "minLength" && <p className='text-danger'>Owner's NIC invalid!</p>}
             {errors.ownerNIC && errors.ownerNIC.type === "maxLength" && <p className='text-danger'>Owner's NIC invalid!</p>} */}
-            
-            <Form.Group>
-                {/* <Form.Label htmlFor="regNo">Vehicle Registration Number</Form.Label> */}
-                <Form.Control
-                    type="hidden"
-                    id="regNo"
-                    name="regNo"
-                    defaultValue={props.regNo}
-                    placeholder={props.regNo}
-                    {...register("regNo", {
-                        required: true
-                    })}
-                />
-            </Form.Group>
-            {errors.regNo && <p className='text-danger'>Vehicle Registration Number is required!</p>}
 
-            <div className="row">
-                {/* <div className="col-sm">
+                <Form.Group>
+                    {/* <Form.Label htmlFor="regNo">Vehicle Registration Number</Form.Label> */}
+                    <Form.Control
+                        type="hidden"
+                        id="regNo"
+                        name="regNo"
+                        defaultValue={props.regNo}
+                        placeholder={props.regNo}
+                        {...register("regNo", {
+                            required: true
+                        })}
+                    />
+                </Form.Group>
+                {errors.regNo && <p className='text-danger'>Vehicle Registration Number is required!</p>}
+
+                <div className="row">
+                    {/* <div className="col-sm">
                     <Form.Group>
                         <Form.Label htmlFor="weight">Vehicle Weight</Form.Label>
                         <Form.Control
@@ -127,57 +133,57 @@ const LicenseRenewalOfficer = (props) => {
                     </Form.Group>
                     {errors.weight && <p className='text-danger'>Vehicle Weight is required!</p>}
                 </div> */}
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label>Renewal date</Form.Label>
-                        <Form.Control type="date" name='renewalDate' max={disableFutureDate()}
-                            {...register("renewalDate", {
-                                required: true
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.renewalDate && <p className='text-danger'>Please enter a valid renewal date!</p>}
-                    <p>Expiration Date will be set to 1 year ahead of License Renewal Date</p>
-                </div>
-               
-            </div>
-
-            <div className="row">
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label htmlFor="paidAmount">Amount Paid</Form.Label>
-                        <Form.Control
-                            type="number"
-                            id="paidAmount"
-                            name="paidAmount"
-                            {...register("paidAmount", {
-                                required: true
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.paidAmount && <p className='text-danger'>Amount Paid is required!</p>}
-                </div>
-
-                <div className="col-sm">
-                    <Form.Group>
-                        <Form.Label htmlFor="nextYearFee">Fee for next year</Form.Label>
-                        <Form.Control
-                            type="number"
-                            id="nextYearFee"
-                            name="nextYearFee"
-                            {...register("nextYearFee", {
-                                required: true
-                            })}
-                        />
-                    </Form.Group>
-                    {errors.nextYearFee && <p className='text-danger'>Fee for next year is required!</p>}
+                    <div className="col-sm">
+                        <Form.Group>
+                            <Form.Label>Renewal date</Form.Label>
+                            <Form.Control type="date" name='renewalDate' max={disableFutureDate()}
+                                {...register("renewalDate", {
+                                    required: true
+                                })}
+                            />
+                        </Form.Group>
+                        {errors.renewalDate && <p className='text-danger'>Please enter a valid renewal date!</p>}
+                        <p>Expiration Date will be set to 1 year ahead of License Renewal Date</p>
+                    </div>
 
                 </div>
-            </div>
 
-            <div className="row">
-                
-                {/* <div className="col-sm">
+                <div className="row">
+                    <div className="col-sm">
+                        <Form.Group>
+                            <Form.Label htmlFor="paidAmount">Amount Paid</Form.Label>
+                            <Form.Control
+                                type="number"
+                                id="paidAmount"
+                                name="paidAmount"
+                                {...register("paidAmount", {
+                                    required: true
+                                })}
+                            />
+                        </Form.Group>
+                        {errors.paidAmount && <p className='text-danger'>Amount Paid is required!</p>}
+                    </div>
+
+                    <div className="col-sm">
+                        <Form.Group>
+                            <Form.Label htmlFor="nextYearFee">Fee for next year</Form.Label>
+                            <Form.Control
+                                type="number"
+                                id="nextYearFee"
+                                name="nextYearFee"
+                                {...register("nextYearFee", {
+                                    required: true
+                                })}
+                            />
+                        </Form.Group>
+                        {errors.nextYearFee && <p className='text-danger'>Fee for next year is required!</p>}
+
+                    </div>
+                </div>
+
+                <div className="row">
+
+                    {/* <div className="col-sm">
                     <Form.Group>
                         <Form.Label>Expiration date</Form.Label>
                         <Form.Control type="date" name='expirationDate' value={} {...register("expirationDate", {
@@ -187,13 +193,13 @@ const LicenseRenewalOfficer = (props) => {
                     </Form.Group>
                     {errors.expirationDate && <p className='text-danger'>Please enter a valid expiration date!</p>}
                 </div> */}
-            </div>
-            <br></br>
-            <Button variant="primary" type="submit">
-                Renew License and send to customer
-            </Button>
-        </Form>
-
+                </div>
+                <br></br>
+                <Button variant="primary" type="submit">
+                    Renew License and send to customer
+                </Button>
+            </Form>
+        </div>
     )
 }
 

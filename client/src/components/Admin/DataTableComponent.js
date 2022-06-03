@@ -13,6 +13,7 @@ import NewVehicle from './NewVehicleComponent';
 import UpdateVehicle from './UpdateVehicleComponent';
 import LicenseRenewalOfficer from './LicenseRenewalComponent';
 import RequestRejection from './RequestRejectionComponent';
+import { Badge } from 'primereact/badge';
 
 const axios = require('axios').default;
 
@@ -29,6 +30,7 @@ const DataTable = (props) => {
     const [ownerID, setOwnerId] = useState('');
     const [requests, setRequests] = useState([]);
     const [vehicle, setVehicle] = useState({});
+    const [files, setFiles] = useState([]);
 
     const [openRegistration, setOpenRegistration] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
@@ -45,7 +47,7 @@ const DataTable = (props) => {
 
             try {
 
-                const token = sessionStorage.getItem('token');
+                const token = sessionStorage.getItem('officer_token');
 
                 let response = await axios.get(`/officer/dashboard/${user_id}`, {
                     headers: {
@@ -78,13 +80,14 @@ const DataTable = (props) => {
     const dialogFuncMap = {
         'displayResponsive': setDisplayResponsive
     }
-    const onClick = (type, name, regNo, reqId, ownerID, vehicle) => {
+    const onClick = (type, name, regNo, reqId, ownerID, vehicle, files) => {
         dialogFuncMap[`${type}`](true);
         setname(name);
         setRegNo(regNo);
         setReqId(reqId);
         setOwnerId(ownerID);
         setVehicle(vehicle);
+        setFiles(files);
     }
 
     const onHide = (name) => {
@@ -102,7 +105,7 @@ const DataTable = (props) => {
 
                     </div>
                     <div className="product-list-action">
-                        <Button label="Show" icon="pi pi-external-link" onClick={() => onClick('displayResponsive', request.ownerName, request.regNo, request._id, request.ownerID, request.vehicle)} className="p-button-info p-button-sm p-button-rounded" />
+                        <Button label="Show" icon="pi pi-external-link" onClick={() => onClick('displayResponsive', request.ownerName, request.regNo, request._id, request.ownerID, request.vehicle, request.files)} className="p-button-info p-button-sm p-button-rounded" />
                         <div className="product-badge">{request.createdAt}</div>
                     </div>
                 </div>
@@ -143,6 +146,13 @@ const DataTable = (props) => {
         setOpenRenewal(false);
     }
 
+    const download = (files) => {
+
+        if(files.length > 1){
+            window.open(files[1], '_blank');
+        }
+    }
+
     return (
 
         <div className="dataview-demo">
@@ -151,21 +161,21 @@ const DataTable = (props) => {
             </div>
             <Dialog header={name} visible={displayResponsive} onHide={() => onHide('displayResponsive')} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }} >
                 <Card>
-                    <Card.Body>
-                        <Card.Title>{regNo}</Card.Title>
-                        <div className='col-12 col-md-3 text-center align-self-center'>
+                    <Card.Body>         
+                        {(regNo) && <Card.Title>Vehicle No : <Badge value={regNo} severity="success" className="m-2 fs-5"></Badge></Card.Title>}
+                        <Card className='text-center text-lg bg-light fs-4'>
                             Attached File<br />
-                            <Card.Link href={`/officer/downloadDocumets/${reqId}`} className='product-name' ><span className='fa fa-download'></span></Card.Link>
-                        </div>
+                            <Card.Link href={files[0]} onClick={() => download(files)} className='product-name' ><span className='fa fa-download'></span></Card.Link>
+                        </Card>
 
                         <br></br>
                         <div >
-                            {(props.state==="pending") && <Button className="btn mr-1" onClick={renderCollapsible}>
-                                Approve
-                            </Button>}
-                            {(props.state==="pending") && <Button className='btn btn-primary margin-left float-right' onClick={renderRejection}>
-                                Reject
-                            </Button>}
+                            <span className="p-buttonset">
+                            {(props.state === "pending") && <Button label='Approve' icon="pi pi-check" className="p-button-sm p-button-raised p-button-success" onClick={renderCollapsible} />}
+                            {(props.state === "pending") && <Button label='Reject' icon="pi pi-times" className="p-button-sm p-button-raised p-button-danger" onClick={renderRejection} />}
+                            </span>
+                            
+                            
                         </div>
 
                         <Collapse in={openRegistration}>
@@ -175,7 +185,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <NewVehicle ownerID={ownerID} reqId={reqId}/>
+                                    <NewVehicle ownerID={ownerID} reqId={reqId} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -187,7 +197,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <UpdateVehicle ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle}/>
+                                    <UpdateVehicle ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -199,7 +209,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <LicenseRenewalOfficer ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle}/>
+                                    <LicenseRenewalOfficer ownerID={ownerID} reqId={reqId} regNo={regNo} vehicle={vehicle} />
                                 </Modal.Body>
                             </div>
                         </Collapse>
@@ -211,7 +221,7 @@ const DataTable = (props) => {
                                 </Modal.Header>
 
                                 <Modal.Body>
-                                    <RequestRejection reqId={reqId}/>
+                                    <RequestRejection reqId={reqId} />
                                 </Modal.Body>
                             </div>
                         </Collapse>

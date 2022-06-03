@@ -1,16 +1,21 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import { isVehRegDocDone } from '../statusSlice';
 
 
 const UploadComponent = (props) => {
 
-    const id = useSelector(state => state.user.id);
-    const fullName = useSelector(state => state.user.fullName);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const id = storageUserData.id;
+    const fullName = storageUserData.fullName;
+
+    const toast = useRef(null);
+    const dispatch = useDispatch();
     
     const onSubmit = async (data) => {
 
@@ -35,7 +40,13 @@ const UploadComponent = (props) => {
         })
 
         let returned_data = await response.json();
-        console.log(returned_data);
+        if(returned_data.status === "ok"){
+            dispatch(isVehRegDocDone());
+             
+        }else{
+            console.log(returned_data)
+            toast.current.show({severity:'info', summary: `${response.error}`, detail: "Submit again!", life: 5000});
+        }
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm();

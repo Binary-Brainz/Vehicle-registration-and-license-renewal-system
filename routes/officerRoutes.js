@@ -14,7 +14,7 @@ router.get('/dashboard/:id', auth.requireAuth, officerController.get_dashboard);
 router.get('/requests', auth.requireAuth, officerController.get_officer_requests);
 
 //get all vehicles
-router.get('/allVehicles', auth.requireAuth, officerController.get_vehicles);
+router.get('/allVehicles', auth.requireRouteAuth, officerController.get_vehicles);
 
 //edit officer profile
 router.post('/editProfile', auth.requireAuth, officerController.edit_officer);
@@ -30,8 +30,5 @@ router.post('/renewLicense', auth.requireAuth, officerController.update_vehicle)
 
 //reject request
 router.post('/reject', officerController.reject_request);
-
-//download documents belong to an application
-router.get('/downloadDocumets/:request_id', officerController.download_documents);
 
 module.exports = router;

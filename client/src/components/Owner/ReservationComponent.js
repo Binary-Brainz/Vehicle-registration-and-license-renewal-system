@@ -6,10 +6,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { vehRegDateResed } from '../statusSlice';
 import { Toast } from 'primereact/toast';
 import { Calendar } from 'primereact/calendar';
+import { useHref, useNavigate } from 'react-router-dom';
 
 async function reserveDate(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     return fetch('/owner/reserve', {
       method: 'POST',

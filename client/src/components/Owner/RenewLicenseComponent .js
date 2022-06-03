@@ -8,8 +8,14 @@ import { Toast } from 'primereact/toast';
 
 const axios = require('axios').default;
 
-
 function RenewLicense(props) {
+
+    const token = sessionStorage.getItem('owner_token');
+
+    if(!token){
+        sessionStorage.clear();
+        document.location = '/';
+    }
 
     const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
     const stored_id = useSelector(state => state.user.id);
@@ -18,13 +24,11 @@ function RenewLicense(props) {
     const [user, setUser] = useState({});
     const [id, setId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle.jpg");
+    const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle.gif");
     const [ownVehicles, setOwnVehicles] = useState([]);
     const toast = useRef(null);
 
     useEffect(() => {
-
-        const token = sessionStorage.getItem('token');
 
         axios.get(`/owner/expiredVehicles/${user_id}`, {
             headers: {
@@ -41,6 +45,10 @@ function RenewLicense(props) {
                 if (status === 'ok') {
                     setOwnVehicles(vehicles);
                     setUser(user_data);
+                }
+                else if(status === 'auth-error'){
+                    sessionStorage.clear();
+                    document.location = '/';
                 }
                 else {
                     console.log(response.error);
@@ -89,19 +97,14 @@ function RenewLicense(props) {
                 </div>
                 <Modal show={isModalOpen} onHide={toggleModal}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Renew License for Vehicle {id}</Modal.Title>
+                        <Modal.Title>Renew License for Vehicle</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         {ownVehicles.filter(vehicle => vehicle._id === id).map(vehicle => (
-                            <RenewalComponent regNo={vehicle.regNo} />
+                            <RenewalComponent regNo={vehicle.regNo} nextYearFee={vehicle.nextYearFee}/>
                         ))}
 
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={toggleModal}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
                 </Modal>
             </div>
         </div>

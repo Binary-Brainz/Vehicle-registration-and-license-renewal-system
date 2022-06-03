@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 async function rejectReqest(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     return fetch('/officer/reject', {
       method: 'POST',

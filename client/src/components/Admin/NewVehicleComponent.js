@@ -8,7 +8,7 @@ import { Toast } from 'primereact/toast';
 
 async function addVehicle(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     return fetch('/officer/addVehicle', {
         method: 'POST',

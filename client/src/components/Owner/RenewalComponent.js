@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
@@ -43,21 +44,33 @@ const RenewalComponent = (props) => {
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
-            <h5>You have to pay Rs....</h5>
-            <p>Please submit your payment receipt and EcoTest Report below</p>
+
+            <Card body bg="light">
+            <h5>You have to pay Rs. {props.nextYearFee}.00</h5>
+            <p>Pay the above-mentioned fee to one of the following bank accounts and get a payment receipt.
+            <br/><br/>
+            <div className=' fw-bold'>
+            <span className='fa fa-square'></span> Bank of Ceylon - 2298567<br/><span className='fa fa-square'></span> People's Bank - 3986567<br/><span className='fa fa-square'></span> Hatton National Bank - 498567
+                </div></p>
+
+
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>Upload Payment Receipt</Form.Label>
                 <Form.Control type="file" name='file' {...register("receipt", {
                     required: true
                 })} />
             </Form.Group>
-
+            </Card><br/>
+            <Card body bg="light">
+            <p>Please get an eco test report for your vehicle from a government approved place.</p>
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>Upload EcoTest Report</Form.Label>
                 <Form.Control type="file" name='file' {...register("ecoTest", {
                     required: true
                 })} />
             </Form.Group>
+            </Card><br/>
+            
 
             <Button variant="primary" type="submit">
                 Submit
