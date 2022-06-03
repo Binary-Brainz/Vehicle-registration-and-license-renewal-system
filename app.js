@@ -41,3 +41,4 @@ app.use((req, res, next) => {
 app.use('/superuser', superuserRoutes);
 app.use('/officer', officerRoutes);
 app.use('/owner', ownerRoutes);
+app.get('/*', (req, res) => res.send('Index Page'));
