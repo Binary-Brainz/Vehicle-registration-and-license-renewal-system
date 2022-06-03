@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const superuserRoutes = require('./routes/superuserRoutes');
 const officerRoutes = require('./routes/officerRoutes');
@@ -44,3 +45,7 @@ app.use((req, res, next) => {
 app.use('/superuser', superuserRoutes);
 app.use('/officer', officerRoutes);
 app.use('/owner', ownerRoutes);
+
+app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
