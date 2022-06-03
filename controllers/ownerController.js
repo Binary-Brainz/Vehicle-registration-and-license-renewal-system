@@ -447,11 +447,16 @@ const send_request = async (req, res) => {
 
     let data = req.body;
     let type = data.type;
+    data.files = [];
 
     if(data.files){
 
         let obj = await Officer.findOne({type: type}, '_id');
         let officerID = obj._id.toString();
+
+        for(let i = 0; i < req.files.length; i++){
+            data.files.push(req.files[i].location);
+        }
 
         if(officerID){
 

@@ -31,7 +31,4 @@ router.post('/renewLicense', auth.requireAuth, officerController.update_vehicle)
 //reject request
 router.post('/reject', officerController.reject_request);
 
-//download documents belong to an application
-router.get('/downloadDocumets/:request_id', officerController.download_documents);
-
 module.exports = router;

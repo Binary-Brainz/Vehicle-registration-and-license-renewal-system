@@ -1,14 +1,72 @@
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
+require('dotenv').config()
+const fs = require('fs')
+const multer = require("multer");
+const path = require("path");
 const uuid = require('uuid').v4;
+const multerS3 = require("multer-s3");
+const aws = require("aws-sdk");
+
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+const bucketName = process.env.AWS_STORAGE_BUCKET_NAME;
+
+const s3 = new aws.S3({
+    accessKeyId,
+    secretAccessKey,
+})
+
+const uploadS3 = multer({
+
+    storage: multerS3({
+
+        s3: s3,
+        bucket: bucketName,
+        acl: "public-read",
+
+        metadata: function (req, file, cb) {
+        cb(null, {fieldName: file.fieldname});
+        },
+
+        key: function (req, file, cb) {
+
+            let {originalname } = file;
+            let fileName = uuid() + '-' + originalname;
+            let fullPath = 'uploads/' + fileName;
+
+            cb(null, fullPath);
+
+            if(!req.body['files']){
+                req.body['files'] = [fileName];
+            }
+            else{
+                req.body['files'].push(fileName);
+            }
+        }
+    })
+})
 
 const makePdf = (data) => {
 
     // Create a document
-    let doc = new PDFDocument();
+    let doc = new PDFDocument({bufferPages: true});
 
     let doc_name = data.regNo + '-registration-' + uuid() +'.pdf';
     let doc_path = './generated/' + doc_name;
+
+    // let buffers = [];
+    // doc.on('data', buffers.push.bind(buffers));
+    // doc.on('end', () => {
+
+    //     let pdfData = Buffer.concat(buffers);
+    //     res.writeHead(200, {
+    //     'Content-Length': Buffer.byteLength(pdfData),
+    //     'Content-Type': 'application/pdf',
+    //     'Content-disposition': `attachment;filename=${doc_name}`,})
+    //     .end(pdfData);
+
+    // });
+
     doc.pipe(fs.createWriteStream(doc_path));
 
     doc
@@ -142,6 +200,7 @@ const makePdf = (data) => {
 
     // Finalize PDF file
     doc.end();
+
     return doc_name;
 }
 
