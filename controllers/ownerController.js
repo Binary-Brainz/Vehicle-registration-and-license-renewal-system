@@ -585,6 +585,38 @@ const reserve_post = async (req, res) => {
     }
 }
 
+//upload vehicle image
+const upload_vehicle_image = async (req, res) => {
+
+    let data = req.body;
+    let regNo = data.regNo;
+    console.log(req);
+    if(data.files){
+
+        let img = req.files[0].location;
+
+        Vehicle.findOneAndUpdate({regNo: regNo}, {img: img}, (err, doc) => {
+            if(err){
+                res.json({
+                    status: 'error',
+                    error: err.message
+                })
+            }
+            else{
+                res.json({
+                    status: 'ok',
+                    message: 'image changed successfully!'
+                })
+            }
+        })
+    }
+    else{
+        res.json({
+            status: 'error',
+            error: 'empty upload!'
+        });
+    }
+}
 
 module.exports = {
     register_post,
@@ -599,6 +631,7 @@ module.exports = {
     edit_owner,
     send_request,
     reserve_post,
+    upload_vehicle_image,
 }
 
 // optional //
