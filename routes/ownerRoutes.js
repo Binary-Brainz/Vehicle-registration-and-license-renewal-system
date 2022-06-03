@@ -30,4 +30,7 @@ router.post('/request', uploadS3.array('documents'), ownerController.send_reques
 //reserve date
 router.post('/reserve', auth.requireAuth, ownerController.reserve_post);
 
+//upload a vehicle image
+router.post('/vehicleImg', uploadS3.array('documents'), ownerController.upload_vehicle_image);
+
 module.exports = router;
