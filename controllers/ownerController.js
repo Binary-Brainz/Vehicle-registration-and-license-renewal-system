@@ -266,7 +266,7 @@ const get_owner_reservedDates = async (req, res) => {
             let dt = new Date(workdays[i].day);
 
             if(dt > today){
-                let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+                let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate() + 1).padStart(2, '0');
                 ownerReservedDates.push(dtstr);
             }
         }
