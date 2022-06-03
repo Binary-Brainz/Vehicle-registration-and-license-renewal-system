@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useRef} from 'react'
 import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux';
 import { gotId, gotNic } from '../userSlice';
+import { Toast } from 'primereact/toast';
 
 const RenewalComponent = (props) => {
+
+    const toast = useRef(null);
 
     const id = useSelector(state => state.user.id);
     const fullName = useSelector(state => state.user.fullName);
@@ -38,44 +41,48 @@ const RenewalComponent = (props) => {
 
         let returned_data = await response.json();
         console.log(returned_data);
+        toast.current.show({severity:'success', summary: "Request Sent!", life: 5000});
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     return (
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+            <Toast ref={toast} position="top-center" />
+            <Form onSubmit={handleSubmit(onSubmit)}>
 
-            <Card body bg="light">
-            <h5>You have to pay Rs. {props.nextYearFee}.00</h5>
-            <p>Pay the above-mentioned fee to one of the following bank accounts and get a payment receipt.
-            <br/><br/>
-            <div className=' fw-bold'>
-            <span className='fa fa-square'></span> Bank of Ceylon - 2298567<br/><span className='fa fa-square'></span> People's Bank - 3986567<br/><span className='fa fa-square'></span> Hatton National Bank - 498567
-                </div></p>
+                <Card body bg="light">
+                <h5>You have to pay Rs. {props.nextYearFee}.00</h5>
+                <p>Pay the above-mentioned fee to one of the following bank accounts and get a payment receipt.
+                <br/><br/>
+                <div className=' fw-bold'>
+                <span className='fa fa-square'></span> Bank of Ceylon - 2298567<br/><span className='fa fa-square'></span> People's Bank - 3986567<br/><span className='fa fa-square'></span> Hatton National Bank - 498567
+                    </div></p>
 
 
-            <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Upload Payment Receipt</Form.Label>
-                <Form.Control type="file" name='file' {...register("receipt", {
-                    required: true
-                })} />
-            </Form.Group>
-            </Card><br/>
-            <Card body bg="light">
-            <p>Please get an eco test report for your vehicle from a government approved place.</p>
-            <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Upload EcoTest Report</Form.Label>
-                <Form.Control type="file" name='file' {...register("ecoTest", {
-                    required: true
-                })} />
-            </Form.Group>
-            </Card><br/>
-            
+                <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Label>Upload Payment Receipt</Form.Label>
+                    <Form.Control type="file" name='file' {...register("receipt", {
+                        required: true
+                    })} />
+                </Form.Group>
+                </Card><br/>
+                <Card body bg="light">
+                <p>Please get an eco test report for your vehicle from a government approved place.</p>
+                <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Label>Upload EcoTest Report</Form.Label>
+                    <Form.Control type="file" name='file' {...register("ecoTest", {
+                        required: true
+                    })} />
+                </Form.Group>
+                </Card><br/>
+                
 
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
-        </Form>
+                <Button variant="primary" type="submit">
+                    Submit
+                </Button>
+            </Form>
+        </div>
     )
 }
 
