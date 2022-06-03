@@ -39,16 +39,16 @@ class App extends Component {
                 <Routes>
                     <Route path="*" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
                     <Route path="/" element={<LoginSignup setAuthState={(response) => this.setAuthState(response)}/>}></Route>
-                    <Route path="ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}>
+                    <Route path="/ownerDashboard" element={<VehicleOwnerMain response={this.state.authResponse}/>}>
                         <Route path="" element={<OwnVehicles />}></Route>
-                        <Route path="ownvehicles" element={<OwnVehicles />}></Route>
-                        <Route exact path="registernewvehicle" element={<RegisterNewVehicle />} ></Route>  
-                        <Route exact path="renewlicense" element={<RenewLicense />} ></Route>
+                        <Route path="/ownvehicles" element={<OwnVehicles />}></Route>
+                        <Route exact path="/registernewvehicle" element={<RegisterNewVehicle />} ></Route>  
+                        <Route exact path="/renewlicense" element={<RenewLicense />} ></Route>
                     </Route> 
-                    <Route path="adminDashboard" element={<AdminMain response={this.state.authResponse}/>}>
+                    <Route path="/adminDashboard" element={<AdminMain response={this.state.authResponse}/>}>
                         <Route path="" element={<Requests />}></Route>
-                        <Route exact path="requests" element={<Requests />}></Route>
-                        <Route exact path="vehicledetails" element={<ViewVehicles />}></Route>    
+                        <Route exact path="/requests" element={<Requests />}></Route>
+                        <Route exact path="/vehicledetails" element={<ViewVehicles />}></Route>    
                     </Route> 
                     {/* <Route exact path="officerDashboard" element={<AdminMainComponent response={this.state.authResponse}/>} ></Route> */}
                 </Routes>
