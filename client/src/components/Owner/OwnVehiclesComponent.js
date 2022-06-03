@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactCrop from 'react-image-crop';
 import { gotId, gotNic } from '../userSlice';
 import { FileUpload } from 'primereact/fileupload';
+import { useForm } from 'react-hook-form';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const axios = require('axios').default;
 
@@ -27,6 +29,12 @@ const OwnVehicles = () => {
     const [defaultVehicle, setDefaultVehicle] = useState("/assets/images/vehicle2.gif");
     const [ownVehicles, setOwnVehicles] = useState([]);
     const [vId, setVId] = useState("");
+    const [vNo, setVNo] = useState("");
+
+    const setVid = (no) => {
+        setVId(no);
+        setVNo(no);
+    }
 
     useEffect(() => {
 
@@ -77,53 +85,35 @@ const OwnVehicles = () => {
         toggleImageModal();
     }
 
-    const [srcImg, setSrcImg] = useState(null);
-    const [image, setImage] = useState(null);
-    const [crop, setCrop] = useState({ aspect: 16 / 9 });
     const [result, setResult] = useState(null);
+    const navigate = useNavigate();
 
-    const handleImage = async (event) => {
-        setSrcImg(URL.createObjectURL(event.target.files[0]));
-        console.log(event.target.files[0]);
-    };
+   
+    const onSubmit = async (data) => {
 
-    const getCroppedImg = async () => {
-        try {
-            const canvas = document.createElement("canvas");
-            const scaleX = image.naturalWidth / image.width;
-            const scaleY = image.naturalHeight / image.height;
-            canvas.width = crop.width;
-            canvas.height = crop.height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(
-                image,
-                crop.x * scaleX,
-                crop.y * scaleY,
-                crop.width * scaleX,
-                crop.height * scaleY,
-                0,
-                0,
-                crop.width,
-                crop.height
-            );
+        
+        const formData = new FormData();
+        console.log(vNo);
+        formData.append("regNo", vNo);
 
-            const base64Image = canvas.toDataURL("image/jpeg", 1);
-            setResult(base64Image);
-            console.log(result);
-        } catch (e) {
-            console.log("crop the image");
+        for(let i =0; i < data.file.length; i++) {
+                formData.append("documents", data.file[i]);
         }
-    };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        console.log(result);
+        let response = await fetch("http://localhost:5000/owner/vehicleImg", {
+            method: 'POST',
+            body: formData,
+        })
+
+        let returned_data = await response.json();
+        if(returned_data.status === "ok"){
+            navigate(0);
+        }else{
+            console.log(returned_data)
+        }
     }
 
-    const onUpload = () => {
-
-        console.log("done")
-    }
+    const { register, handleSubmit, formState: { errors } } = useForm();
 
     var vehicle = ownVehicles.filter(function (el) {
         return el._id === id;
@@ -136,7 +126,7 @@ const OwnVehicles = () => {
                 {ownVehicles.map((vehicle) => (
 
                     <Card key={vehicle._id} bg="light" border="light" className='m-3 shadow' style={{ height: "24rem", width: '18rem', "paddingLeft": "0px", "paddingRight": "0px" }}>
-                        <Card.Img height="200rem" className='crdhv' onMouseOut={() => setVId("")} onMouseOver={() => setVId(vehicle._id)} onClick={changeImage} variant="top" src={(vehicle.image) ? vehicle.image : ((vId === vehicle._id) ? "/assets/images/edit.jpg" : defaultVehicle)} />
+                        <Card.Img height="200rem" onMouseOut={() => setVId("")} onMouseOver={() => setVid(vehicle.regNo)} onClick={changeImage} variant="top" src={(vehicle.img) ? ((vId === vehicle.regNo) ? "/assets/images/edit.jpg" : vehicle.img) : ((vId === vehicle.regNo) ? "/assets/images/edit.jpg" : defaultVehicle)} />
                         <Card.Body>
                             <Card.Title>{vehicle.regNo}</Card.Title>
                             <Card.Subtitle>{vehicle.type} ({vehicle.model})</Card.Subtitle>
@@ -156,10 +146,18 @@ const OwnVehicles = () => {
             <Modal show={isImageModal} onHide={toggleImageModal}>
                 <Modal.Header closeButton>Change Image</Modal.Header>
                 <Modal.Body >
-                    <FileUpload name="demo[]" url="https://binary-brainz-bucket.s3.us-west-2.amazonaws.com/uploads" onUpload={onUpload} accept="image/*" maxFileSize={1000000}
-                        emptyTemplate={<p className="m-0">Drag and drop image to here to upload.</p>} />
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+                        <Form.Group controlId="formFile" className="mb-3">
+                            <Form.Label>Upload Document</Form.Label>
+                            <Form.Control type="file" name='file' {...register("file", {
+                                required: true
+                            })} />
+                        </Form.Group>
+                        <Button variant="primary" type="submit">
+                            Upload
+                        </Button>
+                    </Form>
                     <div>
-
                         {result && (
                             <div>
                                 <img src={result} alt="cropped image" />
