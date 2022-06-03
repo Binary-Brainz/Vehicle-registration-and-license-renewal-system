@@ -558,7 +558,7 @@ const reserve_post = async (req, res) => {
                 let newWorkday1 = new Workday({
 
                     day: dateObj,
-                    owners: [id]
+                    owners: ['id']
 
                 });
                 newWorkday1.save((err)=>{
