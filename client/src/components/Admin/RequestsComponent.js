@@ -49,7 +49,7 @@ function RenderCard(props) {
 
 export default function Requests() {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('officer_token');
 
     if(!token){
         sessionStorage.clear();

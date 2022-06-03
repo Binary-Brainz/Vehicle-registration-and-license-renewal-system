@@ -10,8 +10,9 @@ import { isVehRegDocDone } from '../statusSlice';
 
 const UploadComponent = (props) => {
 
-    const id = useSelector(state => state.user.id);
-    const fullName = useSelector(state => state.user.fullName);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const id = storageUserData.id;
+    const fullName = storageUserData.fullName;
 
     const toast = useRef(null);
     const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const UploadComponent = (props) => {
             dispatch(isVehRegDocDone());
              
         }else{
+            console.log(returned_data)
             toast.current.show({severity:'info', summary: `${response.error}`, detail: "Submit again!", life: 5000});
         }
     }

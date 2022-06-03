@@ -66,6 +66,10 @@ function Header(props) {
     const [value, setValue] = useState('');
     const toast = useRef(null);
 
+    // if(loginError){
+    //     toast.current.show({severity:'error', summary: "Invalid login details!", life: 5000});
+    // }
+
     const handleChange = (event) => {
         setValue(event.target.value );
     }
@@ -80,6 +84,7 @@ function Header(props) {
 
     const handleSignup = async (values) => {
 
+        sessionStorage.clear();
 
         const response = await signUpUser(values);
 
@@ -88,10 +93,13 @@ function Header(props) {
             toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid signup!", life: 5000});
         }
         else{
+
             toggleSignupModal();
             
+            sessionStorage.setItem('userType', JSON.stringify(response.userType));
             sessionStorage.setItem('userData', JSON.stringify(response.data));
-            sessionStorage.setItem('token', JSON.stringify(response.token));
+            sessionStorage.setItem('owner_token', JSON.stringify(response.token));
+
             props.setAuthState(response);
 
             navigate('/ownerDashboard', { replace: true });
@@ -104,6 +112,8 @@ function Header(props) {
         let response;
         let type;
         let nic_arr = event.nic.split("-");
+
+        sessionStorage.clear();
         
         if(nic_arr.length === 1){
 
@@ -129,16 +139,20 @@ function Header(props) {
             toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid login details!", life: 5000});
         }
         else{
+            
             toggleLoginModal();
 
+            sessionStorage.setItem('userType', JSON.stringify(response.userType));
             sessionStorage.setItem('userData', JSON.stringify(response.data));
-            sessionStorage.setItem('token', JSON.stringify(response.token));
+
             props.setAuthState(response);
 
             if(type === 'owner'){
+                sessionStorage.setItem('owner_token', JSON.stringify(response.token));
                 navigate('/ownerDashboard', { replace: true });
             }
             else{
+                sessionStorage.setItem('officer_token', JSON.stringify(response.token));
                 navigate('/adminDashboard', { replace: true });
             }
         }
@@ -146,10 +160,10 @@ function Header(props) {
     
     return (
         <React.Fragment>
-            <Toast ref={toast} position="top-center"/>
+            <Toast ref={toast} position="top-right" />
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
-                    <Navbar.Brand href="/home"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licening System</Navbar.Brand>
+                    <Navbar.Brand href="/home"><img src="/assets/images/logo04.png" height="40" width="40" alt="logo.png" /> Vehicle Registration and Licensing System</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="ms-auto">

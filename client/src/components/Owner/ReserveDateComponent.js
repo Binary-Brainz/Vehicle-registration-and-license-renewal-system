@@ -11,7 +11,7 @@ import { vehRegDateResed } from '../statusSlice';
 
 async function reserveDate(data) {
 
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('owner_token');
 
     return fetch('http://localhost:5000/owner/reserve', {
         method: 'POST',
@@ -28,7 +28,8 @@ const ReserveDate = () => {
     const toast = useRef(null);
     const dispatch = useDispatch();
 
-    const id = useSelector(state => state.user.id);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const id = storageUserData.id;
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {

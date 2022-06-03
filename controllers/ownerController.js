@@ -40,6 +40,7 @@ const register_post = async (req, res) => {
             res.json({
                 status: 'ok',
                 token: token,
+                userType: 'owner',
                 data: {
                     nic: nic,
                     id: user._id,
@@ -72,6 +73,7 @@ const login_post = async (req, res) => {
                 return_data = {
                     status: 'ok',
                     token: token,
+                    userType: 'owner',
                     data: {
                         nic: nic,
                         id: user._id,
@@ -451,6 +453,11 @@ const send_request = async (req, res) => {
         let obj = await Officer.findOne({type: type}, '_id');
         let officerID = obj._id.toString();
 
+        data.files = [];
+        for(let i = 0; i < req.files.length; i++){
+            data.files.push(req.files[i].location);
+        }
+
         if(officerID){
 
             data['officerID'] = officerID;
@@ -484,42 +491,6 @@ const send_request = async (req, res) => {
             status: 'error',
             error: 'Required documents must be uploaded!'
         });
-    }
-}
-
-//download pdf
-const download_file = async (req, res) => {
-
-    let notificationID = req.params.notificationID;
-
-    try {
-        
-        let notification = await Notification.findById(mongoose.Types.ObjectId(notificationID));
-
-        if(notification !== null){
-
-            if(notification.files.length > 0){
-
-                let fileName = notification.files[0];
-
-                res.download('generated/' + fileName);
-            }
-            else{
-                res.json({
-                    status: 'error',
-                    error: 'No attachments!'
-                })
-            }
-        }
-        else{
-            res.json({
-                status: 'error',
-                error: 'Invalid notification id!'
-            })
-        }
-    } 
-    catch (err) {
-        
     }
 }
 
@@ -627,7 +598,6 @@ module.exports = {
     get_owner_requests,
     edit_owner,
     send_request,
-    download_file,
     reserve_post,
 }
 

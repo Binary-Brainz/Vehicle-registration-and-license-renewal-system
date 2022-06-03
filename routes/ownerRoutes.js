@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-const uploader = require('../middleware/fileUploader');
+const uploadS3 = require('../middleware/uploader');
 
 //register
 router.post('/register', ownerController.register_post);
@@ -25,10 +25,7 @@ router.get('/requests', auth.requireAuth, ownerController.get_owner_requests);
 router.post('/editProfile', auth.requireAuth, ownerController.edit_owner);
 
 //request with file upload
-router.post('/request', uploader.array('documents'), ownerController.send_request);
-
-//download pdf document sent by an officer
-router.get('/downloadFile/:notificationID', ownerController.download_file);
+router.post('/request', uploadS3.array('documents'), ownerController.send_request);
 
 //reserve date
 router.post('/reserve', auth.requireAuth, ownerController.reserve_post);
