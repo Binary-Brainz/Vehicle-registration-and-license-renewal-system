@@ -28,7 +28,8 @@ const ReserveDate = () => {
     const toast = useRef(null);
     const dispatch = useDispatch();
 
-    const id = useSelector(state => state.user.id);
+    const storageUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const id = storageUserData.id;
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {
@@ -43,7 +44,7 @@ const ReserveDate = () => {
         if (status === 'ok') {
             //set store status
             dispatch(vehRegDateResed());
-            //toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
+            toast.current.show({ severity: 'success', summary: "Date Reservation Success!", life: 5000 });
             navigate("/ownerDashboard/ownvehicles");
         }
         else {

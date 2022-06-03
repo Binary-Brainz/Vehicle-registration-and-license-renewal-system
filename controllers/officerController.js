@@ -1,8 +1,9 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-
+require('dotenv').config()
 const archiver = require('archiver');
 const path = require('path');
+const uuid = require('uuid').v4;
 
 const Officer = require('../models/officer');
 const Owner = require('../models/owner');
@@ -13,6 +14,17 @@ const Request = require('../models/request');
 const auth = require('../middleware/auth');
 const encHandler = require('../middleware/encryptionHandler');
 const pdfGenerator = require('../middleware/pdfGenerator');
+
+const aws = require("aws-sdk");
+
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+const bucketName = process.env.AWS_STORAGE_BUCKET_NAME;
+
+const s3 = new aws.S3({
+    accessKeyId,
+    secretAccessKey,
+})
 
 //login - get all requests(requests by officerID)
 const login_post = async (req, res) => {
@@ -298,8 +310,10 @@ const add_vehicle = async (req, res) => {
 
                     let request = await Request.findByIdAndUpdate(requestID, {state: 'approved', regNo: data.regNo});
                 
-                    let doc_name = pdfGenerator.makePdf(data);
-                    let files = [doc_name];
+                    let fileName = 'generated/' + uuid() + '-registration.txt'
+                    let response = await putFile(fileName, JSON.stringify(data));
+                    let location = 'https://binary-brainz-bucket.s3.us-west-2.amazonaws.com/' + fileName;
+                    let files = [location];
 
                     let notification_data = {
                         type: request.type,
@@ -391,8 +405,10 @@ const update_vehicle = async (req, res) => {
 
                             let request = await Request.findByIdAndUpdate(requestID, {state: 'approved'});
                         
-                            let doc_name = pdfGenerator.makePdf(updated_vehicle);
-                            let files = [doc_name];
+                            let fileName = 'generated/' + uuid() + '-registration.txt'
+                            let response = await putFile(fileName, JSON.stringify(updated_vehicle));
+                            let location = 'https://binary-brainz-bucket.s3.us-west-2.amazonaws.com/' + fileName;
+                            let files = [location];
         
                             let notification_data = {
                                 type: request.type,
@@ -449,62 +465,12 @@ const update_vehicle = async (req, res) => {
     }
 }
 
-// download documents of an application
-const download_documents = async (req, res) => {
-
-    let request_id = req.params.request_id;
-    
-    try {
-
-        let request_data = await Request.findById(mongoose.Types.ObjectId(request_id));
-        
-        if(request_data){
-
-            if(request_data.state === 'new'){
-                await Request.findByIdAndUpdate(mongoose.Types.ObjectId(request_id), {state: 'pending'});
-            }
-
-            let fileNames = request_data.files;
-            console.log(fileNames);
-
-            const archive = archiver('zip');
-            archive.on('error', function(err) {
-                res.status(500).send({error: err.message});
-            });
-
-            //on stream closed we can end the request
-            archive.on('end', function() {
-                console.log('Archive wrote %d bytes', archive.pointer());
-            });
-
-            res.attachment('documents.zip');
-            let files = [];
-
-            for(let i = 0; i < fileNames.length; i++){
-                
-                files.push('uploads/' + fileNames[i]);
-
-            }
-
-            archive.pipe(res);
-
-            for(const i in files) {
-                archive.file(files[i], { name: path.basename(files[i]) });
-            }
-
-            archive.finalize();
-        }
-        else{
-            res.json({
-                status: 'error',
-                error: 'Unable to find the request!'
-            })
-        }
-    } 
-    catch (err) {
-        console.log(err);
-    }
-}
+const putFile = (key, body) =>
+  s3.putObject({
+    Bucket: bucketName,
+    Key: key,
+    Body: body,
+}).promise()
 
 //reject request
 const reject_request = async (req, res) => {
@@ -577,5 +543,4 @@ module.exports = {
     add_vehicle,
     update_vehicle,
     reject_request,
-    download_documents,
 }
