@@ -1,9 +1,10 @@
-import React from 'react'
+import React, {useRef} from 'react'
 import { Button } from 'react-bootstrap';
 import { useForm } from "react-hook-form";
 import { useState } from 'react';
 import VehicleComponent from '../Owner/VehicleComponent';
 import Form from 'react-bootstrap/Form';
+import { Toast } from 'primereact/toast';
 
 async function updateVehicle(data) {
 
@@ -22,6 +23,8 @@ async function updateVehicle(data) {
 
 const UpdateVehicle = (props) => {
 
+    const toast = useRef(null);
+
   const onSubmit = async (data) => {
 
     data['regNo'] = vehicle.regNo;
@@ -31,11 +34,14 @@ const UpdateVehicle = (props) => {
 
     let response = await updateVehicle(data);
     if(response.status === "ok"){
-        console.log(response)
+        console.log(response);
+        toast.current.show({severity:'success', summary: "Successfully updated!", life: 5000});
     }
     else{
         console.log(response.error);
+        toast.current.show({severity:'error', summary: `${response.error}`, detail: "Submit again!", life: 5000});
     }
+
   }
 
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -44,6 +50,7 @@ const UpdateVehicle = (props) => {
 
   return (
     <div>
+        <Toast ref={toast} position="top-center" />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <VehicleComponent vehicle={vehicle} register={register} errors={errors} disabled={0} update={1} />
         <br></br>
@@ -51,7 +58,6 @@ const UpdateVehicle = (props) => {
           Update Vehicle Details
         </Button>
       </Form>
-
     </div>
   )
 }

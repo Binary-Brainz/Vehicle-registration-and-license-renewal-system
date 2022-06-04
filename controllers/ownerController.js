@@ -266,7 +266,7 @@ const get_owner_reservedDates = async (req, res) => {
             let dt = new Date(workdays[i].day);
 
             if(dt > today){
-                let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + dt.getDate().toString().padStart(2, '0');
+                let dtstr = dt.getFullYear().toString().padStart(2, '0') + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate() + 1).padStart(2, '0');
                 ownerReservedDates.push(dtstr);
             }
         }
@@ -585,6 +585,38 @@ const reserve_post = async (req, res) => {
     }
 }
 
+//upload vehicle image
+const upload_vehicle_image = async (req, res) => {
+
+    let data = req.body;
+    let regNo = data.regNo;
+
+    if(data.files){
+
+        let img = req.files[0].location;
+
+        Vehicle.findOneAndUpdate({regNo: regNo}, {img: img}, (err, doc) => {
+            if(err){
+                res.json({
+                    status: 'error',
+                    error: err.message
+                })
+            }
+            else{
+                res.json({
+                    status: 'ok',
+                    message: 'image changed successfully!'
+                })
+            }
+        })
+    }
+    else{
+        res.json({
+            status: 'error',
+            error: 'empty upload!'
+        });
+    }
+}
 
 module.exports = {
     register_post,
@@ -599,6 +631,7 @@ module.exports = {
     edit_owner,
     send_request,
     reserve_post,
+    upload_vehicle_image,
 }
 
 // optional //
