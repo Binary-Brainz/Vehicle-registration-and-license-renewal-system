@@ -134,27 +134,34 @@ function Header(props) {
             });
         }
 
-        if(response.status === 'error'){
-            setLoginError(response.error );
-            toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid login details!", life: 5000});
-        }
-        else{
-            
-            toggleLoginModal();
-
-            sessionStorage.setItem('userType', JSON.stringify(response.userType));
-            sessionStorage.setItem('userData', JSON.stringify(response.data));
-
-            props.setAuthState(response);
-
-            if(type === 'owner'){
-                sessionStorage.setItem('owner_token', JSON.stringify(response.token));
-                navigate('/ownerDashboard', { replace: true });
+        if(response){
+            if(response.status === 'error'){
+                setLoginError(response.error );
+                toast.current.show({severity:'error', summary: `${response.error}`, detail: "Invalid login details!", life: 5000});
             }
             else{
-                sessionStorage.setItem('officer_token', JSON.stringify(response.token));
-                navigate('/adminDashboard', { replace: true });
+                
+                toggleLoginModal();
+
+                sessionStorage.setItem('userType', JSON.stringify(response.userType));
+                sessionStorage.setItem('userData', JSON.stringify(response.data));
+
+                props.setAuthState(response);
+
+                if(type === 'owner'){
+                    sessionStorage.setItem('owner_token', JSON.stringify(response.token));
+                    navigate('/ownerDashboard', { replace: true });
+                }
+                else{
+                    sessionStorage.setItem('officer_token', JSON.stringify(response.token));
+                    navigate('/adminDashboard', { replace: true });
+                }
             }
+        }
+        else{
+            let error = 'Authentication error!';
+            setLoginError(error );
+            toast.current.show({severity:'error', summary: `${error}`, detail: "Invalid login details!", life: 5000});
         }
     }
     
